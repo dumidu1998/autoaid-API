@@ -17,14 +17,22 @@ router.route('/add').post((req, res) => {
 });
 
 router.route('/:id').get((req, res) => {
-    const id = req.params.id;
-
-    User.findById(id)
+    User.findById(req.params.id)
         .then((user) => res.json(user))
         .catch(err => res.status(400).json("err: " + err))
 })
 
+router.route('/:id').get((req, res) => {
+    User.findById(req.params.id)
+        .then((user) => res.json(user))
+        .catch(err => res.status(400).json("err: " + err))
+})
 
+router.route('/:id').delete((req, res) => {
+    User.findOneAndDelete(req.params.id)
+        .then((user) => res.json(user))
+        .catch(err => res.status(400).json("err: " + err))
+})
 
 
 module.exports = router;
