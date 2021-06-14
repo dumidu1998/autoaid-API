@@ -1,4 +1,2 @@
 # API for AutoAid
-## MongoDB 
-This API is developed for AutoAid Repair and service station management system
-Mongodb atlas is used here as database
+![image](https://user-images.githubusercontent.com/50117273/121954424-5b84ca00-cd7c-11eb-8317-c45f9e450c2e.png)
