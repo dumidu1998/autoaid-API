@@ -4,26 +4,39 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="USER")
+@Table(name="CUSTOMER")
 public class User {
 
     @Id
     @GeneratedValue
+    @Column(name = "customer_id")
     private int id;
+
+    @Column(nullable = false)
     private String firstname;
+
+    @Column(nullable = false)
     private String lastname;
-    private String email;
+
+    @Column(nullable = false)
     private String contactNo;
+
+    @Column(nullable = true)
+    private String email;
+
+    @Column(nullable = false)
+    @Size(min = 6)
     private String password;
+
+    @Column(nullable = false)
+    private int profile_state;
 
 }
