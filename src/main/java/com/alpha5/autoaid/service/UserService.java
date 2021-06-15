@@ -13,7 +13,8 @@ public class UserService {
     private UserRepository repository;
 
 
-    public User addUser(User user){
+
+    public User registerUser(User user){
         return repository.save(user);
     }
 
@@ -30,7 +31,7 @@ public class UserService {
     }
 
     public User getUserByName(String name){
-        return repository.findByname(name);
+        return repository.findByName(name);
     }
 
     public String deleteUser(int id){
@@ -40,7 +41,8 @@ public class UserService {
 
     public User updateUser(User user){
         User existingUser =  repository.findById(user.getId()).orElse(null);
-        existingUser.setName(user.getName());
+        existingUser.setFirstname(user.getFirstname());
+        existingUser.setLastname(user.getLastname());
         existingUser.setEmail(user.getEmail());
         existingUser.setPassword(user.getPassword());
         return repository.save(existingUser);

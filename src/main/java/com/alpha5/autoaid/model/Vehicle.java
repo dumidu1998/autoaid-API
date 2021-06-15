@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,21 +10,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="USER")
-public class User {
-
+@Table(name="VEHICLE")
+public class Vehicle {
     @Id
     @GeneratedValue
     private int id;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String contactNo;
-    private String password;
+    private int userid;
+    private String VIN;
+    private String engineNo;
+    private String chassisNo;
+
 
 }
