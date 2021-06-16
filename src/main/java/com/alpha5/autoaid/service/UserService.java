@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -17,8 +18,12 @@ public class UserService {
 
 
     public ResponseEntity<Boolean> registerUser(User user){
+        Optional<User> userOptional =repository.findByEmail(user.getEmail());
+        if(!userOptional.isPresent()){
         repository.save(user);
         return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public List<User> addUsers(List<User> user){
