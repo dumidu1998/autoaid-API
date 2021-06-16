@@ -21,10 +21,10 @@ public class UserService {
         Optional<User> sameEmail =repository.findByEmail(user.getEmail());
         Optional<User> sameMobile =repository.findByContactNo(user.getContactNo());
         if(sameEmail.isPresent()){
-            return new ResponseEntity<>("Email taken", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Email Already Taken", HttpStatus.UNAUTHORIZED);
         }
         if(sameMobile.isPresent()){
-            return new ResponseEntity<>("mobile taken", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Already Registered with the Mobile Number", HttpStatus.UNAUTHORIZED);
         }
         repository.save(user);
         return new ResponseEntity<>(true,HttpStatus.OK);
