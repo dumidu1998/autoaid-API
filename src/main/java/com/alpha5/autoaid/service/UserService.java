@@ -17,28 +17,17 @@ public class UserService {
 
 
 
-    public ResponseEntity<Boolean> registerUser(User user){
-        Optional<User> userOptional =repository.findByEmail(user.getEmail());
-        if(userOptional.isEmpty()){
-            repository.save(user);
-            return new ResponseEntity<>(true, HttpStatus.OK);
+    public ResponseEntity<Object> registerUser(User user){
+        Optional<User> sameEmail =repository.findByEmail(user.getEmail());
+        Optional<User> sameMobile =repository.findByContactNo(user.getContactNo());
+        if(sameEmail.isPresent()){
+            return new ResponseEntity<>("Email taken", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(false,HttpStatus.INTERNAL_SERVER_ERROR);
+        if(sameMobile.isPresent()){
+            return new ResponseEntity<>("mobile taken", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        repository.save(user);
+        return new ResponseEntity<>(true,HttpStatus.OK);
     }
 
-    public ResponseEntity<Boolean> checkemail(String email) {
-        Optional<User> user = repository.findByEmail(email);
-        if(!user.isEmpty()){
-            return new ResponseEntity<>(true, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    public ResponseEntity<Boolean> checkContact(String contactno) {
-        Optional<User> user = repository.findByContactNo(contactno);
-        if(user.isPresent()){
-            return new ResponseEntity<>(true, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }

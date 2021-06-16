@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 public class UserController {
 
@@ -15,23 +16,9 @@ public class UserController {
     private UserService service;
 
     @PostMapping("/register")
-    public ResponseEntity<Boolean> addUser(@RequestBody User user){
+    public ResponseEntity<Object> addUser(@RequestBody User user){
         return service.registerUser(user);
     }
 
-
-    @GetMapping("/checkemail/{email}")
-    public ResponseEntity<Boolean> checkemail(@PathVariable String email){
-        return service.checkemail(email);
-    }
-
-    @GetMapping("/checkmobile/{mobile}")
-    public ResponseEntity<Boolean> checkmobile(@PathVariable String mobile){
-        return service.checkContact(mobile);
-    }
-
-//    public List<User> getAllUsers(){
-//        return service.getUsers()
-//    }
 
 }
