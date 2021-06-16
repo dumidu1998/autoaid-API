@@ -4,9 +4,7 @@ import com.alpha5.autoaid.model.User;
 import com.alpha5.autoaid.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,9 +19,15 @@ public class UserController {
         return service.registerUser(user);
     }
 
-    @PostMapping("/addUsers")
-    public List<User> addUsers(@RequestBody List<User> user){
-        return service.addUsers(user);
+
+    @GetMapping("/checkemail/{email}")
+    public ResponseEntity<Boolean> checkemail(@PathVariable String email){
+        return service.checkemail(email);
+    }
+
+    @GetMapping("/checkmobile/{mobile}")
+    public ResponseEntity<Boolean> checkmobile(@PathVariable String mobile){
+        return service.checkContact(mobile);
     }
 
 //    public List<User> getAllUsers(){

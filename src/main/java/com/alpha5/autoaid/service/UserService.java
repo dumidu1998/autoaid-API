@@ -19,15 +19,26 @@ public class UserService {
 
     public ResponseEntity<Boolean> registerUser(User user){
         Optional<User> userOptional =repository.findByEmail(user.getEmail());
-        if(!userOptional.isPresent()){
-        repository.save(user);
-        return new ResponseEntity<>(true, HttpStatus.OK);
+        if(userOptional.isEmpty()){
+            repository.save(user);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         }
         return new ResponseEntity<>(false,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public List<User> addUsers(List<User> user){
-        return repository.saveAll(user);
+    public ResponseEntity<Boolean> checkemail(String email) {
+        Optional<User> user = repository.findByEmail(email);
+        if(!user.isEmpty()){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    public ResponseEntity<Boolean> checkContact(String contactno) {
+        Optional<User> user = repository.findByContactNo(contactno);
+        if(user.isPresent()){
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
