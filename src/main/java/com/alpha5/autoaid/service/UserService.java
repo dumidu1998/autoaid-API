@@ -15,11 +15,10 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
-
-
     public ResponseEntity<Object> registerUser(User user){
         Optional<User> sameEmail =repository.findByEmail(user.getEmail());
         Optional<User> sameMobile =repository.findByContactNo(user.getContactNo());
+
         if(sameEmail.isPresent()){
             return new ResponseEntity<>("Email Already Taken", HttpStatus.UNAUTHORIZED);
         }

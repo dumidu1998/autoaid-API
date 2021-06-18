@@ -12,12 +12,10 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="CUSTOMER")
 public class User {
 
     @Id
     @GeneratedValue
-    @Column(name = "customer_id")
     private int id;
 
     @Column(nullable = false)
