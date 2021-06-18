@@ -29,4 +29,11 @@ public class UserService {
         return new ResponseEntity<>(true,HttpStatus.OK);
     }
 
+    public List<User> getUser(){
+        return repository.findAll();
+    }
+    public Optional<User> getUserByEmail(int id){
+        return repository.findById(id);
+    }
+
 }
