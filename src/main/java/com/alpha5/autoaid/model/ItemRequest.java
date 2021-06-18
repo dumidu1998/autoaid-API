@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "item_request")
 public class ItemRequest {
 
     @Id
@@ -29,7 +30,7 @@ public class ItemRequest {
     private ItemRequestStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "staffId")
+    @JoinColumn(name = "staff_id")
     Staff staff;
 
 }

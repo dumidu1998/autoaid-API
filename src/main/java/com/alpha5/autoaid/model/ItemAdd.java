@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "item_add")
 public class ItemAdd {
 
     @Id
@@ -26,7 +27,7 @@ public class ItemAdd {
     private Date dateTime;
 
     @ManyToOne
-    @JoinColumn(name = "itemNo")
+    @JoinColumn(name = "item_no")
     InventoryItem item;
 
 

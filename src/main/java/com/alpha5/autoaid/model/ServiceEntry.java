@@ -10,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "service_entry")
 public class ServiceEntry {
 
     @Id
@@ -20,15 +21,15 @@ public class ServiceEntry {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "repairId")
+    @JoinColumn(name = "repair_id")
     Repair repair;
 
     @ManyToOne
-    @JoinColumn(name = "staffId")
+    @JoinColumn(name = "staff_id")
     Staff staff;
 
     @ManyToOne
-    @JoinColumn(name = "subCatId")
+    @JoinColumn(name = "sub_cat_id")
     SubCategory subCategory;
 
 }

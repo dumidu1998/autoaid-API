@@ -25,11 +25,11 @@ public class Appointment {
     private Date date;
 
     @ManyToOne
-    @JoinColumn(name = "customerId")
+    @JoinColumn(name = "customer_id")
     Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "staffId")
+    @JoinColumn(name = "staff_id")
     Staff staff;
 
 }

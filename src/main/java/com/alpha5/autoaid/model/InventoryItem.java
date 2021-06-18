@@ -12,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "inventory_item")
 public class InventoryItem {
     @Id
     @GeneratedValue
@@ -33,7 +34,7 @@ public class InventoryItem {
     private int reorderLevel;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId")
+    @JoinColumn(name = "category_id")
     ItemCategory category;
 
     @OneToMany(targetEntity = ItemAdd.class, mappedBy = "item", cascade = CascadeType.ALL)

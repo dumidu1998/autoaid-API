@@ -21,7 +21,7 @@ public class Invoice {
     private int amount;
 
     @ManyToOne
-    @JoinColumn(name = "repairId")
+    @JoinColumn(name = "repair_id")
     Repair repair;
 
 }

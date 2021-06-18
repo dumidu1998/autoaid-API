@@ -11,6 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "sub_category")
 public class SubCategory {
 
     @Id
@@ -24,7 +25,7 @@ public class SubCategory {
     private String subCatName;
 
     @ManyToOne
-    @JoinColumn(name = "sectionId")
+    @JoinColumn(name = "section_id")
     Section section;
 
     @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "subCategory", cascade = CascadeType.ALL)

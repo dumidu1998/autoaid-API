@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "rate_and_review")
 public class RateAndReview {
 
     @Id
@@ -32,10 +33,10 @@ public class RateAndReview {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "customerId")
+    @JoinColumn(name = "customer_id")
     Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "repairId")
+    @JoinColumn(name = "repair_id")
     Repair repair;
 }

@@ -22,7 +22,7 @@ public class Section {
     private String sectionName;
 
     @ManyToOne
-    @JoinColumn(name = "staffId")
+    @JoinColumn(name = "staff_id")
     Staff staff;
 
     @OneToMany(targetEntity = Slot.class, mappedBy = "section", cascade = CascadeType.ALL)
@@ -30,8 +30,5 @@ public class Section {
 
     @OneToMany(targetEntity = SubCategory.class, mappedBy = "section", cascade = CascadeType.ALL)
     private Set<SubCategory> subCategories;
-
-
-
 
 }

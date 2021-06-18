@@ -25,7 +25,7 @@ public class Slot {
     private SlotStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "sectionID")
+    @JoinColumn(name = "section_id")
     Section section;
 
 }

@@ -33,7 +33,7 @@ public class Vehicle {
     private String model;
 
     @ManyToOne
-    @JoinColumn(name = "CustomerId")
+    @JoinColumn(name = "Customer_id")
     Customer customer;
 
     @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
