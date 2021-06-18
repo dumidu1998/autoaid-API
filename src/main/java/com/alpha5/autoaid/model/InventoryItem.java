@@ -39,4 +39,6 @@ public class InventoryItem {
     @OneToMany(targetEntity = ItemAdd.class, mappedBy = "item", cascade = CascadeType.ALL)
     private Set<ItemAdd> itemAdd;
 
+
+
 }

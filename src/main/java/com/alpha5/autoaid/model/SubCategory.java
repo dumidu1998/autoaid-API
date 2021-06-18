@@ -1,36 +1,29 @@
 package com.alpha5.autoaid.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class ItemAdd {
+public class SubCategory {
 
     @Id
     @GeneratedValue
-    private long grnNo;
+    private long subCatId;
 
     @Column(nullable = false)
-    private int quantity;
+    private int time;
 
-    @CreationTimestamp
-    private Date dateTime;
+    @Column(nullable = false)
+    private String subCatName;
 
     @ManyToOne
-    @JoinColumn(name = "itemNo")
-    InventoryItem item;
-
-
-
-
+    @JoinColumn(name = "sectionID")
+    Section section;
 
 }

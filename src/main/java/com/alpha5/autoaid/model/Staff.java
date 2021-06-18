@@ -38,6 +38,12 @@ public class Staff {
     private StaffRole role;
 
     @OneToMany(targetEntity = Appointment.class, mappedBy = "staff", cascade = CascadeType.ALL)
-    private Set<Appointment> appointment;
+    private Set<Appointment> appointments;
+
+    @OneToMany(targetEntity = Section.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    private Set<Section> sections;
+
+    @OneToMany(targetEntity = ItemRequest.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    private Set<ItemRequest> itemRequests;
 
 }

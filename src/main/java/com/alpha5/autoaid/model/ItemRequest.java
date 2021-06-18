@@ -1,10 +1,10 @@
 package com.alpha5.autoaid.model;
 
 
+import com.alpha5.autoaid.enums.ItemRequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,24 +13,23 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class ItemAdd {
+public class ItemRequest {
 
     @Id
     @GeneratedValue
-    private long grnNo;
+    private long requestId;
 
     @Column(nullable = false)
     private int quantity;
 
-    @CreationTimestamp
-    private Date dateTime;
+    @Column(nullable = false)
+    private Date issuedDateTime;
+
+    @Enumerated(EnumType.STRING)
+    private ItemRequestStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "itemNo")
-    InventoryItem item;
-
-
-
-
+    @JoinColumn(name = "staffId")
+    Staff staff;
 
 }

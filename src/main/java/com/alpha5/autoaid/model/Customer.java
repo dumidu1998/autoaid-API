@@ -39,7 +39,10 @@ public class Customer {
     private Date RegisteredDate;
 
     @OneToMany(targetEntity = Appointment.class, mappedBy = "customer", cascade = CascadeType.ALL)
-    private Set<Appointment> appointment;
+    private Set<Appointment> appointments;
+
+    @OneToMany(targetEntity = Vehicle.class, mappedBy = "customer", cascade = CascadeType.ALL)
+    private Set<Vehicle> vehicles;
 
 
 }

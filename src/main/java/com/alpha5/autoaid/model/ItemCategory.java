@@ -21,5 +21,5 @@ public class ItemCategory {
     private String categoryName;
 
     @OneToMany(targetEntity = InventoryItem.class, mappedBy = "category", cascade = CascadeType.ALL)
-    private Set<InventoryItem> inventoryItem;
+    private Set<InventoryItem> inventoryItems;
 }

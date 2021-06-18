@@ -1,36 +1,31 @@
 package com.alpha5.autoaid.model;
 
-
+import com.alpha5.autoaid.enums.SlotStatus;
+import com.alpha5.autoaid.enums.StaffRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class ItemAdd {
+public class Slot {
 
     @Id
     @GeneratedValue
-    private long grnNo;
+    private long slotID;
 
     @Column(nullable = false)
-    private int quantity;
+    private String slotName;
 
-    @CreationTimestamp
-    private Date dateTime;
+    @Enumerated(EnumType.STRING)
+    private SlotStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "itemNo")
-    InventoryItem item;
-
-
-
-
+    @JoinColumn(name = "sectionID")
+    Section section;
 
 }

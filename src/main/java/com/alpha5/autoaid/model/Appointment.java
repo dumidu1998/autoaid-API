@@ -32,7 +32,4 @@ public class Appointment {
     @JoinColumn(name = "staffId")
     Staff staff;
 
-//    @OneToMany(targetEntity = Customer.class, mappedBy = "appointment", cascade = CascadeType.ALL)
-//    private Set<Customer> user;
-
 }
