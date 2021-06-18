@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -34,6 +35,9 @@ public class Vehicle {
     @ManyToOne
     @JoinColumn(name = "CustomerId")
     Customer customer;
+
+    @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
+    private Set<Repair> repairs;
 
 
 

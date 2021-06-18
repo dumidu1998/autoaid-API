@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +24,10 @@ public class SubCategory {
     private String subCatName;
 
     @ManyToOne
-    @JoinColumn(name = "sectionID")
+    @JoinColumn(name = "sectionId")
     Section section;
+
+    @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "subCategory", cascade = CascadeType.ALL)
+    private Set<ServiceEntry> serviceEntries;
 
 }

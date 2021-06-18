@@ -16,7 +16,7 @@ public class Section {
 
     @Id
     @GeneratedValue
-    private long sectionID;
+    private long sectionId;
 
     @Column(nullable = false)
     private String sectionName;

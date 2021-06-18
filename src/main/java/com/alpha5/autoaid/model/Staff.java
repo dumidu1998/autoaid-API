@@ -46,4 +46,7 @@ public class Staff {
     @OneToMany(targetEntity = ItemRequest.class, mappedBy = "staff", cascade = CascadeType.ALL)
     private Set<ItemRequest> itemRequests;
 
+    @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    private Set<ServiceEntry> serviceEntries;
+
 }
