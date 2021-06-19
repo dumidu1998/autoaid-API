@@ -32,7 +32,10 @@ public class UserService {
     public List<User> getUser(){
         return repository.findAll();
     }
+    //get by id
+
     public Optional<User> getUserByEmail(int id){
+
         return repository.findById(id);
     }
 
