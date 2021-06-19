@@ -40,6 +40,58 @@ public class InventoryItem {
     @OneToMany(targetEntity = ItemAdd.class, mappedBy = "item", cascade = CascadeType.ALL)
     private Set<ItemAdd> itemAdd;
 
+    public long getItemNo() {
+        return itemNo;
+    }
+    public void setItemNo(long itemNo) {
+        this.itemNo = itemNo;
+    }
 
+    public String getItemName() {
+        return itemName;
+    }
 
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public int getReorderLevel() {
+        return reorderLevel;
+    }
+
+    public void setReorderLevel(int reorderLevel) {
+        this.reorderLevel = reorderLevel;
+    }
+
+    public InventoryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(InventoryStatus status) {
+        this.status = status;
+    }
+
+    public ItemCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ItemCategory category) {
+        this.category = category;
+    }
 }
