@@ -32,4 +32,17 @@ public class Appointment {
     @JoinColumn(name = "staff_id")
     Staff staff;
 
+    public long getAppointmentId() {
+        return appointmentId;
+    }
+    public void setAppointmentId(long appointmentId) {
+        this.appointmentId = appointmentId;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }
