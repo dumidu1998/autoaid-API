@@ -5,6 +5,8 @@ import com.alpha5.autoaid.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerService {
 
@@ -13,6 +15,9 @@ public class CustomerService {
 
     public Customer findByEmail(String email){
         return CustomerRepository.findByEmail(email);
+    }
+    public List<Customer> getCustomers(){
+        return CustomerRepository.findAll();
     }
 
 }
