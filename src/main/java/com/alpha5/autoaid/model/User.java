@@ -37,4 +37,6 @@ public class User {
     @Column(nullable = false)
     private int profile_state;
 
+
+
 }
