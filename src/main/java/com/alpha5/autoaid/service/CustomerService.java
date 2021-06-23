@@ -13,6 +13,7 @@ public class CustomerService{
     private CustomerRepository customerRepository;
 
     public UserSignup signup(Customer customer){
+
         Customer storedUser = customerRepository.save(customer);
 
         UserSignup output=new UserSignup();

@@ -1,24 +1,24 @@
 package com.alpha5.autoaid.controller;
 
+
 import com.alpha5.autoaid.dto.response.UserSignup;
 import com.alpha5.autoaid.model.Customer;
-import com.alpha5.autoaid.service.CustomerService;
-import org.springframework.beans.BeanUtils;
+import com.alpha5.autoaid.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CustomerController {
+public class AuthController {
 
     @Autowired
-    CustomerService customerService;
+    AuthService authService;
 
-
-    @PostMapping("auth/siganup")
-    public UserSignup signupp(@RequestBody Customer customer) {
-        UserSignup response= customerService.signup(customer);
+    @PostMapping("/auth/signup")
+    public UserSignup signup(@RequestBody Customer customer){
+        UserSignup response= authService.signup(customer);
         return response;
     }
+
 }
