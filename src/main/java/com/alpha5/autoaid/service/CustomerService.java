@@ -5,6 +5,7 @@ import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class CustomerService{
@@ -23,6 +24,13 @@ public class CustomerService{
         output.setUsername(storedUser.getFirstName());
 
         return output;
+    }
+
+    public Customer findByEmail(String email){
+        return customerRepository.findByEmail(email);
+    }
+    public List<Customer> getCustomers(){
+        return customerRepository.findAll();
     }
 
 
