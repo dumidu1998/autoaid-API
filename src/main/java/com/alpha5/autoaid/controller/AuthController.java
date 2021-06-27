@@ -1,5 +1,7 @@
 package com.alpha5.autoaid.controller;
 
+
+import com.alpha5.autoaid.dto.response.UserSignup;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +13,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
     @Autowired
-    private AuthService AuthService;
+    AuthService authService;
+
+    @PostMapping("/signup")
+    public UserSignup signup(@RequestBody Customer customer){
+        UserSignup response= authService.signup(customer);
+        return response;
+    }
 
     @GetMapping("/login/{email}")
     public String login(@PathVariable String email){
-        return AuthService.customerLogin(email);
+        return authService.customerLogin(email);
     }
+
     @GetMapping("/allcustomers")
     public List<Customer> findAllCustomers(){
-        return AuthService.getAll();
+        return authService.getAll();
     }
+    
 
 }
