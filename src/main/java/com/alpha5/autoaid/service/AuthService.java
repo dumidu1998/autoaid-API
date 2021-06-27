@@ -1,7 +1,7 @@
 package com.alpha5.autoaid.service;
 
 
-import com.alpha5.autoaid.dto.response.UserSignup;
+import com.alpha5.autoaid.dto.response.CustomerSigned;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,9 @@ public class AuthService {
     @Autowired
     private CustomerService customerService;
 
-    public UserSignup signup(Customer customer){
+
+
+    public CustomerSigned signup(Customer customer){
         if(authRepository.findByEmail(customer.getEmail()) != null){
             throw new RuntimeException("Email already taken");
         }
@@ -25,7 +27,7 @@ public class AuthService {
             throw new RuntimeException("Mobile Number already taken");
         }
         Customer newUser = authRepository.save(customer);
-        UserSignup output=new UserSignup();
+        CustomerSigned output=new CustomerSigned();
 
         output.setId(newUser.getCustomerId());
         output.setEmail(newUser.getEmail());
@@ -35,7 +37,7 @@ public class AuthService {
     }
 
     public String customerLogin(String email){
-        Customer Customer= this.customerService.findByEmail(email);
+        Customer Customer= this.authRepository.findByEmail(email);
         if (Customer != null){
             return "Customer is Here ";
         }
@@ -43,7 +45,7 @@ public class AuthService {
     }
 
     public List<Customer> getAll(){
-        return customerService.getCustomers();
+        return authRepository.findAll();
     }
 
 }

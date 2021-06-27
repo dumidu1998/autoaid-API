@@ -1,15 +1,15 @@
 package com.alpha5.autoaid.dto.response;
 
-public class UserSignup {
+public class CustomerSigned {
 
     private Long id;
     private String username;
     private String email;
 
-    public UserSignup() {
+    public CustomerSigned() {
     }
 
-    public UserSignup(Long id, String username, String email) {
+    public CustomerSigned(Long id, String username, String email) {
         this.id = id;
         this.username = username;
         this.email = email;
