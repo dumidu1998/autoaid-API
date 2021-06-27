@@ -1,4 +1,4 @@
-package com.alpha5.autoaid.model.request;
+package com.alpha5.autoaid.dto.request;
 
 public class CustomerSignInRequest {
 

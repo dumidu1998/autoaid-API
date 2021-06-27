@@ -1,7 +1,7 @@
 package com.alpha5.autoaid.controller;
 
 
-import com.alpha5.autoaid.dto.response.UserSignup;
+import com.alpha5.autoaid.dto.response.CustomerSigned;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ public class AuthController {
     AuthService authService;
 
     @PostMapping("/signup")
-    public UserSignup signup(@RequestBody Customer customer){
-        UserSignup response= authService.signup(customer);
+    public CustomerSigned signup(@RequestBody Customer customer){
+        CustomerSigned response= authService.signup(customer);
         return response;
     }
 
