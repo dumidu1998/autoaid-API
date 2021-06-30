@@ -2,7 +2,9 @@ package com.alpha5.autoaid.controller;
 
 
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
+import com.alpha5.autoaid.dto.request.StaffLoginRequest;
 import com.alpha5.autoaid.dto.response.CustomerSigned;
+import com.alpha5.autoaid.dto.response.StaffLogged;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,13 @@ public class AuthController {
     @PostMapping("/customer/login")
     public CustomerSigned customerLogin(@RequestBody CustomerSignInRequest signInCustomer){
         CustomerSigned response= authService.customerLogin(signInCustomer);
+        return response;
+    }
+
+    @PostMapping("/staff")
+    public StaffLogged staffLogin(@RequestBody StaffLoginRequest loginStaff){
+        StaffLogged response=authService.staffLogin(loginStaff);
+
         return response;
     }
 
