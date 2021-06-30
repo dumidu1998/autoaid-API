@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.controller;
 
 
+import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
 import com.alpha5.autoaid.dto.response.CustomerSigned;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
@@ -23,9 +24,10 @@ public class AuthController {
         return response;
     }
 
-    @GetMapping("/login/{email}")
-    public String login(@PathVariable String email){
-        return authService.customerLogin(email);
+    @PostMapping("/customer/login")
+    public CustomerSigned customerLogin(@RequestBody CustomerSignInRequest signInCustomer){
+        CustomerSigned response= authService.customerLogin(signInCustomer);
+        return response;
     }
 
     @GetMapping("/allcustomers")

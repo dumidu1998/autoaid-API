@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.service;
 
 
+import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
 import com.alpha5.autoaid.dto.response.CustomerSigned;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.repository.AuthRepository;
@@ -14,8 +15,6 @@ public class AuthService {
     @Autowired
     private AuthRepository authRepository;
 
-    @Autowired
-    private CustomerService customerService;
 
 
 
@@ -36,12 +35,29 @@ public class AuthService {
         return output;
     }
 
-    public String customerLogin(String email){
-        Customer Customer= this.authRepository.findByEmail(email);
-        if (Customer != null){
-            return "Customer is Here ";
+    // customer login verification
+    public CustomerSigned customerLogin(CustomerSignInRequest signInCustomer){
+
+        // object of relevant customer
+        Customer customer= this.authRepository.findByEmail(signInCustomer.getEmail());
+
+        //check whether customer exists
+        if( customer == null){
+
+            throw new RuntimeException("Email is Invalid");
+
+        }else if(signInCustomer.getPassword().equals(customer.getPassword())){
+            CustomerSigned response=new CustomerSigned();
+            response.setId(customer.getCustomerId());
+            response.setEmail(customer.getEmail());
+            response.setUsername(customer.getFirstName());
+
+            return response;
+        }else{
+
+            throw new RuntimeException("Password is wrong. Try again");
         }
-        return  "Searching Customer is Not in the List";
+
     }
 
     public List<Customer> getAll(){
