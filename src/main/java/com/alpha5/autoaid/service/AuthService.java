@@ -7,8 +7,8 @@ import com.alpha5.autoaid.dto.response.CustomerSigned;
 import com.alpha5.autoaid.dto.response.StaffLogged;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.Staff;
-import com.alpha5.autoaid.repository.AuthRepository;
-import com.alpha5.autoaid.repository.AuthStaffRepository;
+import com.alpha5.autoaid.repository.CustomerRepository;
+import com.alpha5.autoaid.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,27 +24,28 @@ import java.util.List;
 public class AuthService implements UserDetailsService {
 
     @Autowired
-    private AuthRepository authRepository;
+    private CustomerRepository authCustomerRepository;
 
     @Autowired
-    private AuthStaffRepository authStaffRepository;
+    private StaffRepository authStaffRepository;
 
     @Autowired
     private PasswordEncoder bcryptPasswordEncoder;
 
     public CustomerSigned signup(Customer customer){
+        
         //check for duplicate email
-        if(authRepository.findByEmail(customer.getEmail()) != null){
+        if(authCustomerRepository.findByEmail(customer.getEmail()) != null){
             //exception
             throw new RuntimeException("Email already taken");
         }
         //check for duplicate mobile number
-        if(authRepository.findByContactNo(customer.getContactNo()) != null){
+        if(authCustomerRepository.findByContactNo(customer.getContactNo()) != null){
             throw new RuntimeException("Mobile Number already taken");
         }
         //encode password with bcrypt password
         customer.setPassword(bcryptPasswordEncoder.encode(customer.getPassword()));
-        Customer newUser = authRepository.save(customer);
+        Customer newUser = authCustomerRepository.save(customer);
         CustomerSigned output=new CustomerSigned();
         //set response
         output.setId(newUser.getCustomerId());
@@ -58,7 +59,7 @@ public class AuthService implements UserDetailsService {
     public CustomerSigned customerLogin(CustomerSignInRequest signInCustomer){
 
         // object of relevant customer
-        Customer customer= this.authRepository.findByEmail(signInCustomer.getEmail());
+        Customer customer= this.authCustomerRepository.findByEmail(signInCustomer.getEmail());
 
         //decrypt password
         boolean isPasswordMatch = bcryptPasswordEncoder.matches(signInCustomer.getPassword(),customer.getPassword());
@@ -112,12 +113,12 @@ public class AuthService implements UserDetailsService {
 
     }
     public List<Customer> getAll(){
-        return authRepository.findAll();
+        return authCustomerRepository.findAll();
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Customer customer = authRepository.findByEmail(email);
+        Customer customer = authCustomerRepository.findByEmail(email);
         return new User(customer.getEmail(),customer.getPassword(),new ArrayList<>());
     }
 }
