@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private AuthStaffRepository authStaffRepository;
 
+    @Autowired
+    private PasswordEncoder bcryptPasswordEncoder;
+
     public CustomerSigned signup(Customer customer){
         if(authRepository.findByEmail(customer.getEmail()) != null){
             throw new RuntimeException("Email already taken");
@@ -35,6 +39,7 @@ public class AuthService implements UserDetailsService {
         if(authRepository.findByContactNo(customer.getContactNo()) != null){
             throw new RuntimeException("Mobile Number already taken");
         }
+        customer.setPassword(bcryptPasswordEncoder.encode(customer.getPassword()));
         Customer newUser = authRepository.save(customer);
         CustomerSigned output=new CustomerSigned();
 
