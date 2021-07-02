@@ -91,7 +91,7 @@ public class AuthService implements UserDetailsService {
 
         //check whether customer exists
 
-
+        //TODO password decode
 
         if( staff == null){
 
