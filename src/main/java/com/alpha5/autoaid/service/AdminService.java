@@ -15,5 +15,6 @@ public class AdminService {
         if(staffRepository.findByContactNoAndEmail(staff.getContactNo(),staff.getEmail())!=null){
             throw new RuntimeException("User email and contact already taken");
         }
+        return "Done";
     }
 }
