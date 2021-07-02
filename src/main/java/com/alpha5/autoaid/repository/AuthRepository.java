@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface AuthRepository extends JpaRepository<Customer,Long> {
     Customer findByEmail(String email);
-    Object findByContactNo(String contactNo);
+    Customer findByContactNo(String contactNo);
 
 }

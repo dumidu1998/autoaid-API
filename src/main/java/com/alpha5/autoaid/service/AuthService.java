@@ -10,11 +10,17 @@ import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.repository.AuthRepository;
 import com.alpha5.autoaid.repository.AuthStaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AuthService {
+public class AuthService implements UserDetailsService {
 
     @Autowired
     private AuthRepository authRepository;
@@ -93,4 +99,9 @@ public class AuthService {
         return authRepository.findAll();
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Customer customer = authRepository.findByEmail(email);
+        return new User(customer.getEmail(),customer.getPassword(),new ArrayList<>());
+    }
 }
