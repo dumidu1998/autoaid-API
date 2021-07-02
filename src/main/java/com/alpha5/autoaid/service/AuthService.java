@@ -118,7 +118,7 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Customer customer = authRepository.findByEmail(email);
+        Customer customer = authCustomerRepository.findByEmail(email);
         return new User(customer.getEmail(),customer.getPassword(),new ArrayList<>());
     }
 }
