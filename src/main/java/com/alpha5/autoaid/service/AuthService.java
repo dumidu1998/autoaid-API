@@ -33,16 +33,20 @@ public class AuthService implements UserDetailsService {
     private PasswordEncoder bcryptPasswordEncoder;
 
     public CustomerSigned signup(Customer customer){
+        //check for duplicate email
         if(authRepository.findByEmail(customer.getEmail()) != null){
+            //exception
             throw new RuntimeException("Email already taken");
         }
+        //check for duplicate mobile number
         if(authRepository.findByContactNo(customer.getContactNo()) != null){
             throw new RuntimeException("Mobile Number already taken");
         }
+        //encode password with bcrypt password
         customer.setPassword(bcryptPasswordEncoder.encode(customer.getPassword()));
         Customer newUser = authRepository.save(customer);
         CustomerSigned output=new CustomerSigned();
-
+        //set response
         output.setId(newUser.getCustomerId());
         output.setEmail(newUser.getEmail());
         output.setUsername(newUser.getFirstName());
@@ -56,12 +60,16 @@ public class AuthService implements UserDetailsService {
         // object of relevant customer
         Customer customer= this.authRepository.findByEmail(signInCustomer.getEmail());
 
+        //decrypt password
+        boolean isPasswordMatch = bcryptPasswordEncoder.matches(signInCustomer.getPassword(),customer.getPassword());
+        System.out.println("password is "+isPasswordMatch);
+
         //check whether customer exists
         if( customer == null){
 
             throw new RuntimeException("Email is Invalid");
 
-        }else if(signInCustomer.getPassword().equals(customer.getPassword())){
+        }else if(isPasswordMatch){
             CustomerSigned response=new CustomerSigned();
             response.setId(customer.getCustomerId());
             response.setEmail(customer.getEmail());
@@ -82,6 +90,9 @@ public class AuthService implements UserDetailsService {
         Staff staff= this.authStaffRepository.findByFirstName(staffLogin.getUserName());
 
         //check whether customer exists
+
+
+
         if( staff == null){
 
             throw new RuntimeException("User Name is Invalid");
