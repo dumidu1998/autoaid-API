@@ -14,7 +14,7 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-
+    //test only
     @PostMapping("auth/siganup")
     public CustomerSigned signupp(@RequestBody Customer customer) {
         CustomerSigned response= customerService.signup(customer);

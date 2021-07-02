@@ -7,8 +7,8 @@ import com.alpha5.autoaid.dto.response.CustomerSigned;
 import com.alpha5.autoaid.dto.response.StaffLogged;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.Staff;
-import com.alpha5.autoaid.repository.AuthRepository;
-import com.alpha5.autoaid.repository.AuthStaffRepository;
+import com.alpha5.autoaid.repository.CustomerRepository;
+import com.alpha5.autoaid.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -17,19 +17,19 @@ import java.util.List;
 public class AuthService {
 
     @Autowired
-    private AuthRepository authRepository;
+    private CustomerRepository authCustomerRepository;
 
     @Autowired
-    private AuthStaffRepository authStaffRepository;
+    private StaffRepository authStaffRepository;
 
     public CustomerSigned signup(Customer customer){
-        if(authRepository.findByEmail(customer.getEmail()) != null){
+        if(authCustomerRepository.findByEmail(customer.getEmail()) != null){
             throw new RuntimeException("Email already taken");
         }
-        if(authRepository.findByContactNo(customer.getContactNo()) != null){
+        if(authCustomerRepository.findByContactNo(customer.getContactNo()) != null){
             throw new RuntimeException("Mobile Number already taken");
         }
-        Customer newUser = authRepository.save(customer);
+        Customer newUser = authCustomerRepository.save(customer);
         CustomerSigned output=new CustomerSigned();
 
         output.setId(newUser.getCustomerId());
@@ -43,7 +43,7 @@ public class AuthService {
     public CustomerSigned customerLogin(CustomerSignInRequest signInCustomer){
 
         // object of relevant customer
-        Customer customer= this.authRepository.findByEmail(signInCustomer.getEmail());
+        Customer customer= this.authCustomerRepository.findByEmail(signInCustomer.getEmail());
 
         //check whether customer exists
         if( customer == null){
@@ -90,7 +90,7 @@ public class AuthService {
 
     }
     public List<Customer> getAll(){
-        return authRepository.findAll();
+        return authCustomerRepository.findAll();
     }
 
 }
