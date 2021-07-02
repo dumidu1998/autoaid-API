@@ -15,9 +15,9 @@ public class CustomerController {
     CustomerService customerService;
 
 
-    @PostMapping("auth/siganup")
-    public CustomerSigned signupp(@RequestBody Customer customer) {
-        CustomerSigned response= customerService.signup(customer);
-        return response;
-    }
+//    @PostMapping("auth/siganup")
+//    public CustomerSigned signupp(@RequestBody Customer customer) {
+//        CustomerSigned response= customerService.signup(customer);
+//        return response;
+//    }
 }
