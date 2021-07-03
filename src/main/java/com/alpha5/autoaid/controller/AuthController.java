@@ -62,6 +62,9 @@ public class AuthController {
     public List<Customer> findAllCustomers(){
         return authService.getAll();
     }
+
+
+
     
 
 }
