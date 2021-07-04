@@ -42,7 +42,6 @@ public class AuthController {
     @PostMapping("/staff")
     public StaffLogged staffLogin(@RequestBody StaffLoginRequest loginStaff){
         StaffLogged response=authService.staffLogin(loginStaff);
-
         return response;
     }
 
@@ -62,6 +61,5 @@ public class AuthController {
     public List<Customer> findAllCustomers(){
         return authService.getAll();
     }
-    
 
 }
