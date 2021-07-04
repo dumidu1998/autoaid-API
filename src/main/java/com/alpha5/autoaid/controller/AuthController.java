@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins ="http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -42,7 +41,6 @@ public class AuthController {
     @PostMapping("/staff")
     public StaffLogged staffLogin(@RequestBody StaffLoginRequest loginStaff){
         StaffLogged response=authService.staffLogin(loginStaff);
-
         return response;
     }
 
@@ -51,7 +49,7 @@ public class AuthController {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(signInRequest.getEmail(), signInRequest.getPassword())
-        );
+            );
         }catch (Exception ex){
             throw new Exception("Invalid Username or password");
         }
@@ -62,9 +60,5 @@ public class AuthController {
     public List<Customer> findAllCustomers(){
         return authService.getAll();
     }
-
-
-
-    
 
 }

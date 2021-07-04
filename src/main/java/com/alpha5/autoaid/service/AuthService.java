@@ -9,7 +9,10 @@ import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.repository.CustomerRepository;
 import com.alpha5.autoaid.repository.StaffRepository;
+import com.alpha5.autoaid.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +34,12 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder bcryptPasswordEncoder;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public CustomerSigned signup(Customer customer){
         
@@ -57,31 +66,32 @@ public class AuthService implements UserDetailsService {
 
     // customer login verification
     public CustomerSigned customerLogin(CustomerSignInRequest signInCustomer){
-
         // object of relevant customer
         Customer customer= this.authCustomerRepository.findByEmail(signInCustomer.getEmail());
 
-        //decrypt password
-        boolean isPasswordMatch = bcryptPasswordEncoder.matches(signInCustomer.getPassword(),customer.getPassword());
-        System.out.println("password is "+isPasswordMatch);
-
         //check whether customer exists
         if( customer == null){
-
             throw new RuntimeException("Email is Invalid");
+        }else{
+            //check password and email with authentication manager
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(signInCustomer.getEmail(), signInCustomer.getPassword())
+                );
+            }catch (Exception ex){
+                //throw error if emaila and password does not match
+                throw new RuntimeException("Email and Password is Not matching");
+            }
+            //get jwt token
+            String token = jwtTokenUtil.generateToken(signInCustomer.getEmail());
 
-        }else if(isPasswordMatch){
             CustomerSigned response=new CustomerSigned();
             response.setId(customer.getCustomerId());
             response.setEmail(customer.getEmail());
             response.setUsername(customer.getFirstName());
-
+            response.setToken(token); //append to response entity
             return response;
-        }else{
-
-            throw new RuntimeException("Password is wrong. Try again");
         }
-
     }
 
     // staff login verification
@@ -90,15 +100,15 @@ public class AuthService implements UserDetailsService {
         // object of relevant customer
         Staff staff= this.authStaffRepository.findByFirstName(staffLogin.getUserName());
 
+
+
         //check whether customer exists
-
-
-
         if( staff == null){
 
             throw new RuntimeException("User Name is Invalid");
 
         }else if(staffLogin.getPassword().equals(staff.getPassword())){
+        //TODO Authentication Manager
             StaffLogged response=new StaffLogged();
 
             response.setStaffId(staff.getStaffId());
@@ -121,4 +131,5 @@ public class AuthService implements UserDetailsService {
         Customer customer = authCustomerRepository.findByEmail(email);
         return new User(customer.getEmail(),customer.getPassword(),new ArrayList<>());
     }
+
 }
