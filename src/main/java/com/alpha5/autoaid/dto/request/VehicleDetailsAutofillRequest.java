@@ -1,6 +1,6 @@
 package com.alpha5.autoaid.dto.request;
 
-public class VehicleAddRequest {
+public class VehicleDetailsAutofillRequest {
     private String vehicleNumber;
 
     public String getVehicleNumber() {

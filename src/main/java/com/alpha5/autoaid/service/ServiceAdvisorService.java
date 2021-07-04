@@ -1,7 +1,7 @@
 package com.alpha5.autoaid.service;
 
-import com.alpha5.autoaid.dto.request.VehicleAddRequest;
-import com.alpha5.autoaid.dto.response.VehicleAddResponse;
+import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
+import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.model.VehicleDetails;
 import com.alpha5.autoaid.repository.StaffRepository;
 import com.alpha5.autoaid.repository.VehicleRepository;
@@ -16,11 +16,11 @@ public class ServiceAdvisorService {
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    public VehicleAddResponse addvehicle(VehicleAddRequest vehicleAddRequest){
+    public VehicleDetailsAutofillResponse autoFillVehicleDetails(VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest){
         //check whether vehicle exists
-        VehicleDetails vehicle = vehicleRepository.findByVehicleNumber(vehicleAddRequest.getVehicleNumber());
+        VehicleDetails vehicle = vehicleRepository.findByVehicleNumber(vehicleDetailsAutofillRequest.getVehicleNumber());
         if(vehicle != null){
-            VehicleAddResponse response= new VehicleAddResponse();
+            VehicleDetailsAutofillResponse response= new VehicleDetailsAutofillResponse();
             response.setVehiceId(vehicle.getVehicleId());
             response.setChassisNo(vehicle.getChassisNo());
             response.setEnginNo(vehicle.getEngineNo());
@@ -28,7 +28,11 @@ public class ServiceAdvisorService {
             response.setModel(vehicle.getModel());
 
             return response;
-        }else throw new RuntimeException("Vehicle not there");
+        }else throw new RuntimeException("Vehicle not registered. Add details");
 
+    }
+    public String registerNewVehicle(VehicleDetails vehicleDetails){
+        VehicleDetails newVehicle=vehicleRepository.save(vehicleDetails);
+        return "Vehicle Added Successfully";
     }
 }

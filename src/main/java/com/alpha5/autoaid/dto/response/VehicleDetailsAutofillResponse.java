@@ -1,6 +1,6 @@
 package com.alpha5.autoaid.dto.response;
 
-public class VehicleAddResponse {
+public class VehicleDetailsAutofillResponse {
     private int vehiceId;
     private String chassisNo;
     private String enginNo;
