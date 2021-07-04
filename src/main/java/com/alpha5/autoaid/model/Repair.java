@@ -31,7 +31,7 @@ public class Repair {
 
     @ManyToOne
     @JoinColumn(name = "vehicleId")
-    Vehicle vehicle;
+    VehicleDetails vehicleDetails;
 
     @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "repair", cascade = CascadeType.ALL)
     private Set<ServiceEntry> serviceEntries;

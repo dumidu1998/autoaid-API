@@ -41,8 +41,8 @@ public class Customer {
     @OneToMany(targetEntity = Appointment.class, mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<Appointment> appointments;
 
-    @OneToMany(targetEntity = Vehicle.class, mappedBy = "customer", cascade = CascadeType.ALL)
-    private Set<Vehicle> vehicles;
+    @OneToMany(targetEntity = VehicleDetails.class, mappedBy = "customer", cascade = CascadeType.ALL)
+    private Set<VehicleDetails> vehicleDetails;
 
     @OneToMany(targetEntity = RateAndReview.class, mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<RateAndReview> rateAndReviews;
