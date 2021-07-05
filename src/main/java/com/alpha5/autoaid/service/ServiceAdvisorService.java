@@ -35,4 +35,5 @@ public class ServiceAdvisorService {
         VehicleDetails newVehicle=vehicleRepository.save(vehicleDetails);
         return "Vehicle Added Successfully";
     }
+
 }
