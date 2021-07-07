@@ -6,6 +6,15 @@ public class StaffLogged {
     private long staffId;
     private String userName;
     private StaffRole role;
+    private String jwt;
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
 
     public long getStaffId() {
         return staffId;
