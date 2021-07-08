@@ -12,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class VehicleDetails {
+public class Vehicle {
     @Id
     @GeneratedValue
     private int vehicleId;
@@ -40,7 +40,7 @@ public class VehicleDetails {
     @JoinColumn(name = "customer_id")
     Customer customer;
 
-    @OneToMany(targetEntity = Repair.class, mappedBy = "vehicleDetails", cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
     private Set<Repair> repairs;
 
     public int getVehicleId() {

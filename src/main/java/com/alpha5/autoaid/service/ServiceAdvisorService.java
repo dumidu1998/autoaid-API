@@ -2,7 +2,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
-import com.alpha5.autoaid.model.VehicleDetails;
+import com.alpha5.autoaid.model.Vehicle;
 import com.alpha5.autoaid.repository.StaffRepository;
 import com.alpha5.autoaid.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class ServiceAdvisorService {
 
     public VehicleDetailsAutofillResponse autoFillVehicleDetails(VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest){
         //check whether vehicle exists
-        VehicleDetails vehicle = vehicleRepository.findByVehicleNumber(vehicleDetailsAutofillRequest.getVehicleNumber());
+        Vehicle vehicle = vehicleRepository.findByVehicleNumber(vehicleDetailsAutofillRequest.getVehicleNumber());
         if(vehicle != null){
             VehicleDetailsAutofillResponse response= new VehicleDetailsAutofillResponse();
             response.setVehiceId(vehicle.getVehicleId());
@@ -31,8 +31,8 @@ public class ServiceAdvisorService {
         }else throw new RuntimeException("Vehicle not registered. Add details");
 
     }
-    public String registerNewVehicle(VehicleDetails vehicleDetails){
-        VehicleDetails newVehicle=vehicleRepository.save(vehicleDetails);
+    public String registerNewVehicle(Vehicle vehicle){
+        Vehicle newVehicle=vehicleRepository.save(vehicle);
         return "Vehicle Added Successfully";
     }
 }

@@ -1,6 +1,6 @@
 package com.alpha5.autoaid.controller;
 
-import com.alpha5.autoaid.model.VehicleDetails;
+import com.alpha5.autoaid.model.Vehicle;
 import com.alpha5.autoaid.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ public class CustomerController {
     VehicleService vehicleService;
 
     @GetMapping("/{id}")
-    public VehicleDetails getVehicles(@PathVariable("id") String ii){
+    public Vehicle getVehicles(@PathVariable("id") String ii){
         return vehicleService.getVehicleById(ii);
     }
 
