@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequestMapping("/customer")
 @RestController
 public class CustomerController {
@@ -16,7 +18,7 @@ public class CustomerController {
     VehicleService vehicleService;
 
     @GetMapping("/{id}")
-    public Vehicle getVehicles(@PathVariable("id") String ii){
+    public List<Vehicle> getVehicles(@PathVariable("id") Long ii){
         return vehicleService.getVehicleById(ii);
     }
 
