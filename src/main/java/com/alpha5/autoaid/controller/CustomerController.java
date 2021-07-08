@@ -18,7 +18,7 @@ public class CustomerController {
     VehicleService vehicleService;
 
     @GetMapping("/{id}")
-    public List<Vehicle> getVehicles(@PathVariable("id") Long ii){
+    public List<Vehicle> getVehicles(@PathVariable("id") String ii){
         return vehicleService.getVehicleById(ii);
     }
 

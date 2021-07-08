@@ -14,7 +14,7 @@ public class VehicleService {
     @Autowired
     VehicleRepository vehicleRepository;
 
-    public List<Vehicle> getVehicleById(Long i) {
-        return vehicleRepository.findAllByCustomer_CustomerId(i);
+    public List<Vehicle> getVehicleById(String i) {
+        return vehicleRepository.findAllByCustomer_Email(i);
     }
 }
