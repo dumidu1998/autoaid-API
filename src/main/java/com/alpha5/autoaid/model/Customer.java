@@ -18,7 +18,7 @@ public class Customer {
 
     @Id
     @GeneratedValue
-    private long customerId;
+    private Long customerId;
 
     @Column(nullable = false)
     private String firstName;
@@ -36,7 +36,7 @@ public class Customer {
     private String contactNo;
 
     @CreationTimestamp
-    private Date RegisteredDate;
+    private Date registeredDate;
 
     @OneToMany(targetEntity = Appointment.class, mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<Appointment> appointments;
@@ -88,10 +88,10 @@ public class Customer {
     }
 
     public Date getRegDate(){
-        return RegisteredDate;
+        return registeredDate;
     }
-    public void setRegDate(Date RegisteredDate){
-        this.RegisteredDate= RegisteredDate;
+    public void setRegDate(Date registeredDate){
+        this.registeredDate= registeredDate;
     }
 
 }
