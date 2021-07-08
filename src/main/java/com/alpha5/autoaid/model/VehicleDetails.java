@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,8 @@ public class VehicleDetails {
     private String model;
 
     @ManyToOne
-    @JoinColumn(name = "Customer_id")
+    @JsonIgnore
+    @JoinColumn(name = "customer_id")
     Customer customer;
 
     @OneToMany(targetEntity = Repair.class, mappedBy = "vehicleDetails", cascade = CascadeType.ALL)
