@@ -18,8 +18,13 @@ public class CustomerController {
     VehicleService vehicleService;
 
     @GetMapping("/{id}")
-    public List<Vehicle> getVehicles(@PathVariable("id") String ii){
-        return vehicleService.getVehicleById(ii);
+    public List<Vehicle> getVehicles(@PathVariable("id") long id){
+        return vehicleService.getVehicleById(id);
+    }
+
+    @GetMapping("byemail/{email}")
+    public List<Vehicle> getVehicles(@PathVariable("email") String email){
+        return vehicleService.getVehicleByEmail(email);
     }
 
 }
