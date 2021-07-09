@@ -56,6 +56,7 @@ public class AuthController {
         String email=customerSignInRequest.getEmail();
         String userName=customerSignInRequest.getUserName();
         String responseMsg;
+        //continue if user exists on provided details
         if (authService.findbyUserNameorEmail(userName,email)){
             CustomerSigned response= authService.customerLogin(customerSignInRequest);
             return ResponseEntity.ok().body(response);
