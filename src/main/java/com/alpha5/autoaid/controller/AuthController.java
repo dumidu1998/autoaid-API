@@ -51,9 +51,19 @@ public class AuthController {
     }
 
     @PostMapping("/customer/login")
-    public CustomerSigned customerLogin(@RequestBody CustomerSignInRequest signInCustomer){
-        CustomerSigned response= authService.customerLogin(signInCustomer);
-        return response;
+    public ResponseEntity customerLogin(@RequestBody CustomerSignInRequest customerSignInRequest){
+        //get object of relavant user
+        String email=customerSignInRequest.getEmail();
+        String userName=customerSignInRequest.getUserName();
+        String responseMsg;
+        if (authService.findbyUserNameorEmail(userName,email)){
+            CustomerSigned response= authService.customerLogin(customerSignInRequest);
+            return ResponseEntity.ok().body(response);
+        }
+        responseMsg="UserName or email Invalid";
+        return ResponseEntity.badRequest().body(responseMsg);
+
+
     }
 
     @PostMapping("/staff")

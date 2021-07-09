@@ -98,25 +98,21 @@ public class AuthService implements UserDetailsService {
     }
 
     // customer login verification
-    public CustomerSigned customerLogin(CustomerSignInRequest signInCustomer){
+    public CustomerSigned customerLogin(CustomerSignInRequest customerSignInRequest){
         // object of relevant user
-        UserData customer= this.userRepository.findByEmail(signInCustomer.getEmail());
+        UserData customer= this.userRepository.findByUserNameOrEmail(customerSignInRequest.getUserName(),customerSignInRequest.getEmail());
 
-        //check whether customer exists
-        if( customer == null){
-            throw new RuntimeException("Email is Invalid");
-        }else{
-            //check password and email with authentication manager
+            //check password and with the user email with authentication manager
             try {
                 authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(signInCustomer.getEmail(), signInCustomer.getPassword())
+                        new UsernamePasswordAuthenticationToken(customer.getEmail(), customerSignInRequest.getPassword())
                 );
             }catch (Exception ex){
                 //throw error if emails and password does not match
-                throw new RuntimeException("Email and Password is Not matching");
+                throw new RuntimeException("Invalid Password");
             }
             //get jwt token
-            String token = jwtTokenUtil.generateToken(signInCustomer.getEmail());
+            String token = jwtTokenUtil.generateToken(customerSignInRequest.getEmail());
 
             CustomerSigned response=new CustomerSigned();
             response.setId(customer.getId());
@@ -124,7 +120,6 @@ public class AuthService implements UserDetailsService {
             response.setUsername(customer.getUserName());
             response.setToken(token); //append to response entity
             return response;
-        }
     }
 
     // staff login verification
@@ -173,12 +168,11 @@ return null;
     }
 
     //return customer email and password to the web security configurer user details according to the given email.
-    //TODO make it as get details on both email or username
 
     @Override
-    public User loadUserByUsername(String input) throws UsernameNotFoundException {
-        //TODO have to get from user table- Done
-        UserData userData = userRepository.findByEmail(input);
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        UserData userData = userRepository.findByEmail(email);
 
         //returning user details to the web security configurer user details according to the requested details
         return new User(userData.getEmail(),userData.getPassword(),new ArrayList<>());
