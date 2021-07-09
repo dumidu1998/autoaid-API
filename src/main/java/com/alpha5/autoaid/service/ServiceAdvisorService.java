@@ -3,7 +3,6 @@ package com.alpha5.autoaid.service;
 import com.alpha5.autoaid.dto.request.AddVehicleRequest;
 import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
-import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.Vehicle;
 import com.alpha5.autoaid.repository.CustomerRepository;
 import com.alpha5.autoaid.repository.StaffRepository;
@@ -41,13 +40,8 @@ public class ServiceAdvisorService {
     }
 
     public String registerNewVehicle(AddVehicleRequest addVehicleRequest) {
-//        Optional<Customer> customerOptional = customerRepository.findById(addVehicleRequest.getCustomerId());
-//        if (!customerOptional.isPresent()) {
-//            throw new RuntimeException("no customer");
-//        }
-//        Vehicle vehicle=new Vehicle();
-//        vehicle.setCustomer(customerOptional.get());
-//        Vehicle newVehicle = vehicleRepository.save(vehicle);
+
+//        Vehicle newVehicle=vehicleRepository.save(vehicle);
         return "Vehicle Added Successfully";
     }
 

@@ -3,6 +3,7 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.AddVehicleRequest;
 import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
+import com.alpha5.autoaid.model.Vehicle;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

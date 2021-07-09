@@ -18,7 +18,7 @@ public class Customer {
 
     @Id
     @GeneratedValue
-    private long CustomerId;
+    private Long customerId;
 
     @Column(nullable = false)
     private String firstName;
@@ -27,7 +27,7 @@ public class Customer {
     private String lastName;
 
     @CreationTimestamp
-    private Date RegisteredDate;
+    private Date registeredDate;
 
     @OneToOne
     private UserData userData;
@@ -41,9 +41,9 @@ public class Customer {
     @OneToMany(targetEntity = RateAndReview.class, mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<RateAndReview> rateAndReviews;
 
-    public long getCustomerId(){return CustomerId; }
+    public long getCustomerId(){return customerId; }
     public void setCustomerId(long CustomerId){
-        this.CustomerId= CustomerId;
+        this.customerId = CustomerId;
     }
 
     public String getFirstName(){
@@ -62,10 +62,10 @@ public class Customer {
 
 
     public Date getRegDate(){
-        return RegisteredDate;
+        return registeredDate;
     }
-    public void setRegDate(Date RegisteredDate){
-        this.RegisteredDate= RegisteredDate;
+    public void setRegDate(Date registeredDate){
+        this.registeredDate= registeredDate;
     }
 
 }
