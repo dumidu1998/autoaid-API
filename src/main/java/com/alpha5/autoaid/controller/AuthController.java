@@ -36,17 +36,18 @@ public class AuthController {
         String email=customerSignUpRequest.getEmail();
         String username=customerSignUpRequest.getUserName();
         String contactNo=customerSignUpRequest.getContactNo();
-        String errorMsg;
+        String responseMsg;
         if (authService.checkIfEmailExists(email)){
-            errorMsg="Email exists";
+            responseMsg="Email exists";
         }else if (authService.checkIfContactExists(contactNo)){
-            errorMsg="Contact exists";
+            responseMsg="Contact exists";
         }else if (authService.checkIfUserNameExists(username)){
-            errorMsg="username exists";
+            responseMsg="username exists";
         }else {
-            CustomerSigned response = authService.signup(customerSignUpRequest);
-            return ResponseEntity.ok().body(response);
-        }return ResponseEntity.badRequest().body(errorMsg);
+            authService.signup(customerSignUpRequest);
+            responseMsg="Customer Added Successfully";
+            return ResponseEntity.ok().body(responseMsg);
+        }return ResponseEntity.badRequest().body(responseMsg);
     }
 
     @PostMapping("/customer/login")

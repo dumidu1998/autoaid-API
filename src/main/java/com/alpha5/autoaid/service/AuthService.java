@@ -75,7 +75,7 @@ public class AuthService implements UserDetailsService {
         return false;
     }
 
-    public CustomerSigned signup(CustomerSignUpRequest customerSignUpRequest){
+    public void signup(CustomerSignUpRequest customerSignUpRequest){
 
         UserData userData= new UserData();
         Customer customer=new Customer();
@@ -85,6 +85,7 @@ public class AuthService implements UserDetailsService {
         userData.setEmail(customerSignUpRequest.getEmail());
         userData.setUserName(customerSignUpRequest.getUserName());
         userData.setContactNo(customerSignUpRequest.getContactNo());
+
         //set details to customer object
         customer.setFirstName(customerSignUpRequest.getFirstName());
         customer.setLastName(customerSignUpRequest.getLastName());
@@ -94,13 +95,6 @@ public class AuthService implements UserDetailsService {
         userRepository.save(userData);
         authCustomerRepository.save(customer);
 
-        CustomerSigned output=new CustomerSigned();
-        //set response
-        output.setId(userData.getId());
-        output.setEmail(userData.getEmail());
-        output.setUsername(userData.getUserName());
-
-        return output;
     }
 
     // customer login verification
