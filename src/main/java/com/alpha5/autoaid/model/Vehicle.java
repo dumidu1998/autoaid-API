@@ -11,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class VehicleDetails {
+public class Vehicle {
     @Id
     @GeneratedValue
     private int vehicleId;
@@ -35,10 +35,9 @@ public class VehicleDetails {
     private String model;
 
     @ManyToOne
-    @JoinColumn(name = "Customer_id")
-    Customer customer;
+    private Customer customer;
 
-    @OneToMany(targetEntity = Repair.class, mappedBy = "vehicleDetails", cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
     private Set<Repair> repairs;
 
     public int getVehicleId() {

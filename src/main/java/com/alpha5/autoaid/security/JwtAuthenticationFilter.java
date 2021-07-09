@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//autherize inercept requests
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 

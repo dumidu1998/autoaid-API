@@ -23,10 +23,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+//security class
 @Configuration
 @EnableWebSecurity
 public class WebSecurity extends  WebSecurityConfigurerAdapter{
 
+    //service that uses authorization to create token
     @Autowired
     private AuthService userDetailsService;
 
@@ -38,6 +40,7 @@ public class WebSecurity extends  WebSecurityConfigurerAdapter{
         auth.userDetailsService(userDetailsService);
     }
 
+    //add password encoder to the web security
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -63,6 +66,7 @@ public class WebSecurity extends  WebSecurityConfigurerAdapter{
         return super.authenticationManagerBean();
     }
 
+    //disable authenticate for below APIs
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().cors().and().authorizeRequests()
