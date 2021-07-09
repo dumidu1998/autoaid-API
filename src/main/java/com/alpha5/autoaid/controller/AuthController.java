@@ -9,7 +9,6 @@ import com.alpha5.autoaid.dto.response.StaffLogged;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
 import com.alpha5.autoaid.util.JwtTokenUtil;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,14 +23,15 @@ public class AuthController {
 
     @Autowired
     AuthService authService;
+
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
     public ResponseEntity signup(@RequestBody CustomerSignUpRequest customerSignUpRequest){
-
 
         String email=customerSignUpRequest.getEmail();
         String username=customerSignUpRequest.getUserName();
@@ -47,7 +47,8 @@ public class AuthController {
             authService.signup(customerSignUpRequest);
             responseMsg="Customer Added Successfully";
             return ResponseEntity.ok().body(responseMsg);
-        }return ResponseEntity.badRequest().body(responseMsg);
+        }
+        return ResponseEntity.badRequest().body(responseMsg);
     }
 
     @PostMapping("/customer/login")
@@ -63,8 +64,6 @@ public class AuthController {
         }
         responseMsg="UserName or email Invalid";
         return ResponseEntity.badRequest().body(responseMsg);
-
-
     }
 
     @PostMapping("/staff")

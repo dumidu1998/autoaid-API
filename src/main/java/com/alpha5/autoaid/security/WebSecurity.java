@@ -23,7 +23,7 @@ import java.util.Arrays;
 //security class
 @Configuration
 @EnableWebSecurity
-public class WebSecurity extends  WebSecurityConfigurerAdapter{
+public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     //service that uses authorization to create token
     @Autowired
@@ -39,7 +39,7 @@ public class WebSecurity extends  WebSecurityConfigurerAdapter{
 
     //add password encoder to the web security
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
 //        return NoOpPasswordEncoder.getInstance();
     }
@@ -74,7 +74,7 @@ public class WebSecurity extends  WebSecurityConfigurerAdapter{
                 .antMatchers("/auth/staff").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

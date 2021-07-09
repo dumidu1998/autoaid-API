@@ -47,38 +47,41 @@ public class AuthService implements UserDetailsService {
     private AuthenticationManager authenticationManager;
 
     //return true if username or email exists
-    public boolean findbyUserNameorEmail(String username, String email){
-        if(userRepository.findByUserNameOrEmail(username,email) != null){
+    public boolean findbyUserNameorEmail(String username, String email) {
+        if (userRepository.findByUserNameOrEmail(username, email) != null) {
             return true;
         }
         return false;
     }
+
     //check whether contact No exists
-    public boolean checkIfContactExists(String contactNo){
-        if(userRepository.findByContactNo(contactNo) != null){
+    public boolean checkIfContactExists(String contactNo) {
+        if (userRepository.findByContactNo(contactNo) != null) {
             return true;
         }
         return false;
     }
+
     //check for email
-    public boolean checkIfEmailExists(String email){
-        if(userRepository.findByEmail(email) != null){
+    public boolean checkIfEmailExists(String email) {
+        if (userRepository.findByEmail(email) != null) {
             return true;
         }
         return false;
     }
+
     //check for username
-    public boolean checkIfUserNameExists(String username){
-        if(userRepository.findByUserName(username) != null){
+    public boolean checkIfUserNameExists(String username) {
+        if (userRepository.findByUserName(username) != null) {
             return true;
         }
         return false;
     }
 
-    public void signup(CustomerSignUpRequest customerSignUpRequest){
+    public void signup(CustomerSignUpRequest customerSignUpRequest) {
 
-        UserData userData= new UserData();
-        Customer customer=new Customer();
+        UserData userData = new UserData();
+        Customer customer = new Customer();
 
         //encode password with bcrypt password
         userData.setPassword(bcryptPasswordEncoder.encode(customerSignUpRequest.getPassword()));
@@ -98,54 +101,52 @@ public class AuthService implements UserDetailsService {
     }
 
     // customer login verification
-    public CustomerSigned customerLogin(CustomerSignInRequest customerSignInRequest){
+    public CustomerSigned customerLogin(CustomerSignInRequest customerSignInRequest) {
         // object of relevant user
-        UserData customer= this.userRepository.findByUserNameOrEmail(customerSignInRequest.getUserName(),customerSignInRequest.getEmail());
+        UserData customer = this.userRepository.findByUserNameOrEmail(customerSignInRequest.getUserName(), customerSignInRequest.getEmail());
 
-            //check password and with the user email with authentication manager
-            try {
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(customer.getEmail(), customerSignInRequest.getPassword())
-                );
-            }catch (Exception ex){
-                //throw error if emails and password does not match
-                throw new RuntimeException("Invalid Password");
-            }
-            //get jwt token
-            String token = jwtTokenUtil.generateToken(customerSignInRequest.getEmail());
+        //check password and with the user email with authentication manager
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(customer.getEmail(), customerSignInRequest.getPassword())
+            );
+        } catch (Exception ex) {
+            //throw error if emails and password does not match
+            throw new RuntimeException("Invalid Password");
+        }
+        //get jwt token
+        String token = jwtTokenUtil.generateToken(customerSignInRequest.getEmail());
 
-            CustomerSigned response=new CustomerSigned();
-            response.setId(customer.getId());
-            response.setEmail(customer.getEmail());
-            response.setUsername(customer.getUserName());
-            response.setToken(token); //append to response entity
-            return response;
+        CustomerSigned response = new CustomerSigned();
+        response.setId(customer.getId());
+        response.setEmail(customer.getEmail());
+        response.setUsername(customer.getUserName());
+        response.setToken(token); //append to response entity
+        return response;
     }
 
     // staff login verification
-    public StaffLogged staffLogin(StaffLoginRequest staffLogin){
-
-        //TODO Authentication Manager Check again this @Hasantha @amodh
+    public StaffLogged staffLogin(StaffLoginRequest staffLogin) {
 
         // object of relevant customer
-        Staff staff= this.authStaffRepository.findByFirstName(staffLogin.getUserName());
+        Staff staff = this.authStaffRepository.findByFirstName(staffLogin.getUserName());
 
         //check whether customer exists
-        if( staff == null){
+        if (staff == null) {
             throw new RuntimeException("User Name is Invalid");
-        }else {
+        } else {
             //check password and email with authentication manager
             try {
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(staffLogin.getUserName(), staffLogin.getPassword())
                 );
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 //throw error if emaila and password does not match
                 throw new RuntimeException("Email and Password is Not matching");
             }
             //get jwt token
             String token = jwtTokenUtil.generateToken(staffLogin.getUserName());
-            StaffLogged response=new StaffLogged();
+            StaffLogged response = new StaffLogged();
 
             response.setStaffId(staff.getStaffId());
             response.setJwt(token);
@@ -156,7 +157,7 @@ public class AuthService implements UserDetailsService {
         }
     }
 
-    public List<Customer> getAll(){
+    public List<Customer> getAll() {
         return authCustomerRepository.findAll();
     }
 
@@ -168,7 +169,7 @@ public class AuthService implements UserDetailsService {
         UserData userData = userRepository.findByEmail(email);
 
         //returning user details to the web security configurer user details according to the requested details
-        return new User(userData.getEmail(),userData.getPassword(),new ArrayList<>());
+        return new User(userData.getEmail(), userData.getPassword(), new ArrayList<>());
     }
 
 }

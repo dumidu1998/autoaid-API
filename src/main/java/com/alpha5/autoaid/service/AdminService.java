@@ -11,7 +11,7 @@ public class AdminService {
     @Autowired
     private StaffRepository staffRepository;
 
-    private String staffRegister(Staff staff){
+    private String staffRegister(Staff staff) {
 //        if(staffRepository.findByContactNoAndEmail(staff.getContactNo(),staff.getEmail())!=null){
 //            throw new RuntimeException("User email and contact already taken");
 //        }

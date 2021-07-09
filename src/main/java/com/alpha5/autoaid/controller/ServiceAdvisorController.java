@@ -3,7 +3,6 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.AddVehicleRequest;
 import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
-import com.alpha5.autoaid.model.Vehicle;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,14 +18,15 @@ public class ServiceAdvisorController {
     ServiceAdvisorService serviceAdvisorService;
 
     @PostMapping("/get vehicle")
-    public VehicleDetailsAutofillResponse getVehicleDetails(@RequestBody VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest){
-        VehicleDetailsAutofillResponse response= serviceAdvisorService.autoFillVehicleDetails(vehicleDetailsAutofillRequest);
+    public VehicleDetailsAutofillResponse getVehicleDetails(@RequestBody VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest) {
+        VehicleDetailsAutofillResponse response = serviceAdvisorService.autoFillVehicleDetails(vehicleDetailsAutofillRequest);
         return response;
 
     }
+
     @PostMapping("/register vehicle")
-    public String addNewVehicle(@RequestBody AddVehicleRequest addVehicleRequest){
-        String response=serviceAdvisorService.registerNewVehicle(addVehicleRequest);
+    public String addNewVehicle(@RequestBody AddVehicleRequest addVehicleRequest) {
+        String response = serviceAdvisorService.registerNewVehicle(addVehicleRequest);
 
         return response;
     }
