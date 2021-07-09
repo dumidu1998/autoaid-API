@@ -12,9 +12,9 @@ public class AdminService {
     private StaffRepository staffRepository;
 
     private String staffRegister(Staff staff){
-        if(staffRepository.findByContactNoAndEmail(staff.getContactNo(),staff.getEmail())!=null){
-            throw new RuntimeException("User email and contact already taken");
-        }
+//        if(staffRepository.findByContactNoAndEmail(staff.getContactNo(),staff.getEmail())!=null){
+//            throw new RuntimeException("User email and contact already taken");
+//        }
         return "Done";
     }
 }

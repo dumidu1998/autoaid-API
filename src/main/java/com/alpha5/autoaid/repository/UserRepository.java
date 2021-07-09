@@ -1,12 +1,12 @@
 package com.alpha5.autoaid.repository;
 
-import com.alpha5.autoaid.model.User;
+import com.alpha5.autoaid.model.UserData;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
-public interface UserRepository extends JpaRepository<User,Integer> {
-    Optional<User> findByEmail(String email);
-    Optional<User> findByContactNo(String contactNo);
+public interface UserRepository extends JpaRepository<UserData,Integer> {
+    UserData findByEmail(String email);
+    UserData findByContactNo(String contactNo);
+    UserData findByUserName(String username);
+    UserData findByUserNameOrEmail(String username,String email);
 
 }

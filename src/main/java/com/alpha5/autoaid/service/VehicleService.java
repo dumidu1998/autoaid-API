@@ -23,6 +23,6 @@ public class VehicleService {
     }
 
     public List<Vehicle> getVehicleByEmail(String email) {
-        return vehicleRepository.findAllByCustomer_Email(email);
+        return vehicleRepository.findAllByCustomer_UserData_Email(email);
     }
 }

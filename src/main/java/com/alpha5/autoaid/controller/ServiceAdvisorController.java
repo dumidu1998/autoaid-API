@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.AddVehicleRequest;
 import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.model.Vehicle;
@@ -24,8 +25,9 @@ public class ServiceAdvisorController {
 
     }
     @PostMapping("/register vehicle")
-    public String addNewVehicle(@RequestBody Vehicle vehicle){
-        String response=serviceAdvisorService.registerNewVehicle(vehicle);
+    public String addNewVehicle(@RequestBody AddVehicleRequest addVehicleRequest){
+        String response=serviceAdvisorService.registerNewVehicle(addVehicleRequest);
+
         return response;
     }
 }

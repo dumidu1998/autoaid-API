@@ -36,9 +36,7 @@ public class Vehicle {
     private String model;
 
     @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "customer_id")
-    Customer customer;
+    private Customer customer;
 
     @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
     private Set<Repair> repairs;
