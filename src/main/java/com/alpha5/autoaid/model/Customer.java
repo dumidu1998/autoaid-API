@@ -18,7 +18,7 @@ public class Customer {
 
     @Id
     @GeneratedValue
-    private Long customerId;
+    private long customerId;
 
     @Column(nullable = false)
     private String firstName;
