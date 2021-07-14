@@ -9,6 +9,8 @@ public class CustomerSignUpRequest {
     private String userName;
     private String email;
     private String contactNo;
+    private String address;
+    private String city;
     private String password;
 
     public String getFirstName() {
@@ -57,5 +59,21 @@ public class CustomerSignUpRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }
