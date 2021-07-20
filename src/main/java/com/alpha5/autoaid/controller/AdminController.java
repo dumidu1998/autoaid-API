@@ -25,7 +25,7 @@ public class AdminController {
         return adminService.getAdmins();
     }
 
-    //------------XXX------Staff Handling NavBar Data------XXX------------//
+    //------------XXX------Staff Handling NavBar Data------XXX-------------//
 
 }
 
