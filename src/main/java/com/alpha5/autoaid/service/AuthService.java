@@ -88,6 +88,9 @@ public class AuthService implements UserDetailsService {
         userData.setEmail(customerSignUpRequest.getEmail());
         userData.setUserName(customerSignUpRequest.getUserName());
         userData.setContactNo(customerSignUpRequest.getContactNo());
+        userData.setAddress(customerSignUpRequest.getAddress());
+        userData.setCity(customerSignUpRequest.getCity());
+
 
         //set details to customer object
         customer.setFirstName(customerSignUpRequest.getFirstName());

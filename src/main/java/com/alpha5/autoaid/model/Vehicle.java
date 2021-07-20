@@ -39,6 +39,7 @@ public class Vehicle {
     private Customer customer;
 
     @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Repair> repairs;
 
     public int getVehicleId() {

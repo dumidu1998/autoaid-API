@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -26,6 +27,12 @@ public class UserData {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = true)
+    private String address;
+
+    @Column(nullable = true)
+    private String city;
 
     @Column
     private String userType;
@@ -98,5 +105,21 @@ public class UserData {
 
     public Staff getStaff() {
         return staff;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }
