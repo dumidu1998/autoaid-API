@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.RepairStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,12 +35,15 @@ public class Repair {
     Vehicle vehicle;
 
     @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "repair", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<ServiceEntry> serviceEntries;
 
     @OneToMany(targetEntity = Invoice.class, mappedBy = "repair", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Invoice> invoices;
 
     @OneToMany(targetEntity = RateAndReview.class, mappedBy = "repair", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<RateAndReview> rateAndReviews;
 
 }
