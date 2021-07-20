@@ -2,11 +2,10 @@ package com.alpha5.autoaid.service;
 
 
 import com.alpha5.autoaid.dto.request.AddStaffRequest;
-import com.alpha5.autoaid.dto.response.*;
+import com.alpha5.autoaid.dto.response.AddStaffRespond;
+import com.alpha5.autoaid.dto.response.AdminListRespond;
 import com.alpha5.autoaid.enums.StaffRole;
 import com.alpha5.autoaid.model.Staff;
-
-
 import com.alpha5.autoaid.model.UserData;
 import com.alpha5.autoaid.repository.StaffRepository;
 import com.alpha5.autoaid.repository.UserRepository;
@@ -45,11 +44,10 @@ public class AdminService {
         //assign values ti staff
         staff.setFirstName(addStaffRequest.getFirstName());
         staff.setLastName(addStaffRequest.getLastName());
-        staff.setUserData(userData);
-        //staff.setRole(addStaffRequest.getRole());
-        staff.setRole(StaffRole.ADMIN);
+        staff.setRole(addStaffRequest.getRole());
 
-        userRepository.save(userData);
+        UserData newuserdata = userRepository.save(userData);
+        staff.setUserData(newuserdata);
         Staff savedstaff=staffRepository.save(staff);
 
         AddStaffRespond addStaffRespond =new AddStaffRespond();
