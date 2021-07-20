@@ -7,13 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Customer findByFirstName(String username);
 
-    @Query(value = "SELECT SUM(amount) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id INNER JOIN customer as c ON c.customer_id=v.customer_customer_id WHERE v.customer_customer_id=?1 AND i.date BETWEEN CURDATE() - INTERVAL 1 YEAR AND CURDATE() " , nativeQuery = true)
+    @Query(value = "SELECT SUM(amount) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id INNER JOIN customer as c ON c.customer_id=v.customer_customer_id WHERE v.customer_customer_id=?1 AND i.invoice_date BETWEEN CURDATE() - INTERVAL 1 YEAR AND CURDATE() " , nativeQuery = true)
      float customerSummary(long userId);
 
-    @Query(value = "SELECT SUM(amount) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id INNER JOIN customer as c ON c.customer_id=v.customer_customer_id WHERE v.customer_customer_id=?1 AND i.date BETWEEN CURDATE() - INTERVAL 1 MONTH AND CURDATE() " , nativeQuery = true)
+    @Query(value = "SELECT SUM(amount) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id INNER JOIN customer as c ON c.customer_id=v.customer_customer_id WHERE v.customer_customer_id=?1 AND i.invoice_date BETWEEN CURDATE() - INTERVAL 1 MONTH AND CURDATE() " , nativeQuery = true)
     float customerSummary2(long userId);
 
-    @Query(value = "SELECT COUNT(*) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id INNER JOIN customer as c ON c.customer_id=v.customer_customer_id WHERE v.customer_customer_id=?1 AND i.date BETWEEN CURDATE() - INTERVAL 1 YEAR AND CURDATE() " , nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id INNER JOIN customer as c ON c.customer_id=v.customer_customer_id WHERE v.customer_customer_id=?1 AND i.invoice_date BETWEEN CURDATE() - INTERVAL 1 YEAR AND CURDATE() " , nativeQuery = true)
     int customerSummary3(long userId);
 
     @Query(value = "SELECT COUNT(*) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id INNER JOIN customer as c ON c.customer_id=v.customer_customer_id WHERE v.customer_customer_id=?1 AND r.status != 'COMPLETED'" , nativeQuery = true)
