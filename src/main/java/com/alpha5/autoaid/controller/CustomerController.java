@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.response.ExpenseResponse;
 import com.alpha5.autoaid.model.Vehicle;
 import com.alpha5.autoaid.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class CustomerController {
     @GetMapping("byemail/{email}")
     public List<Vehicle> getVehicles(@PathVariable("email") String email) {
         return vehicleService.getVehicleByEmail(email);
+    }
+
+    @GetMapping("expenses/{id}")
+    public ExpenseResponse getSummary(@PathVariable("id") long id) {
+        return vehicleService.getSummaryByCustomer(id);
     }
 
 }
