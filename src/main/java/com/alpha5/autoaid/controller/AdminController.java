@@ -14,19 +14,15 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    AdminService adminService;
-
-
+    private AdminService adminService;
 
     //-----------_______________________--------------------ADD to TO Real ------------____________________-----//
-
     //------------------Staff Add------------------//
     @PostMapping("addstaff")
     public AddStaffRespond insertStaffDetails(@RequestBody AddStaffRequest addStaffRequest){
         return adminService.insertStaff(addStaffRequest);
     }
     //-------------XXX-----Staff Add-----XX-------------//
-
 
     //------------------Staff Handling NavBar Data------------------//
     @GetMapping("getadmins")

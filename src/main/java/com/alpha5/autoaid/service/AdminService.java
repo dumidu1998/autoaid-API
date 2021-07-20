@@ -42,12 +42,14 @@ public class AdminService {
         userData.setUserName(addStaffRequest.getUserName());
         userData.setUserType("1");
         //assign values ti staff
+
+        UserData newuserdata = userRepository.save(userData);
+
         staff.setFirstName(addStaffRequest.getFirstName());
         staff.setLastName(addStaffRequest.getLastName());
         staff.setRole(addStaffRequest.getRole());
-
-        UserData newuserdata = userRepository.save(userData);
         staff.setUserData(newuserdata);
+
         Staff savedstaff=staffRepository.save(staff);
 
         AddStaffRespond addStaffRespond =new AddStaffRespond();
@@ -55,7 +57,6 @@ public class AdminService {
         addStaffRespond.setSid(savedstaff.getStaffId());
 
         return addStaffRespond;
-
     }
 
     //------XXX------------Staff Add-----XXX-------------//
