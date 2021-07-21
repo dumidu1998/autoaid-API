@@ -51,8 +51,8 @@ public class AuthController {
         return ResponseEntity.badRequest().body(responseMsg);
     }
 
-    @PostMapping("/customer/login")
-    public ResponseEntity customerLogin(@RequestBody CustomerSignInRequest customerSignInRequest){
+    @PostMapping("/user/login")
+    public ResponseEntity userLogin(@RequestBody CustomerSignInRequest customerSignInRequest){
         //get object of relavant user
         String email=customerSignInRequest.getEmail();
         String userName=customerSignInRequest.getUserName();
