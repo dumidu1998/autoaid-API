@@ -3,9 +3,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
 import com.alpha5.autoaid.dto.request.CustomerSignUpRequest;
-import com.alpha5.autoaid.dto.request.StaffLoginRequest;
-import com.alpha5.autoaid.dto.response.CustomerSigned;
-import com.alpha5.autoaid.dto.response.StaffLogged;
+import com.alpha5.autoaid.dto.response.UserSigned;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
 import com.alpha5.autoaid.util.JwtTokenUtil;
@@ -59,18 +57,18 @@ public class AuthController {
         String responseMsg;
         //continue if user exists on provided details
         if (authService.findbyUserNameorEmail(userName,email)){
-            CustomerSigned response= authService.customerLogin(customerSignInRequest);
+            UserSigned response= authService.userLogin(customerSignInRequest);
             return ResponseEntity.ok().body(response);
         }
         responseMsg="UserName or email Invalid";
         return ResponseEntity.badRequest().body(responseMsg);
     }
 
-    @PostMapping("/staff")
-    public StaffLogged staffLogin(@RequestBody StaffLoginRequest loginStaff){
-        StaffLogged response=authService.staffLogin(loginStaff);
-        return response;
-    }
+//    @PostMapping("/staff")
+//    public StaffLogged staffLogin(@RequestBody StaffLoginRequest loginStaff){
+//        StaffLogged response=authService.staffLogin(loginStaff);
+//        return response;
+//    }
 
     @PostMapping("/gettoken")
     public String generateToken(@RequestBody CustomerSignInRequest signInRequest) throws Exception{
