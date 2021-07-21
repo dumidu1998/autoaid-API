@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.dto.request;
 
-import com.alpha5.autoaid.enums.StaffRole;
+
+import com.alpha5.autoaid.enums.UserType;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,7 +16,7 @@ public class AddStaffRequest {
     private String  firstName;
     private String  lastName;
     @Enumerated(EnumType.STRING)
-    private StaffRole role;
+    private UserType userType;
 
 
     public String getUserName() {
@@ -84,11 +85,11 @@ public class AddStaffRequest {
         this.lastName = lastName;
     }
 
-    public StaffRole getRole() {
-        return role;
+    public UserType getUserType() {
+        return userType;
     }
 
-    public void setRole(StaffRole role) {
-        this.role = role;
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 }

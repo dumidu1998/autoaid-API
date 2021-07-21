@@ -8,18 +8,17 @@ import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
 import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.model.UserData;
 import com.alpha5.autoaid.dto.response.*;
-import com.alpha5.autoaid.enums.StaffRole;
+import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.repository.StaffRepository;
 import com.alpha5.autoaid.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import org.springframework.stereotype.Service;
 import javax.swing.text.SimpleAttributeSet;
 import java.awt.font.TextHitInfo;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.SocketHandler;
 
 @Service
 public class AdminService {
@@ -45,14 +44,13 @@ public class AdminService {
         userData.setContactNo(addStaffRequest.getContactNum());
         userData.setEmail(addStaffRequest.getEmail());
         userData.setUserName(addStaffRequest.getUserName());
-        userData.setUserType("1");
+        userData.setUserType(addStaffRequest.getUserType());
         //assign values ti staff
 
         UserData newuserdata = userRepository.save(userData);
 
         staff.setFirstName(addStaffRequest.getFirstName());
         staff.setLastName(addStaffRequest.getLastName());
-        staff.setRole(addStaffRequest.getRole());
         staff.setUserData(newuserdata);
 
         Staff savedstaff=staffRepository.save(staff);
@@ -70,13 +68,14 @@ public class AdminService {
 
     //------------------Staff Handling NavBar Data------------------//
     public List<AdminListRespond> getAdmins(){
-        List<Staff> admins= staffRepository.findAllByRole(StaffRole.ADMIN);
+        List<UserData> admins= userRepository.findAllByUserType(UserType.ADMIN);
         List<AdminListRespond> outlist=new ArrayList<AdminListRespond>();
-        for (Staff entity: admins){
+        for (UserData entity: admins){
+            Staff staffMember= staffRepository.findByUserData(entity);
             AdminListRespond adminList=new AdminListRespond();
-            adminList.setFirstName(entity.getFirstName());
-            adminList.setLastname(entity.getLastName());
-            adminList.setId(entity.getStaffId());
+            adminList.setFirstName(staffMember.getFirstName());
+            adminList.setLastname(staffMember.getLastName());
+            adminList.setId(staffMember.getStaffId());
             outlist.add(adminList);
         }
         return outlist;
@@ -97,13 +96,13 @@ public class AdminService {
         GetStaffMemInfoRespond response =new GetStaffMemInfoRespond();
         response.setFirstName(memInfo.getFirstName());
         response.setLastName(memInfo.getLastName());
-        response.setRole(memInfo.getRole());
 
         UserData user_data= memInfo.getUserData();
         response.setAddress(user_data.getAddress());
         response.setCity(user_data.getCity());
         response.setEmail(user_data.getEmail());
         response.setPassword(user_data.getPassword());
+        response.setUserType(user_data.getUserType());
 
         response.setContactNum(user_data.getContactNo());
         response.setUserName(user_data.getUserName());

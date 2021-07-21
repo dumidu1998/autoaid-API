@@ -1,6 +1,6 @@
 package com.alpha5.autoaid.dto.response;
 
-import com.alpha5.autoaid.enums.StaffRole;
+import com.alpha5.autoaid.enums.UserType;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -9,7 +9,7 @@ public class GetStaffMemInfoRespond {
     private String firstName;
     private String lastName;
     @Enumerated(EnumType.STRING)
-    private StaffRole role;
+    private UserType userType;
 
     private String userName;
     private String email;
@@ -35,14 +35,6 @@ public class GetStaffMemInfoRespond {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public StaffRole getRole() {
-        return role;
-    }
-
-    public void setRole(StaffRole role) {
-        this.role = role;
     }
 
     public String getUserName() {
@@ -93,5 +85,11 @@ public class GetStaffMemInfoRespond {
         this.city = city;
     }
 
+    public UserType getUserType() {
+        return userType;
+    }
 
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
 }
