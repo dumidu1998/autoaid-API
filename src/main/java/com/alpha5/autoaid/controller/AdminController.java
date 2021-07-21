@@ -3,6 +3,7 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.AdminListRespond;
+import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
 import com.alpha5.autoaid.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,27 @@ public class AdminController {
     }
 
     //------------XXX------Staff Handling NavBar Data------XXX-------------//
+
+    //------------------Get staff next id------------------//
+    @GetMapping("getnextstaffid")
+    public long getNextStaffId(){
+        return adminService.getNewStaffId();
+    }
+
+    //------------XXX-----Get staff next id------XXX-------------//
+
+    //------------------Get staff Mem Info when click the manage btn in satff list------------------//
+    @GetMapping("getstaffmeminfo/{sid}")
+    public GetStaffMemInfoRespond getStaffMemInfo(@PathVariable long sid){
+
+        return adminService.getStaffMemInfo(sid);
+    }
+
+    //------------XXX-----Get staff Mem Info when click the manage btn in satff list------XXX-------------//
+
+
+
+
 
 }
 

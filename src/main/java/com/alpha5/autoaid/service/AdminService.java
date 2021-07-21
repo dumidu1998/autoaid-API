@@ -4,6 +4,7 @@ package com.alpha5.autoaid.service;
 import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.AdminListRespond;
+import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
 import com.alpha5.autoaid.enums.StaffRole;
 import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.model.UserData;
@@ -75,6 +76,38 @@ public class AdminService {
         }
         return outlist;
     }
+
+    //------------XX------Staff Handling NavBar Data------XX------------//
+
+    //-------------------get nxt staff Id to the form ------------------//
+    public long getNewStaffId(){
+        long getnewid=staffRepository.getMaxStaffId();
+        return getnewid+1;
+    }
+    //---------XXX----------get nxt staff Id to the form ---------XX---------//
+
+    //-------------------get nxt staff Mem Info ------------------//
+    public GetStaffMemInfoRespond getStaffMemInfo(long sid){
+        Staff memInfo = staffRepository.findByStaffId(sid);
+        GetStaffMemInfoRespond response =new GetStaffMemInfoRespond();
+        response.setFirstName(memInfo.getFirstName());
+        response.setLastName(memInfo.getLastName());
+        response.setRole(memInfo.getRole());
+
+        UserData user_data= memInfo.getUserData();
+        response.setAddress(user_data.getAddress());
+        response.setCity(user_data.getCity());
+        response.setEmail(user_data.getEmail());
+        response.setPassword(user_data.getPassword());
+
+        response.setContactNo(user_data.getContactNo());
+        response.setUserName(user_data.getUserName());
+        return response;
+    }
+
+
+
+//-----------XXXX--------get nxt staff Mem Info -------XXX-----------//
 
 }
 
