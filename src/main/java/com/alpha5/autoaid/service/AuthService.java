@@ -2,16 +2,21 @@ package com.alpha5.autoaid.service;
 
 
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
+import com.alpha5.autoaid.dto.request.CustomerSignUpRequest;
 import com.alpha5.autoaid.dto.request.StaffLoginRequest;
 import com.alpha5.autoaid.dto.response.CustomerSigned;
 import com.alpha5.autoaid.dto.response.StaffLogged;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.Staff;
-import com.alpha5.autoaid.repository.AuthRepository;
-import com.alpha5.autoaid.repository.AuthStaffRepository;
+import com.alpha5.autoaid.model.UserData;
+import com.alpha5.autoaid.repository.CustomerRepository;
+import com.alpha5.autoaid.repository.StaffRepository;
+import com.alpha5.autoaid.repository.UserRepository;
+import com.alpha5.autoaid.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,100 +29,150 @@ import java.util.List;
 public class AuthService implements UserDetailsService {
 
     @Autowired
-    private AuthRepository authRepository;
+    private CustomerRepository authCustomerRepository;
 
     @Autowired
-    private AuthStaffRepository authStaffRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private StaffRepository authStaffRepository;
 
     @Autowired
     private PasswordEncoder bcryptPasswordEncoder;
 
-    public CustomerSigned signup(Customer customer){
-        //check for duplicate email
-        if(authRepository.findByEmail(customer.getEmail()) != null){
-            //exception
-            throw new RuntimeException("Email already taken");
-        }
-        //check for duplicate mobile number
-        if(authRepository.findByContactNo(customer.getContactNo()) != null){
-            throw new RuntimeException("Mobile Number already taken");
-        }
-        //encode password with bcrypt password
-        customer.setPassword(bcryptPasswordEncoder.encode(customer.getPassword()));
-        Customer newUser = authRepository.save(customer);
-        CustomerSigned output=new CustomerSigned();
-        //set response
-        output.setId(newUser.getCustomerId());
-        output.setEmail(newUser.getEmail());
-        output.setUsername(newUser.getFirstName());
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
-        return output;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    //return true if username or email exists
+    public boolean findbyUserNameorEmail(String username, String email) {
+        if (userRepository.findByUserNameOrEmail(username, email) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    //check whether contact No exists
+    public boolean checkIfContactExists(String contactNo) {
+        if (userRepository.findByContactNo(contactNo) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    //check for email
+    public boolean checkIfEmailExists(String email) {
+        if (userRepository.findByEmail(email) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    //check for username
+    public boolean checkIfUserNameExists(String username) {
+        if (userRepository.findByUserName(username) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public void signup(CustomerSignUpRequest customerSignUpRequest) {
+
+        UserData userData = new UserData();
+        Customer customer = new Customer();
+
+        //encode password with bcrypt password
+        userData.setPassword(bcryptPasswordEncoder.encode(customerSignUpRequest.getPassword()));
+        userData.setEmail(customerSignUpRequest.getEmail());
+        userData.setUserName(customerSignUpRequest.getUserName());
+        userData.setContactNo(customerSignUpRequest.getContactNo());
+        userData.setAddress(customerSignUpRequest.getAddress());
+        userData.setCity(customerSignUpRequest.getCity());
+
+
+        //set details to customer object
+        customer.setFirstName(customerSignUpRequest.getFirstName());
+        customer.setLastName(customerSignUpRequest.getLastName());
+        customer.setUserData(userData);
+
+        //save user login data and customer data
+        userRepository.save(userData);
+        authCustomerRepository.save(customer);
+
     }
 
     // customer login verification
-    public CustomerSigned customerLogin(CustomerSignInRequest signInCustomer){
+    public CustomerSigned customerLogin(CustomerSignInRequest customerSignInRequest) {
+        // object of relevant user
+        UserData customer = this.userRepository.findByUserNameOrEmail(customerSignInRequest.getUserName(), customerSignInRequest.getEmail());
 
-        // object of relevant customer
-        Customer customer= this.authRepository.findByEmail(signInCustomer.getEmail());
-
-        //decrypt password
-        boolean isPasswordMatch = bcryptPasswordEncoder.matches(signInCustomer.getPassword(),customer.getPassword());
-        System.out.println("password is "+isPasswordMatch);
-
-        //check whether customer exists
-        if( customer == null){
-
-            throw new RuntimeException("Email is Invalid");
-
-        }else if(isPasswordMatch){
-            CustomerSigned response=new CustomerSigned();
-            response.setId(customer.getCustomerId());
-            response.setEmail(customer.getEmail());
-            response.setUsername(customer.getFirstName());
-
-            return response;
-        }else{
-
-            throw new RuntimeException("Password is wrong. Try again");
+        //check password and with the user email with authentication manager
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(customer.getEmail(), customerSignInRequest.getPassword())
+            );
+        } catch (Exception ex) {
+            //throw error if emails and password does not match
+            throw new RuntimeException("Invalid Password");
         }
+        //get jwt token
+        String token = jwtTokenUtil.generateToken(customerSignInRequest.getEmail());
 
+        CustomerSigned response = new CustomerSigned();
+        response.setId(customer.getId());
+        response.setEmail(customer.getEmail());
+        response.setUsername(customer.getUserName());
+        response.setToken(token); //append to response entity
+        return response;
     }
 
     // staff login verification
-    public StaffLogged staffLogin(StaffLoginRequest staffLogin){
+    public StaffLogged staffLogin(StaffLoginRequest staffLogin) {
 
         // object of relevant customer
-        Staff staff= this.authStaffRepository.findByFirstName(staffLogin.getUserName());
+        Staff staff = this.authStaffRepository.findByFirstName(staffLogin.getUserName());
 
         //check whether customer exists
-
-        //TODO password decode
-
-        if( staff == null){
-
+        if (staff == null) {
             throw new RuntimeException("User Name is Invalid");
-
-        }else if(staffLogin.getPassword().equals(staff.getPassword())){
-            StaffLogged response=new StaffLogged();
+        } else {
+            //check password and email with authentication manager
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(staffLogin.getUserName(), staffLogin.getPassword())
+                );
+            } catch (Exception ex) {
+                //throw error if emaila and password does not match
+                throw new RuntimeException("Email and Password is Not matching");
+            }
+            //get jwt token
+            String token = jwtTokenUtil.generateToken(staffLogin.getUserName());
+            StaffLogged response = new StaffLogged();
 
             response.setStaffId(staff.getStaffId());
+            response.setJwt(token);
             response.setUserName(staff.getFirstName());
             response.setRole(staff.getRole());
 
             return response;
-        }else{
-
-            throw new RuntimeException("Password is wrong. Try again");
         }
+    }
 
+    public List<Customer> getAll() {
+        return authCustomerRepository.findAll();
     }
-    public List<Customer> getAll(){
-        return authRepository.findAll();
-    }
+
+    //return customer email and password to the web security configurer user details according to the given email.
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Customer customer = authRepository.findByEmail(email);
-        return new User(customer.getEmail(),customer.getPassword(),new ArrayList<>());
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        UserData userData = userRepository.findByEmail(email);
+
+        //returning user details to the web security configurer user details according to the requested details
+        return new User(userData.getEmail(), userData.getPassword(), new ArrayList<>());
     }
+
 }

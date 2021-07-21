@@ -1,6 +1,6 @@
 package com.alpha5.autoaid.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +21,9 @@ public class Vehicle {
     private String vin;
 
     @Column(nullable = false)
+    private String vehicleNumber;
+
+    @Column(nullable = false)
     private String engineNo;
 
     @Column(nullable = false)
@@ -33,12 +36,40 @@ public class Vehicle {
     private String model;
 
     @ManyToOne
-    @JoinColumn(name = "Customer_id")
-    Customer customer;
+    private Customer customer;
 
     @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
     private Set<Repair> repairs;
 
+    public int getVehicleId() {
+        return vehicleId;
+    }
 
+    public String getVin() {
+        return vin;
+    }
 
+    public String getEngineNo() {
+        return engineNo;
+    }
+
+    public String getChassisNo() {
+        return chassisNo;
+    }
+
+    public String getMake() {
+        return make;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public Set<Repair> getRepairs() {
+        return repairs;
+    }
 }

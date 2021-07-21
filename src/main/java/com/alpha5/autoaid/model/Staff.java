@@ -25,17 +25,11 @@ public class Staff {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false,unique = true)
-    private String email;
-
-    @Column(nullable = false,unique = true)
-    private String contactNo;
-
-    @Column(nullable = false)
-    private String password;
-
     @Enumerated(EnumType.STRING)
     private StaffRole role;
+
+    @OneToOne
+    private UserData userData;
 
     @OneToMany(targetEntity = Appointment.class, mappedBy = "staff", cascade = CascadeType.ALL)
     private Set<Appointment> appointments;

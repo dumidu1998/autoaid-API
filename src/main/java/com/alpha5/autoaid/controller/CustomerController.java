@@ -1,23 +1,30 @@
 package com.alpha5.autoaid.controller;
 
-import com.alpha5.autoaid.dto.response.CustomerSigned;
-import com.alpha5.autoaid.model.Customer;
-import com.alpha5.autoaid.service.CustomerService;
+import com.alpha5.autoaid.model.Vehicle;
+import com.alpha5.autoaid.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
+@RequestMapping("/customer")
 @RestController
 public class CustomerController {
 
     @Autowired
-    CustomerService customerService;
+    VehicleService vehicleService;
 
+    @GetMapping("/{id}")
+    public List<Vehicle> getVehicles(@PathVariable("id") long id) {
+        return vehicleService.getVehicleById(id);
+    }
 
-//    @PostMapping("auth/siganup")
-//    public CustomerSigned signupp(@RequestBody Customer customer) {
-//        CustomerSigned response= customerService.signup(customer);
-//        return response;
-//    }
+    @GetMapping("byemail/{email}")
+    public List<Vehicle> getVehicles(@PathVariable("email") String email) {
+        return vehicleService.getVehicleByEmail(email);
+    }
+
 }

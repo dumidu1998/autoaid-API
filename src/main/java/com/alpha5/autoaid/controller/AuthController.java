@@ -2,6 +2,7 @@ package com.alpha5.autoaid.controller;
 
 
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
+import com.alpha5.autoaid.dto.request.CustomerSignUpRequest;
 import com.alpha5.autoaid.dto.request.StaffLoginRequest;
 import com.alpha5.autoaid.dto.response.CustomerSigned;
 import com.alpha5.autoaid.dto.response.StaffLogged;
@@ -9,40 +10,65 @@ import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
 import com.alpha5.autoaid.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins ="http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
     AuthService authService;
+
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
-    public CustomerSigned signup(@RequestBody Customer customer){
-        CustomerSigned response= authService.signup(customer);
-        return response;
+    public ResponseEntity signup(@RequestBody CustomerSignUpRequest customerSignUpRequest){
+
+        String email=customerSignUpRequest.getEmail();
+        String username=customerSignUpRequest.getUserName();
+        String contactNo=customerSignUpRequest.getContactNo();
+        String responseMsg;
+        if (authService.checkIfEmailExists(email)){
+            responseMsg="Email exists";
+        }else if (authService.checkIfContactExists(contactNo)){
+            responseMsg="Contact exists";
+        }else if (authService.checkIfUserNameExists(username)){
+            responseMsg="username exists";
+        }else {
+            authService.signup(customerSignUpRequest);
+            responseMsg="Customer Added Successfully";
+            return ResponseEntity.ok().body(responseMsg);
+        }
+        return ResponseEntity.badRequest().body(responseMsg);
     }
 
     @PostMapping("/customer/login")
-    public CustomerSigned customerLogin(@RequestBody CustomerSignInRequest signInCustomer){
-        CustomerSigned response= authService.customerLogin(signInCustomer);
-        return response;
+    public ResponseEntity customerLogin(@RequestBody CustomerSignInRequest customerSignInRequest){
+        //get object of relavant user
+        String email=customerSignInRequest.getEmail();
+        String userName=customerSignInRequest.getUserName();
+        String responseMsg;
+        //continue if user exists on provided details
+        if (authService.findbyUserNameorEmail(userName,email)){
+            CustomerSigned response= authService.customerLogin(customerSignInRequest);
+            return ResponseEntity.ok().body(response);
+        }
+        responseMsg="UserName or email Invalid";
+        return ResponseEntity.badRequest().body(responseMsg);
     }
 
     @PostMapping("/staff")
     public StaffLogged staffLogin(@RequestBody StaffLoginRequest loginStaff){
         StaffLogged response=authService.staffLogin(loginStaff);
-
         return response;
     }
 
@@ -62,6 +88,5 @@ public class AuthController {
     public List<Customer> findAllCustomers(){
         return authService.getAll();
     }
-    
 
 }

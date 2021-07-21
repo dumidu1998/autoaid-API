@@ -1,6 +1,5 @@
 package com.alpha5.autoaid.security;
 
-import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
 import com.alpha5.autoaid.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -18,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//autherize inercept requests
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -28,18 +27,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader= httpServletRequest.getHeader("Authorization");
-        String token=null;
-        String email=null;
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+        String token = null;
+        String email = null;
 
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
-            token=authorizationHeader.substring(7);
-            email= jwtTokenUtil.extractUsername(token);
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+            email = jwtTokenUtil.extractUsername(token);
         }
 
-        if(email!=null && SecurityContextHolder.getContext().getAuthentication()==null){
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = authService.loadUserByUsername(email);
-            if(jwtTokenUtil.validateToken(token, userDetails)){
+            if (jwtTokenUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
@@ -47,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-        filterChain.doFilter(httpServletRequest,httpServletResponse);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
 
     }
 }
