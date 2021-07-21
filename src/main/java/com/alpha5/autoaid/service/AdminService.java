@@ -5,17 +5,21 @@ import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.AdminListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
-import com.alpha5.autoaid.enums.StaffRole;
 import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.model.UserData;
+import com.alpha5.autoaid.dto.response.*;
+import com.alpha5.autoaid.enums.StaffRole;
 import com.alpha5.autoaid.repository.StaffRepository;
 import com.alpha5.autoaid.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
-
+import javax.swing.text.SimpleAttributeSet;
+import java.awt.font.TextHitInfo;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.SocketHandler;
 
 @Service
 public class AdminService {
@@ -63,6 +67,7 @@ public class AdminService {
     //------XXX------------Staff Add-----XXX-------------//
 
 
+
     //------------------Staff Handling NavBar Data------------------//
     public List<AdminListRespond> getAdmins(){
         List<Staff> admins= staffRepository.findAllByRole(StaffRole.ADMIN);
@@ -108,6 +113,7 @@ public class AdminService {
 
 
 //-----------XXXX--------get nxt staff Mem Info -------XXX-----------//
+
 
 }
 

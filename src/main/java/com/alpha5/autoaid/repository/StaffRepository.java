@@ -14,4 +14,11 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
     @Query(value = "SELECT MAX(staff_id) FROM staff  " , nativeQuery = true)
     long getMaxStaffId();
 
+
+import java.util.List;
+
+public interface StaffRepository extends JpaRepository<Staff,Long> {
+    Staff findByStaffId(long sid);
+    Staff findByFirstName(String name);
+    List<Staff> findAllByRole(StaffRole role);
 }

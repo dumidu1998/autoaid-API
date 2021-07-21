@@ -4,8 +4,11 @@ import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.AdminListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
+import com.alpha5.autoaid.dto.response.*;
+import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +27,7 @@ public class AdminController {
         return adminService.insertStaff(addStaffRequest);
     }
     //-------------XXX-----Staff Add-----XX-------------//
+
 
     //------------------Staff Handling NavBar Data------------------//
     @GetMapping("getadmins")
@@ -49,8 +53,6 @@ public class AdminController {
     }
 
     //------------XXX-----Get staff Mem Info when click the manage btn in satff list------XXX-------------//
-
-
 
 
 
