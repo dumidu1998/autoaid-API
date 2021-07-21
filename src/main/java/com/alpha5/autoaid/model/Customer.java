@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,15 +31,19 @@ public class Customer {
     private Date registeredDate;
 
     @OneToOne
+    @JsonIgnore
     private UserData userData;
 
     @OneToMany(targetEntity = Appointment.class, mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Appointment> appointments;
 
     @OneToMany(targetEntity = Vehicle.class, mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Vehicle> vehicleDetails;
 
     @OneToMany(targetEntity = RateAndReview.class, mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<RateAndReview> rateAndReviews;
 
     public long getCustomerId(){return customerId; }
