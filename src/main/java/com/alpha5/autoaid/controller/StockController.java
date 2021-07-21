@@ -16,7 +16,7 @@ public class StockController {
 
     @GetMapping("/itemName/{itemName}")
     public InventryStockRespond getItemByName(@PathVariable String itemName){
-        InventryStockRespond response = stockService.inventryItemStock(itemName);
+        InventryStockRespond response = stockService.inventryItemStock(itemName) ;
 
         return response;
     }
