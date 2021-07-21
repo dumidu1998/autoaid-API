@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<UserData, Integer> {
+public interface UserRepository extends JpaRepository<UserData, Long> {
     UserData findByEmail(String email);
 
     UserData findByContactNo(String contactNo);
