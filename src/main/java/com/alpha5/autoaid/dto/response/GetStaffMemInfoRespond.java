@@ -1,9 +1,7 @@
 package com.alpha5.autoaid.dto.response;
 
 import com.alpha5.autoaid.enums.StaffRole;
-import com.alpha5.autoaid.model.UserData;
 
-import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
@@ -15,7 +13,7 @@ public class GetStaffMemInfoRespond {
 
     private String userName;
     private String email;
-    private String contactNo;
+    private String contactNum;
     private String password;
     private String address;
     private String city;
@@ -63,12 +61,12 @@ public class GetStaffMemInfoRespond {
         this.email = email;
     }
 
-    public String getContactNo() {
-        return contactNo;
+    public String getContactNum() {
+        return contactNum;
     }
 
-    public void setContactNo(String contactNo) {
-        this.contactNo = contactNo;
+    public void setContactNum(String contactNum) {
+        this.contactNum = contactNum;
     }
 
     public String getPassword() {

@@ -100,7 +100,7 @@ public class AdminService {
         response.setEmail(user_data.getEmail());
         response.setPassword(user_data.getPassword());
 
-        response.setContactNo(user_data.getContactNo());
+        response.setContactNum(user_data.getContactNo());
         response.setUserName(user_data.getUserName());
         return response;
     }
