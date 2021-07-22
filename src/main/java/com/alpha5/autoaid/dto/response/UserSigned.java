@@ -1,16 +1,19 @@
 package com.alpha5.autoaid.dto.response;
 
-public class CustomerSigned {
+import com.alpha5.autoaid.enums.UserType;
+
+public class UserSigned {
 
     private Long id;
     private String username;
     private String email;
+    private UserType userType;
     private String token;
 
-    public CustomerSigned() {
+    public UserSigned() {
     }
 
-    public CustomerSigned(Long id, String username, String email,String token) {
+    public UserSigned(Long id, String username, String email, String token) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -47,5 +50,13 @@ public class CustomerSigned {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 }

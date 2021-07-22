@@ -3,11 +3,9 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
 import com.alpha5.autoaid.dto.request.CustomerSignUpRequest;
-import com.alpha5.autoaid.dto.request.StaffLoginRequest;
-import com.alpha5.autoaid.dto.response.CustomerSigned;
-import com.alpha5.autoaid.dto.response.StaffLogged;
+import com.alpha5.autoaid.dto.response.UserSigned;
+import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.model.Customer;
-import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.model.UserData;
 import com.alpha5.autoaid.repository.CustomerRepository;
 import com.alpha5.autoaid.repository.StaffRepository;
@@ -90,6 +88,7 @@ public class AuthService implements UserDetailsService {
         userData.setContactNo(customerSignUpRequest.getContactNo());
         userData.setAddress(customerSignUpRequest.getAddress());
         userData.setCity(customerSignUpRequest.getCity());
+        userData.setUserType(UserType.CUSTOMER);
 
 
         //set details to customer object
@@ -104,14 +103,14 @@ public class AuthService implements UserDetailsService {
     }
 
     // customer login verification
-    public CustomerSigned customerLogin(CustomerSignInRequest customerSignInRequest) {
+    public UserSigned userLogin(CustomerSignInRequest customerSignInRequest) {
         // object of relevant user
-        UserData customer = this.userRepository.findByUserNameOrEmail(customerSignInRequest.getUserName(), customerSignInRequest.getEmail());
+        UserData user = this.userRepository.findByUserNameOrEmail(customerSignInRequest.getUserName(), customerSignInRequest.getEmail());
 
         //check password and with the user email with authentication manager
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(customer.getEmail(), customerSignInRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(user.getEmail(), customerSignInRequest.getPassword())
             );
         } catch (Exception ex) {
             //throw error if emails and password does not match
@@ -120,45 +119,46 @@ public class AuthService implements UserDetailsService {
         //get jwt token
         String token = jwtTokenUtil.generateToken(customerSignInRequest.getEmail());
 
-        CustomerSigned response = new CustomerSigned();
-        response.setId(customer.getId());
-        response.setEmail(customer.getEmail());
-        response.setUsername(customer.getUserName());
+        UserSigned response = new UserSigned();
+        response.setId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setUsername(user.getUserName());
+        response.setUserType(user.getUserType());
         response.setToken(token); //append to response entity
         return response;
     }
 
     // staff login verification
-    public StaffLogged staffLogin(StaffLoginRequest staffLogin) {
-
-        // object of relevant customer
-        Staff staff = this.authStaffRepository.findByFirstName(staffLogin.getUserName());
-
-        //check whether customer exists
-        if (staff == null) {
-            throw new RuntimeException("User Name is Invalid");
-        } else {
-            //check password and email with authentication manager
-            try {
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(staffLogin.getUserName(), staffLogin.getPassword())
-                );
-            } catch (Exception ex) {
-                //throw error if emaila and password does not match
-                throw new RuntimeException("Email and Password is Not matching");
-            }
-            //get jwt token
-            String token = jwtTokenUtil.generateToken(staffLogin.getUserName());
-            StaffLogged response = new StaffLogged();
-
-            response.setStaffId(staff.getStaffId());
-            response.setJwt(token);
-            response.setUserName(staff.getFirstName());
-            response.setRole(staff.getRole());
-
-            return response;
-        }
-    }
+//    public StaffLogged staffLogin(StaffLoginRequest staffLogin) {
+//
+//        // object of relevant customer
+//        Staff staff = this.authStaffRepository.findByFirstName(staffLogin.getUserName());
+//
+//        //check whether customer exists
+//        if (staff == null) {
+//            throw new RuntimeException("User Name is Invalid");
+//        } else {
+//            //check password and email with authentication manager
+//            try {
+//                authenticationManager.authenticate(
+//                        new UsernamePasswordAuthenticationToken(staffLogin.getUserName(), staffLogin.getPassword())
+//                );
+//            } catch (Exception ex) {
+//                //throw error if emaila and password does not match
+//                throw new RuntimeException("Email and Password is Not matching");
+//            }
+//            //get jwt token
+//            String token = jwtTokenUtil.generateToken(staffLogin.getUserName());
+//            StaffLogged response = new StaffLogged();
+//
+//            response.setStaffId(staff.getStaffId());
+//            response.setJwt(token);
+//            response.setUserName(staff.getFirstName());
+//            response.setRole(staff.getRole());
+//
+//            return response;
+//        }
+//    }
 
     public List<Customer> getAll() {
         return authCustomerRepository.findAll();
