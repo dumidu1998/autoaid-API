@@ -1,11 +1,11 @@
 package com.alpha5.autoaid.dto.response;
 
-import com.alpha5.autoaid.enums.StaffRole;
+import com.alpha5.autoaid.enums.UserType;
 
 public class StaffLogged {
     private long staffId;
     private String userName;
-    private StaffRole role;
+    private UserType role;
     private String jwt;
 
     public String getJwt() {
@@ -32,11 +32,11 @@ public class StaffLogged {
         this.userName = userName;
     }
 
-    public StaffRole getRole() {
+    public UserType getRole() {
         return role;
     }
 
-    public void setRole(StaffRole role) {
+    public void setRole(UserType role) {
         this.role = role;
     }
 }

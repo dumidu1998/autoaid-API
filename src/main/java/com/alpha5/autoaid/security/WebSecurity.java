@@ -72,7 +72,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/signup").permitAll()
                 .antMatchers("/auth/customer/login").permitAll()
                 .antMatchers("/auth/staff").permitAll()
-                .antMatchers("/customer/**").permitAll()
+                .antMatchers("/customer/*").permitAll()
 
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()

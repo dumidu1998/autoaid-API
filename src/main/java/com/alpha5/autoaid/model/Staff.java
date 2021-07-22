@@ -1,7 +1,7 @@
 package com.alpha5.autoaid.model;
 
 
-import com.alpha5.autoaid.enums.StaffRole;
+import com.alpha5.autoaid.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,9 +24,6 @@ public class Staff {
 
     @Column(nullable = false)
     private String lastName;
-
-    @Enumerated(EnumType.STRING)
-    private StaffRole role;
 
     @OneToOne
     private UserData userData;
