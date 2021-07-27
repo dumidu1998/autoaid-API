@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.sql.Time;
@@ -22,7 +23,7 @@ public class Appointment {
     private long appointmentId;
 
     @CreationTimestamp
-    private Date date;
+    private Date datePlaced;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -32,17 +33,80 @@ public class Appointment {
     @JoinColumn(name = "staff_id")
     Staff staff;
 
+    @OneToOne
+    @JoinColumn(name = "vehicle_id")
+    Vehicle vehicle;
+
+    @Column(nullable=false)
+    private String vehicleName;
+
+    @Column(nullable=false)
+    private Date dateAppointment;
+
+    public String getTimeAppointment() {
+        return timeAppointment;
+    }
+
+    public void setTimeAppointment(String timeAppointment) {
+        this.timeAppointment = timeAppointment;
+    }
+
+    @Column(nullable=false)
+    private String timeAppointment;
+
     public long getAppointmentId() {
         return appointmentId;
     }
+
     public void setAppointmentId(long appointmentId) {
         this.appointmentId = appointmentId;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getDatePlaced() {
+        return datePlaced;
     }
-    public void setDate(Date date) {
-        this.date = date;
+
+    public void setDatePlaced(Date datePlaced) {
+        this.datePlaced = datePlaced;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public String getVehicleName() {
+        return vehicleName;
+    }
+
+    public void setVehicleName(String vehicleName) {
+        this.vehicleName = vehicleName;
+    }
+
+    public Date getDateAppointment() {
+        return dateAppointment;
+    }
+
+    public void setDateAppointment(Date dateAppointment) {
+        this.dateAppointment = dateAppointment;
     }
 }

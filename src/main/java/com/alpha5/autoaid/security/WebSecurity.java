@@ -74,6 +74,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/staff").permitAll()
                 .antMatchers("/customer/**").permitAll()
                 .antMatchers("/admin/**").permitAll()
+                .antMatchers("/appointment/**").permitAll()
 
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
