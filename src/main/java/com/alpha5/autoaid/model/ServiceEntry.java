@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +21,15 @@ public class ServiceEntry {
     @Column(nullable = true)
     private String description;
 
+    @Column
+    private Date assignedTime;
+
+    @Column
+    private Date completedTime;
+
+    @Column
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "repair_id")
     Repair repair;
@@ -31,5 +41,9 @@ public class ServiceEntry {
     @ManyToOne
     @JoinColumn(name = "sub_cat_id")
     SubCategory subCategory;
+
+    @OneToOne
+    @JoinColumn(name = "slot_id")
+    Slot slot;
 
 }

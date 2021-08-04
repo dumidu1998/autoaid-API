@@ -22,10 +22,13 @@ public class Repair {
     private long repairId;
 
     @CreationTimestamp
-    private Date date;
+    private Date repairAddedDate;
+
+    @Column
+    private Date repairCompletedDate;
 
     @Column(nullable = false)
-    private String paymentType; //enum or String?? TODO
+    private String paymentType; //enum or String??
 
     @Enumerated(EnumType.STRING)
     private RepairStatus status;
@@ -33,6 +36,10 @@ public class Repair {
     @ManyToOne
     @JoinColumn(name = "vehicleId")
     Vehicle vehicle;
+
+    @ManyToOne
+    @JsonIgnore
+    Staff staff;
 
     @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "repair", cascade = CascadeType.ALL)
     @JsonIgnore
