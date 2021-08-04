@@ -1,7 +1,6 @@
 package com.alpha5.autoaid.model;
 
 
-import com.alpha5.autoaid.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,5 +38,8 @@ public class Staff {
 
     @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "staff", cascade = CascadeType.ALL)
     private Set<ServiceEntry> serviceEntries;
+
+    @OneToMany(targetEntity = Repair.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    private Set<Repair> repairs;
 
 }
