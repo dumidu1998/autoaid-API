@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.AddSectionRequest;
 import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.AdminListRespond;
@@ -8,6 +9,7 @@ import com.alpha5.autoaid.dto.response.*;
 import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +55,17 @@ public class AdminController {
     }
 
     //------------XXX-----Get staff Mem Info when click the manage btn in satff list------XXX-------------//
+
+    @PostMapping("/addSection")
+    public ResponseEntity addSection(@RequestBody AddSectionRequest addSectionRequest){
+        String responseMsg;
+        if(adminService.checkIfSectionExists(addSectionRequest.getSectionName())){
+            return ResponseEntity.badRequest().body("Section Already Exists");
+        }else {
+            adminService.addSection(addSectionRequest);
+            return ResponseEntity.ok().body("Section Added Successfully");
+        }
+    }
 
 
 
