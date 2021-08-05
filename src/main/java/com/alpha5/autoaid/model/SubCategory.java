@@ -31,4 +31,43 @@ public class SubCategory {
     @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "subCategory", cascade = CascadeType.ALL)
     private Set<ServiceEntry> serviceEntries;
 
+    public long getSubCatId() {
+        return subCatId;
+    }
+
+    public void setSubCatId(long subCatId) {
+        this.subCatId = subCatId;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public String getSubCatName() {
+        return subCatName;
+    }
+
+    public void setSubCatName(String subCatName) {
+        this.subCatName = subCatName;
+    }
+
+    public Section getSection() {
+        return section;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
+    }
+
+    public Set<ServiceEntry> getServiceEntries() {
+        return serviceEntries;
+    }
+
+    public void setServiceEntries(Set<ServiceEntry> serviceEntries) {
+        this.serviceEntries = serviceEntries;
+    }
 }

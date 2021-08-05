@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.AddRepairSubCatRequest;
 import com.alpha5.autoaid.dto.request.AddSectionRequest;
 import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
@@ -58,7 +59,6 @@ public class AdminController {
 
     @PostMapping("/addSection")
     public ResponseEntity addSection(@RequestBody AddSectionRequest addSectionRequest){
-        String responseMsg;
         if(adminService.checkIfSectionExists(addSectionRequest.getSectionName())){
             return ResponseEntity.badRequest().body("Section Already Exists");
         }else {
@@ -67,7 +67,17 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/repair/addSubCategory")
+    public ResponseEntity addRepairSubCat(@RequestBody AddRepairSubCatRequest addRepairSubCatRequest){
 
+        if(adminService.checkIfRepairSubCatExists(addRepairSubCatRequest)){
+            return ResponseEntity.badRequest().body("Sub category Exists");
+        }else{
+            adminService.addRepairSubCategory(addRepairSubCatRequest);
+            return ResponseEntity.ok().body("Entered and Saved ");
+        }
+
+    }
 
 }
 
