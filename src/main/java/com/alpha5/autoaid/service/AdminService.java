@@ -1,14 +1,17 @@
 package com.alpha5.autoaid.service;
 
 
+import com.alpha5.autoaid.dto.request.AddSectionRequest;
 import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.AdminListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
+import com.alpha5.autoaid.model.Section;
 import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.model.UserData;
 import com.alpha5.autoaid.dto.response.*;
 import com.alpha5.autoaid.enums.UserType;
+import com.alpha5.autoaid.repository.SectionRepository;
 import com.alpha5.autoaid.repository.StaffRepository;
 import com.alpha5.autoaid.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,9 @@ public class AdminService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private SectionRepository sectionRepository;
     //-----------_______________________--------------------ADD to TO Real ------------____________________-----//
 
     //------------------Staff Add------------------//
@@ -113,6 +119,15 @@ public class AdminService {
 
 //-----------XXXX--------get nxt staff Mem Info -------XXX-----------//
 
-
+    public void addSection(AddSectionRequest addSectionRequest){
+            Section newSec= new Section();
+            newSec.setSectionName(addSectionRequest.getSectionName());
+            sectionRepository.save(newSec);
+    }
+    public boolean checkIfSectionExists(String sectionName){
+        if(sectionRepository.findBySectionName(sectionName) != null){
+            return true;
+        }else return false;
+    }
 }
 
