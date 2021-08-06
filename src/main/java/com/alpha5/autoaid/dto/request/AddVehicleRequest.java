@@ -9,7 +9,7 @@ public class AddVehicleRequest {
     private String chassisNo;
     private String make;
     private String model;
-    private long customerId;
+    private String contactNo;
 
     public String getVin() {
         return vin;
@@ -59,11 +59,11 @@ public class AddVehicleRequest {
         this.model = model;
     }
 
-    public long getCustomerId() {
-        return customerId;
+    public String getContactNo() {
+        return contactNo;
     }
 
-    public void setCustomerId(long customerId) {
-        this.customerId = customerId;
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
     }
 }
