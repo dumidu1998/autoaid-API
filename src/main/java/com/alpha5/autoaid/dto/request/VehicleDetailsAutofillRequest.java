@@ -1,13 +1,15 @@
 package com.alpha5.autoaid.dto.request;
 
 public class VehicleDetailsAutofillRequest {
-    private String vehicleNumber;
+    //use vin since if every vehicle has VIN and every vehicle not registered
 
-    public String getVehicleNumber() {
-        return vehicleNumber;
+    private String vin;
+
+    public String getVin() {
+        return vin;
     }
 
-    public void setVehicleNumber(String vehicleNumber) {
-        this.vehicleNumber = vehicleNumber;
+    public void setVin(String vin) {
+        this.vin = vin;
     }
 }

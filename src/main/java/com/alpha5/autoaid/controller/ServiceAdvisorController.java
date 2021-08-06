@@ -21,6 +21,7 @@ public class ServiceAdvisorController {
     @Autowired
     ServiceAdvisorService serviceAdvisorService;
 
+    // auto fill vehicle details on the ve
     @PostMapping("/get vehicle")
     public VehicleDetailsAutofillResponse getVehicleDetails(@RequestBody VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest) {
         VehicleDetailsAutofillResponse response = serviceAdvisorService.autoFillVehicleDetails(vehicleDetailsAutofillRequest);

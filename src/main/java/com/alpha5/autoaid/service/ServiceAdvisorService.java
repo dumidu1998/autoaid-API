@@ -1,7 +1,6 @@
 package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.AddVehicleRequest;
-import com.alpha5.autoaid.dto.request.GetCustomerDetailsRequest;
 import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
@@ -14,8 +13,6 @@ import com.alpha5.autoaid.repository.UserRepository;
 import com.alpha5.autoaid.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ServiceAdvisorService {
@@ -52,7 +49,7 @@ public class ServiceAdvisorService {
 
     public VehicleDetailsAutofillResponse autoFillVehicleDetails(VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest) {
         //check whether vehicle exists
-        Vehicle vehicle = vehicleRepository.findByVehicleNumber(vehicleDetailsAutofillRequest.getVehicleNumber());
+        Vehicle vehicle = vehicleRepository.findByVin(vehicleDetailsAutofillRequest.getVin());
         if (vehicle != null) {
             VehicleDetailsAutofillResponse response = new VehicleDetailsAutofillResponse();
             response.setVehiceId(vehicle.getVehicleId());
