@@ -28,11 +28,16 @@ public class ServiceAdvisorController {
 
     }
 
-    @PostMapping("/register vehicle")
-    public String addNewVehicle(@RequestBody AddVehicleRequest addVehicleRequest) {
-        String response = serviceAdvisorService.registerNewVehicle(addVehicleRequest);
-
-        return response;
+    // add new vehicle which not exists
+    // Customer contact number should pass
+    @PostMapping("/vehicle/add new")
+    public ResponseEntity addNewVehicle(@RequestBody AddVehicleRequest addVehicleRequest) {
+        if(serviceAdvisorService.checkIfVehicleExists(addVehicleRequest.getVin())){
+           return ResponseEntity.badRequest().body("Vehicle Already Exists");
+        }else {
+            serviceAdvisorService.registerNewVehicle(addVehicleRequest);
+            return ResponseEntity.ok().body("vehicle Added Succesfully");
+        }
     }
     @PostMapping("/getCustomer")
     public ResponseEntity getCustomerDetails(@RequestBody GetCustomerDetailsRequest getCustomerDetailsRequest){
