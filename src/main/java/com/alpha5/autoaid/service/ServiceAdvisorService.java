@@ -1,11 +1,15 @@
 package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.AddVehicleRequest;
+import com.alpha5.autoaid.dto.request.GetCustomerDetailsRequest;
 import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
+import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
+import com.alpha5.autoaid.model.UserData;
 import com.alpha5.autoaid.model.Vehicle;
 import com.alpha5.autoaid.repository.CustomerRepository;
 import com.alpha5.autoaid.repository.StaffRepository;
+import com.alpha5.autoaid.repository.UserRepository;
 import com.alpha5.autoaid.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,22 @@ public class ServiceAdvisorService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public GetCustomerDetailsRespond autoFillCustomerDetails(String contact){
+        UserData user= userRepository.findByContactNo(contact);
+        GetCustomerDetailsRespond respond=new GetCustomerDetailsRespond();
+        if (user!=null) {
+            respond.setFirstName(user.getCustomer().getFirstName());
+            respond.setLastName(user.getCustomer().getLastName());
+            respond.setAddress(user.getAddress());
+            respond.setCity(user.getCity());
+            return respond ;
+        }
+        return null;
+    }
 
     public VehicleDetailsAutofillResponse autoFillVehicleDetails(VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest) {
         //check whether vehicle exists
