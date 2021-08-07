@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.AddSketchyCustomerRequest;
 import com.alpha5.autoaid.dto.request.AddVehicleRequest;
 import com.alpha5.autoaid.dto.request.GetCustomerDetailsRequest;
 import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
@@ -46,5 +47,13 @@ public class ServiceAdvisorController {
         if(respond!=null){
             return ResponseEntity.ok().body(respond);
         }else return ResponseEntity.badRequest().body("User is Not There. Add New");
+    }
+
+    //add new aketchy account for customer
+    // it doesnt check for existing contact since it was filtered early. So, add non existing contact
+    @PostMapping("/customer/add new")
+    public ResponseEntity addNewCustomerSketchy(@RequestBody AddSketchyCustomerRequest addSketchyCustomerRequest){
+        serviceAdvisorService.addNewCustomerSketchy(addSketchyCustomerRequest);
+        return ResponseEntity.badRequest().body("customer added Successfully");
     }
 }
