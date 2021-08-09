@@ -25,7 +25,7 @@ public class AdminController {
 
     //-----------_______________________--------------------ADD to TO Real ------------____________________-----//
     //------------------Staff Add------------------//
-    @PostMapping("addstaff")
+    @PostMapping("/addstaff")
     public AddStaffRespond insertStaffDetails(@RequestBody AddStaffRequest addStaffRequest){
         return adminService.insertStaff(addStaffRequest);
     }

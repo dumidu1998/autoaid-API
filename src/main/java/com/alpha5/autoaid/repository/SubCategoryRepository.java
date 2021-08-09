@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> {
     SubCategory findBySubCatNameAndSection(String subCatName, Section section);
+    SubCategory findBySubCatId(long subCatId);
     SubCategory findBySubCatName(String subName);
     SubCategory findBySection(Section section);
 }

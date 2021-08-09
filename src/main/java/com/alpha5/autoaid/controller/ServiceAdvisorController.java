@@ -1,9 +1,6 @@
 package com.alpha5.autoaid.controller;
 
-import com.alpha5.autoaid.dto.request.AddSketchyCustomerRequest;
-import com.alpha5.autoaid.dto.request.AddVehicleRequest;
-import com.alpha5.autoaid.dto.request.GetCustomerDetailsRequest;
-import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
+import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.model.UserData;
@@ -54,6 +51,18 @@ public class ServiceAdvisorController {
     @PostMapping("/customer/add new")
     public ResponseEntity addNewCustomerSketchy(@RequestBody AddSketchyCustomerRequest addSketchyCustomerRequest){
         serviceAdvisorService.addNewCustomerSketchy(addSketchyCustomerRequest);
-        return ResponseEntity.badRequest().body("customer added Successfully");
+        return ResponseEntity.ok().body("customer added Successfully");
+    }
+
+    @PostMapping("/add repair")
+    public ResponseEntity addNewRepair(@RequestBody AddNewRepairsRequest addNewRepairsRequest){
+        serviceAdvisorService.addNewRepair(addNewRepairsRequest);
+        return ResponseEntity.ok().body("Repair Added Successfully");
+    }
+
+    @PostMapping("/add service entries")
+    public ResponseEntity addServiceEntries(@RequestBody AddNewServiceEntryRequest[] addNewServiceEntryRequest){
+        serviceAdvisorService.addNewServiceEntry(addNewServiceEntryRequest);
+        return ResponseEntity.ok().body("Added to the DB");
     }
 }

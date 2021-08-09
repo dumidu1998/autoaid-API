@@ -8,5 +8,5 @@ public enum UserType {
     TECHNICIAN,
     STOCK_KEEPER,
     CUSTOMER,
-    SketchyCustomer
+    SKETCHY_CUSTOMER
 }

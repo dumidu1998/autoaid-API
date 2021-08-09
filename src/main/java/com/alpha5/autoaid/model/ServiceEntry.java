@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.model;
 
+import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,8 +28,8 @@ public class ServiceEntry {
     @Column
     private Date completedTime;
 
-    @Column
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ServiceEntryStatus serviceEntryStatus;
 
     @ManyToOne
     @JoinColumn(name = "repair_id")
