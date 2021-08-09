@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.model;
 
+import com.alpha5.autoaid.enums.PaymentType;
 import com.alpha5.autoaid.enums.RepairStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,8 @@ public class Repair {
     private Date repairCompletedDate;
 
     @Column(nullable = false)
-    private String paymentType; //enum or String??
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
 
     @Enumerated(EnumType.STRING)
     private RepairStatus status;

@@ -1,23 +1,22 @@
 package com.alpha5.autoaid.service;
 
-import com.alpha5.autoaid.dto.request.AddSketchyCustomerRequest;
-import com.alpha5.autoaid.dto.request.AddVehicleRequest;
-import com.alpha5.autoaid.dto.request.VehicleDetailsAutofillRequest;
+import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
+import com.alpha5.autoaid.enums.RepairStatus;
+import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.UserType;
-import com.alpha5.autoaid.model.Customer;
-import com.alpha5.autoaid.model.UserData;
-import com.alpha5.autoaid.model.Vehicle;
-import com.alpha5.autoaid.repository.CustomerRepository;
-import com.alpha5.autoaid.repository.StaffRepository;
-import com.alpha5.autoaid.repository.UserRepository;
-import com.alpha5.autoaid.repository.VehicleRepository;
+import com.alpha5.autoaid.model.*;
+import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 @Service
 public class ServiceAdvisorService {
@@ -35,6 +34,15 @@ public class ServiceAdvisorService {
 
     @Autowired
     private PasswordEncoder bcryptPasswordEncoder;
+
+    @Autowired
+    private RepairRepository repairRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
+
+    @Autowired
+    private ServiceEntryRepository serviceEntryRepository;
 
     public boolean checkIfVehicleExists(String vin){
         if(vehicleRepository.findByVin(vin)!=null){
@@ -108,7 +116,7 @@ public class ServiceAdvisorService {
         userData.setEmail(email);
         userData.setAddress(addSketchyCustomerRequest.getAddress());
         userData.setCity(addSketchyCustomerRequest.getCity());
-        userData.setUserType(UserType.SketchyCustomer);
+        userData.setUserType(UserType.SKETCHY_CUSTOMER);
 
         //set Customer Object
         customer.setFirstName(addSketchyCustomerRequest.getFirstName());
@@ -137,6 +145,38 @@ public class ServiceAdvisorService {
         }
         String randomKey = stringBuilder.toString();
         return randomKey;
+    }
+    //Add new Repair
+    public void addNewRepair(AddNewRepairsRequest addNewRepairsRequest){
+        Vehicle vehicle=vehicleRepository.findByVin(addNewRepairsRequest.getVin());
+        Staff serviceAdvisor=staffRepository.findByUserData(userRepository.findByUserName(addNewRepairsRequest.getUserName()));
+
+        Repair newRepair= new Repair();
+        newRepair.setPaymentType(addNewRepairsRequest.getPayment_type());
+        newRepair.setVehicle(vehicle);
+        newRepair.setStaff(serviceAdvisor);
+        newRepair.setStatus(RepairStatus.ONGOING);
+
+        repairRepository.save(newRepair);
+
+    }
+    // Add new service entry
+    public void addNewServiceEntry(AddNewServiceEntryRequest[] addNewServiceEntryRequests){
+        String out="";
+        for (AddNewServiceEntryRequest addNewServiceEntryRequest:addNewServiceEntryRequests) {
+            SubCategory subCategory = subCategoryRepository.findBySubCatId(addNewServiceEntryRequest.getSub_cat_id());
+            Repair repair = repairRepository.findByRepairId(addNewServiceEntryRequest.getRepair_id());
+            Staff staff = staffRepository.findByStaffId(addNewServiceEntryRequest.getStaff_id());
+
+            ServiceEntry serviceEntry = new ServiceEntry();
+            serviceEntry.setStaff(staff);
+            serviceEntry.setDescription(addNewServiceEntryRequest.getDescription());
+            serviceEntry.setRepair(repair);
+            serviceEntry.setSubCategory(subCategory);
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ADDED);
+
+            serviceEntryRepository.save(serviceEntry);
+        }
     }
 
 }
