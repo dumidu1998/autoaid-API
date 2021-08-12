@@ -17,8 +17,6 @@ public class GetStaffMemInfoRespond {
     private String password;
     private String address;
     private String city;
-//    private String userType;
-    //    private UserData userData;
 
 
     public String getFirstName() {

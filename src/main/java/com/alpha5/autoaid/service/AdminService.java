@@ -3,26 +3,19 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.AddRepairSubCatRequest;
 import com.alpha5.autoaid.dto.request.AddSectionRequest;
+import com.alpha5.autoaid.dto.request.AddSlotRequest;
 import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
-import com.alpha5.autoaid.dto.response.AdminListRespond;
+import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
-import com.alpha5.autoaid.model.Section;
-import com.alpha5.autoaid.model.Staff;
-import com.alpha5.autoaid.model.SubCategory;
-import com.alpha5.autoaid.model.UserData;
-import com.alpha5.autoaid.dto.response.*;
+import com.alpha5.autoaid.enums.SlotStatus;
+import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.enums.UserType;
-import com.alpha5.autoaid.repository.SectionRepository;
-import com.alpha5.autoaid.repository.StaffRepository;
-import com.alpha5.autoaid.repository.SubCategoryRepository;
-import com.alpha5.autoaid.repository.UserRepository;
+import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import javax.swing.text.SimpleAttributeSet;
-import java.awt.font.TextHitInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +36,9 @@ public class AdminService {
     @Autowired
     private SubCategoryRepository subCategoryRepository;
 
+    @Autowired
+    private SlotRepository slotRepository;
+
     public boolean checkIfSectionExists(String sectionName){
         if(sectionRepository.findBySectionName(sectionName) != null){
             return true;
@@ -51,6 +47,13 @@ public class AdminService {
     public boolean checkIfRepairSubCatExists(AddRepairSubCatRequest addRepairSubCatRequest){
         Section sectionRetrieved=sectionRepository.findBySectionName(addRepairSubCatRequest.getSectionName());
         if (subCategoryRepository.findBySubCatNameAndSection(addRepairSubCatRequest.getSubCatName(),sectionRetrieved)!=null){
+            return true;
+        }else return false;
+    }
+
+    public boolean checkIfSlotExists(String slotName){
+        Slot slot=slotRepository.findBySlotName(slotName);
+        if(slot!=null){
             return true;
         }else return false;
     }
@@ -92,28 +95,25 @@ public class AdminService {
 
 
     //------------------Staff Handling NavBar Data------------------//
-    public List<AdminListRespond> getAdmins(){
-        List<UserData> admins= userRepository.findAllByUserType(UserType.ADMIN);
-        List<AdminListRespond> outlist=new ArrayList<AdminListRespond>();
+    public List<StaffListRespond> getStaffList(UserType userType){
+        List<UserData> admins= userRepository.findAllByUserType(userType);
+        List<StaffListRespond> outlist=new ArrayList<StaffListRespond>();
         for (UserData entity: admins){
             Staff staffMember= staffRepository.findByUserData(entity);
-            AdminListRespond adminList=new AdminListRespond();
-            adminList.setFirstName(staffMember.getFirstName());
-            adminList.setLastname(staffMember.getLastName());
-            adminList.setId(staffMember.getStaffId());
-            outlist.add(adminList);
+            StaffListRespond staffList=new StaffListRespond();
+            staffList.setFirstName(staffMember.getFirstName());
+            staffList.setLastname(staffMember.getLastName());
+            staffList.setId(staffMember.getStaffId());
+            outlist.add(staffList);
         }
         return outlist;
     }
-
-    //------------XX------Staff Handling NavBar Data------XX------------//
 
     //-------------------get nxt staff Id to the form ------------------//
     public long getNewStaffId(){
         long getnewid=staffRepository.getMaxStaffId();
         return getnewid+1;
     }
-    //---------XXX----------get nxt staff Id to the form ---------XX---------//
 
     //-------------------get nxt staff Mem Info ------------------//
     public GetStaffMemInfoRespond getStaffMemInfo(long sid){
@@ -153,6 +153,16 @@ public class AdminService {
         newSubCategory.setTime(addRepairSubCatRequest.getTime());
 
         subCategoryRepository.save(newSubCategory);
+    }
+
+    public void addSlot(AddSlotRequest addSlotRequest){
+        Section section=sectionRepository.findBySectionId(addSlotRequest.getSectionId());
+        Slot slot=new Slot();
+        slot.setSlotName(addSlotRequest.getSlotName());
+        slot.setSection(section);
+        slot.setStatus(SlotStatus.AVAILABLE);
+
+        slotRepository.save(slot);
     }
 }
 
