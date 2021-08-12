@@ -64,12 +64,6 @@ public class AuthController {
         return ResponseEntity.badRequest().body(responseMsg);
     }
 
-//    @PostMapping("/staff")
-//    public StaffLogged staffLogin(@RequestBody StaffLoginRequest loginStaff){
-//        StaffLogged response=authService.staffLogin(loginStaff);
-//        return response;
-//    }
-
     @PostMapping("/gettoken")
     public String generateToken(@RequestBody CustomerSignInRequest signInRequest) throws Exception{
         try {
