@@ -2,16 +2,15 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.AddRepairSubCatRequest;
 import com.alpha5.autoaid.dto.request.AddSectionRequest;
+import com.alpha5.autoaid.dto.request.AddSlotRequest;
 import com.alpha5.autoaid.dto.request.AddStaffRequest;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
-import com.alpha5.autoaid.dto.response.AdminListRespond;
+import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
-import com.alpha5.autoaid.dto.response.*;
-import com.alpha5.autoaid.model.Staff;
+import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,9 +32,10 @@ public class AdminController {
 
 
     //------------------Staff Handling NavBar Data------------------//
-    @GetMapping("getadmins")
-    public List <AdminListRespond> getAdmins(){
-        return adminService.getAdmins();
+    @GetMapping("/getstaff/{userType}")
+    public List <StaffListRespond> getAdmins(@PathVariable UserType userType){
+
+        return adminService.getStaffList(userType);
     }
 
     //------------XXX------Staff Handling NavBar Data------XXX-------------//
@@ -76,7 +76,16 @@ public class AdminController {
             adminService.addRepairSubCategory(addRepairSubCatRequest);
             return ResponseEntity.ok().body("Entered and Saved ");
         }
+    }
 
+    @PostMapping("/add slot")
+    public ResponseEntity addSlot(@RequestBody AddSlotRequest addSlotRequest){
+        if(adminService.checkIfSlotExists(addSlotRequest.getSlotName())){
+            return ResponseEntity.badRequest().body("Slot Exists");
+        }else {
+            adminService.addSlot(addSlotRequest);
+            return ResponseEntity.ok().body("Slot Added");
+        }
     }
 
 }

@@ -1,8 +1,9 @@
 package com.alpha5.autoaid.dto.response;
 
-public class AdminListRespond {
+public class StaffListRespond {
     private String firstName;
     private String lastname;
+    private  long id;
 
     public long getId() {
         return id;
@@ -12,7 +13,7 @@ public class AdminListRespond {
         this.id = id;
     }
 
-    private  long id;
+
 
     public String getFirstName() {
         return firstName;

@@ -65,4 +65,6 @@ public class ServiceAdvisorController {
         serviceAdvisorService.addNewServiceEntry(addNewServiceEntryRequest);
         return ResponseEntity.ok().body("Added to the DB");
     }
+
+
 }
