@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.model;
 
+import com.alpha5.autoaid.enums.UserStaus;
 import com.alpha5.autoaid.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +38,9 @@ public class UserData {
 
     @Enumerated(EnumType.STRING)
     private UserType userType;
+
+    @Enumerated(EnumType.STRING)
+    private UserStaus userStaus;
 
     @OneToOne(targetEntity = Customer.class, mappedBy = "userData", cascade = CascadeType.ALL)
     private Customer customer;
@@ -122,5 +126,13 @@ public class UserData {
 
     public void setUserType(UserType userType) {
         this.userType = userType;
+    }
+
+    public UserStaus getUserStaus() {
+        return userStaus;
+    }
+
+    public void setUserStaus(UserStaus userStaus) {
+        this.userStaus = userStaus;
     }
 }

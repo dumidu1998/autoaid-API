@@ -32,10 +32,27 @@ public class AdminController {
 
 
     //------------------Staff Handling NavBar Data------------------//
-    @GetMapping("/getstaff/{userType}")
-    public List <StaffListRespond> getAdmins(@PathVariable UserType userType){
+    @GetMapping("/getstaff/{user}")
+    public ResponseEntity getAdmins(@PathVariable int user){
+        UserType userType=null;
+        switch (user){
+            case 1:userType=UserType.ADMIN;
+                break;
+            case 2:userType=UserType.SERVICE_ADVISOR;
+                break;
+            case 3:userType=UserType.LEAD_TECHNICIAN;
+                break;
+            case 4:userType=UserType.CASHIER;
+                break;
+            case 5:userType=UserType.STOCK_KEEPER;
+                break;
+            case 6:userType=UserType.TECHNICIAN;
+                break;
+            default:
+                ResponseEntity.badRequest().body("User Type Not Identified");
+        }
 
-        return adminService.getStaffList(userType);
+        return ResponseEntity.ok().body( adminService.getStaffList(userType));
     }
 
     //------------XXX------Staff Handling NavBar Data------XXX-------------//
