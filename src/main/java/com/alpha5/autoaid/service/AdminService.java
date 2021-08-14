@@ -9,6 +9,7 @@ import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
 import com.alpha5.autoaid.enums.SlotStatus;
+import com.alpha5.autoaid.enums.UserStaus;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.repository.*;
@@ -73,6 +74,7 @@ public class AdminService {
         userData.setEmail(addStaffRequest.getEmail());
         userData.setUserName(addStaffRequest.getUserName());
         userData.setUserType(addStaffRequest.getUserType());
+        userData.setUserStaus(UserStaus.ACTIVATED);
         //assign values ti staff
 
         UserData newuserdata = userRepository.save(userData);
@@ -126,8 +128,9 @@ public class AdminService {
         response.setAddress(user_data.getAddress());
         response.setCity(user_data.getCity());
         response.setEmail(user_data.getEmail());
-        response.setPassword(user_data.getPassword());
+//        response.setPassword(user_data.getPassword());
         response.setUserType(user_data.getUserType());
+        response.setUserStaus(user_data.getUserStaus());
 
         response.setContactNum(user_data.getContactNo());
         response.setUserName(user_data.getUserName());

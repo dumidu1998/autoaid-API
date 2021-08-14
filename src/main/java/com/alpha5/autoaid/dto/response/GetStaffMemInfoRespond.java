@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.dto.response;
 
+import com.alpha5.autoaid.enums.UserStaus;
 import com.alpha5.autoaid.enums.UserType;
 
 import javax.persistence.EnumType;
@@ -14,9 +15,10 @@ public class GetStaffMemInfoRespond {
     private String userName;
     private String email;
     private String contactNum;
-    private String password;
+//    private String password;
     private String address;
     private String city;
+    private UserStaus  userStaus;
 
 
     public String getFirstName() {
@@ -59,13 +61,13 @@ public class GetStaffMemInfoRespond {
         this.contactNum = contactNum;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
     public String getAddress() {
         return address;
@@ -89,5 +91,13 @@ public class GetStaffMemInfoRespond {
 
     public void setUserType(UserType userType) {
         this.userType = userType;
+    }
+
+    public UserStaus getUserStaus() {
+        return userStaus;
+    }
+
+    public void setUserStaus(UserStaus userStaus) {
+        this.userStaus = userStaus;
     }
 }

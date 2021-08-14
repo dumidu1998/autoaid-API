@@ -5,6 +5,7 @@ import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
+import com.alpha5.autoaid.enums.UserStaus;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
@@ -117,6 +118,7 @@ public class ServiceAdvisorService {
         userData.setAddress(addSketchyCustomerRequest.getAddress());
         userData.setCity(addSketchyCustomerRequest.getCity());
         userData.setUserType(UserType.SKETCHY_CUSTOMER);
+        userData.setUserStaus(UserStaus.ACTIVATED);
 
         //set Customer Object
         customer.setFirstName(addSketchyCustomerRequest.getFirstName());
