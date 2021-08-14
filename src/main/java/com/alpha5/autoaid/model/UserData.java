@@ -1,13 +1,12 @@
 package com.alpha5.autoaid.model;
 
-import com.alpha5.autoaid.enums.UserStaus;
+import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -40,7 +39,7 @@ public class UserData {
     private UserType userType;
 
     @Enumerated(EnumType.STRING)
-    private UserStaus userStaus;
+    private UserStatus userStatus;
 
     @OneToOne(targetEntity = Customer.class, mappedBy = "userData", cascade = CascadeType.ALL)
     private Customer customer;
@@ -128,11 +127,11 @@ public class UserData {
         this.userType = userType;
     }
 
-    public UserStaus getUserStaus() {
-        return userStaus;
+    public UserStatus getUserStatus() {
+        return userStatus;
     }
 
-    public void setUserStaus(UserStaus userStaus) {
-        this.userStaus = userStaus;
+    public void setUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
 }

@@ -10,7 +10,6 @@ public class AddStaffRequest {
     private String userName;
     private String email;
     private String contactNum;
-    private String password;
     private String address;
     private String  city;
     private String  firstName;
@@ -41,14 +40,6 @@ public class AddStaffRequest {
 
     public void setContactNum(String contactNum) {
         this.contactNum = contactNum;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getAddress() {

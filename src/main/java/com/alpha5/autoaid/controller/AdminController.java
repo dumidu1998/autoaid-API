@@ -105,5 +105,11 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/update/staff")
+    public ResponseEntity updateStaffDetails(@RequestBody AddSlotRequest addSlotRequest){
+
+        return ResponseEntity.ok().body("Okay");
+    }
+
 }
 
