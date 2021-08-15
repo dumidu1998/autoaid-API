@@ -16,7 +16,7 @@ public class UpdateStaffRequest {
     private String  lastName;
     @Enumerated(EnumType.STRING)
     private UserType userType;
-    private boolean changePassword;
+    private int password[];
 
     public long getStaffId() {
         return staffId;
@@ -90,11 +90,11 @@ public class UpdateStaffRequest {
         this.userType = userType;
     }
 
-    public boolean isChangePassword() {
-        return changePassword;
+    public int isPassword() {
+        return password[0];
     }
 
-    public void setChangePassword(boolean changePassword) {
-        this.changePassword = changePassword;
+    public void setPassword(int password[]) {
+        this.password = password;
     }
 }

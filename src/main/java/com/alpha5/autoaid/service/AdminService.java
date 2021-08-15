@@ -142,6 +142,7 @@ public class AdminService {
     public GetStaffMemInfoRespond getStaffMemInfo(long sid){
         Staff memInfo = staffRepository.findByStaffId(sid);
         GetStaffMemInfoRespond response =new GetStaffMemInfoRespond();
+        response.setStaffId(memInfo.getStaffId());
         response.setFirstName(memInfo.getFirstName());
         response.setLastName(memInfo.getLastName());
 
@@ -149,7 +150,6 @@ public class AdminService {
         response.setAddress(user_data.getAddress());
         response.setCity(user_data.getCity());
         response.setEmail(user_data.getEmail());
-//        response.setPassword(user_data.getPassword());
         response.setUserType(user_data.getUserType());
         response.setUserStatus(user_data.getUserStatus());
 
@@ -198,10 +198,11 @@ public class AdminService {
         userData.setUserName(updateStaffRequest.getUserName());
         userData.setAddress(updateStaffRequest.getAddress());
         userData.setCity(updateStaffRequest.getCity());
-        if(updateStaffRequest.isChangePassword()){
+        if(updateStaffRequest.isPassword()==1){
             userData.setPassword(passwordEncoder.encode("Staff123"));
         }
         userRepository.save(userData);
+        System.out.println(updateStaffRequest.isPassword());
 
         // add data to staff member
         staffMember.setFirstName(updateStaffRequest.getFirstName());

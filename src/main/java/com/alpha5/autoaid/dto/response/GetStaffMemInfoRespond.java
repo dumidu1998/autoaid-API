@@ -7,6 +7,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 public class GetStaffMemInfoRespond {
+    private long staffId;
     private String firstName;
     private String lastName;
     @Enumerated(EnumType.STRING)
@@ -20,6 +21,13 @@ public class GetStaffMemInfoRespond {
     private String city;
     private UserStatus userStatus;
 
+    public long getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(long staffId) {
+        this.staffId = staffId;
+    }
 
     public String getFirstName() {
         return firstName;

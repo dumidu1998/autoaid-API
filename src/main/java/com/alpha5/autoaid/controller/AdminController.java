@@ -120,7 +120,8 @@ public class AdminController {
             response= "Change Contact Number";
         }else {
             adminService.updateStaff(updateStaffRequest);
-            return ResponseEntity.ok().body("Staff Member Updated");
+            return ResponseEntity.ok().body("Staff Updated");
+
         }
         return ResponseEntity.ok().body(response);
     }
