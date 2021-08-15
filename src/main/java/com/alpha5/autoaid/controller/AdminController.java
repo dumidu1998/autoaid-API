@@ -1,9 +1,6 @@
 package com.alpha5.autoaid.controller;
 
-import com.alpha5.autoaid.dto.request.AddRepairSubCatRequest;
-import com.alpha5.autoaid.dto.request.AddSectionRequest;
-import com.alpha5.autoaid.dto.request.AddSlotRequest;
-import com.alpha5.autoaid.dto.request.AddStaffRequest;
+import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
@@ -26,6 +23,10 @@ public class AdminController {
     //------------------Staff Add------------------//
     @PostMapping("/addstaff")
     public AddStaffRespond insertStaffDetails(@RequestBody AddStaffRequest addStaffRequest){
+        //TODO
+        //check whether username exists
+        //check whether email exists
+        //check whether contact exists
         return adminService.insertStaff(addStaffRequest);
     }
     //-------------XXX-----Staff Add-----XX-------------//
@@ -106,9 +107,22 @@ public class AdminController {
     }
 
     @PostMapping("/update/staff")
-    public ResponseEntity updateStaffDetails(@RequestBody AddSlotRequest addSlotRequest){
-
-        return ResponseEntity.ok().body("Okay");
+    public ResponseEntity updateStaffDetails(@RequestBody UpdateStaffRequest updateStaffRequest){
+        String response;
+        //check whether staff member exists
+        if(adminService.checkStaffMemberExists(updateStaffRequest.getStaffId())) {
+            response = "Staff Member Not exists";
+        }else if(adminService.checkUserNameExistsInOtherUsers(updateStaffRequest.getUserName(),updateStaffRequest.getStaffId())){
+            response= "Username is Already taken";
+        }else if(adminService.checkEmailExistsInOtherUsers(updateStaffRequest.getEmail(),updateStaffRequest.getStaffId())){
+            response= "Email is Already Exists";
+        }else if(adminService.checkContactExistsInOtherUsers(updateStaffRequest.getContactNum(),updateStaffRequest.getStaffId())){
+            response= "Change Contact Number";
+        }else {
+            adminService.updateStaff(updateStaffRequest);
+            return ResponseEntity.ok().body("Staff Member Updated");
+        }
+        return ResponseEntity.ok().body(response);
     }
 
 }

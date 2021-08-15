@@ -10,7 +10,9 @@ import java.util.List;
 
 public interface StaffRepository extends JpaRepository<Staff,Long> {
     Staff findByStaffId(long sid);
-    Staff findByFirstName(String name);
+    Staff findByUserData_UserName(String userName);
+    Staff findByUserData_Email(String email);
+    Staff findByUserData_ContactNo(String contact);
     Staff findByUserData(UserData userData);
     @Query(value = "SELECT MAX(staff_id) FROM staff  " , nativeQuery = true)
     long getMaxStaffId();
