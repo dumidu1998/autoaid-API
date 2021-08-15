@@ -22,12 +22,13 @@ public class AdminController {
     //-----------_______________________--------------------ADD to TO Real ------------____________________-----//
     //------------------Staff Add------------------//
     @PostMapping("/addstaff")
-    public AddStaffRespond insertStaffDetails(@RequestBody AddStaffRequest addStaffRequest){
+    public ResponseEntity insertStaffDetails(@RequestBody AddStaffRequest addStaffRequest){
         //TODO
         //check whether username exists
         //check whether email exists
         //check whether contact exists
-        return adminService.insertStaff(addStaffRequest);
+        return ResponseEntity.ok().body(adminService.insertStaff(addStaffRequest));
+
     }
     //-------------XXX-----Staff Add-----XX-------------//
 
@@ -124,6 +125,16 @@ public class AdminController {
 
         }
         return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/staff/activation")
+    public ResponseEntity activateStaffAccount(@RequestBody StaffAccountActivateRequest staffAccountActivateRequest){
+//        System.out.println(staffAccountActivateRequest.getStaffId());
+        if(adminService.checkStaffMemberExists(staffAccountActivateRequest.getStaffId())){
+            return ResponseEntity.badRequest().body("Member Not Exists");
+        }else{
+            return ResponseEntity.ok().body(adminService.accountActivation(staffAccountActivateRequest));
+        }
     }
 
 }

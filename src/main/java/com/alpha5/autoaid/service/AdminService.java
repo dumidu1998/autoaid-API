@@ -37,6 +37,7 @@ public class AdminService {
     @Autowired
     private SlotRepository slotRepository;
 
+    //returns false if member exists
     public boolean checkStaffMemberExists(long staffId){
         if(staffRepository.findByStaffId(staffId)!=null){
             return false;
@@ -202,7 +203,7 @@ public class AdminService {
             userData.setPassword(passwordEncoder.encode("Staff123"));
         }
         userRepository.save(userData);
-        System.out.println(updateStaffRequest.isPassword());
+//        System.out.println(updateStaffRequest.isPassword());
 
         // add data to staff member
         staffMember.setFirstName(updateStaffRequest.getFirstName());
@@ -210,6 +211,23 @@ public class AdminService {
         staffMember.setUserData(userData);
 
         staffRepository.save(staffMember);
+    }
+    //Activate or deactivate staff accounts
+    public String accountActivation(StaffAccountActivateRequest staffAccountActivateRequest){
+        String response;
+        UserData userData=staffRepository.findByStaffId(staffAccountActivateRequest.getStaffId()).getUserData();
+        if(staffAccountActivateRequest.getUserStatus()==UserStatus.ACTIVATED){
+            userData.setUserStatus(UserStatus.DEACTIVATED);
+            response="User Deactivated";
+            userRepository.save(userData);
+        }else if(staffAccountActivateRequest.getUserStatus()==UserStatus.DEACTIVATED){
+            userData.setUserStatus(UserStatus.ACTIVATED);
+            response="User Activated";
+            userRepository.save(userData);
+        }else {
+            response="User Status Unidentified";
+        }
+        return response;
     }
 }
 
