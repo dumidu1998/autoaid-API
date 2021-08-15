@@ -1,6 +1,6 @@
 package com.alpha5.autoaid.enums;
 
-public enum UserStaus {
+public enum UserStatus {
     ACTIVATED,
     DEACTIVATED
 }
