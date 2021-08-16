@@ -1,10 +1,12 @@
 package com.alpha5.autoaid.model;
 
+import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +22,15 @@ public class ServiceEntry {
     @Column(nullable = true)
     private String description;
 
+    @Column
+    private Date assignedTime;
+
+    @Column
+    private Date completedTime;
+
+    @Enumerated(EnumType.STRING)
+    private ServiceEntryStatus serviceEntryStatus;
+
     @ManyToOne
     @JoinColumn(name = "repair_id")
     Repair repair;
@@ -31,5 +42,9 @@ public class ServiceEntry {
     @ManyToOne
     @JoinColumn(name = "sub_cat_id")
     SubCategory subCategory;
+
+    @OneToOne
+    @JoinColumn(name = "slot_id")
+    Slot slot;
 
 }

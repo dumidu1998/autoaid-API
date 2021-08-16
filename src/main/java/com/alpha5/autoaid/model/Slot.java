@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -26,5 +27,9 @@ public class Slot {
     @ManyToOne
     @JoinColumn(name = "section_id")
     Section section;
+
+    @OneToOne(targetEntity = ServiceEntry.class, mappedBy = "slot", cascade = CascadeType.ALL)
+    private ServiceEntry serviceEntries;
+
 
 }

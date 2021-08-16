@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.model;
 
+import com.alpha5.autoaid.enums.PaymentType;
 import com.alpha5.autoaid.enums.RepairStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -22,17 +23,25 @@ public class Repair {
     private long repairId;
 
     @CreationTimestamp
-    private Date date;
+    private Date repairAddedDate;
+
+    @Column
+    private Date repairCompletedDate;
 
     @Column(nullable = false)
-    private String paymentType; //enum or String?? TODO
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
 
     @Enumerated(EnumType.STRING)
     private RepairStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "vehicleId")
+    @JoinColumn(name = "vehicle_id")
     Vehicle vehicle;
+
+    @ManyToOne
+    @JsonIgnore
+    Staff staff;
 
     @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "repair", cascade = CascadeType.ALL)
     @JsonIgnore
