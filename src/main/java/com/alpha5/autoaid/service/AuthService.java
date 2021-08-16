@@ -4,6 +4,7 @@ package com.alpha5.autoaid.service;
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
 import com.alpha5.autoaid.dto.request.CustomerSignUpRequest;
 import com.alpha5.autoaid.dto.response.UserSigned;
+import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.UserData;
@@ -89,6 +90,7 @@ public class AuthService implements UserDetailsService {
         userData.setAddress(customerSignUpRequest.getAddress());
         userData.setCity(customerSignUpRequest.getCity());
         userData.setUserType(UserType.CUSTOMER);
+        userData.setUserStatus(UserStatus.ACTIVATED);
 
 
         //set details to customer object

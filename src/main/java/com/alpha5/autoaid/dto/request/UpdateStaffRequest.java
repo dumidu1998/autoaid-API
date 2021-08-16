@@ -1,12 +1,12 @@
 package com.alpha5.autoaid.dto.request;
 
-
 import com.alpha5.autoaid.enums.UserType;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-public class AddStaffRequest {
+public class UpdateStaffRequest {
+    private long staffId;
     private String userName;
     private String email;
     private String contactNum;
@@ -16,7 +16,15 @@ public class AddStaffRequest {
     private String  lastName;
     @Enumerated(EnumType.STRING)
     private UserType userType;
+    private int password[];
 
+    public long getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(long staffId) {
+        this.staffId = staffId;
+    }
 
     public String getUserName() {
         return userName;
@@ -58,8 +66,6 @@ public class AddStaffRequest {
         this.city = city;
     }
 
-
-
     public String getFirstName() {
         return firstName;
     }
@@ -82,5 +88,13 @@ public class AddStaffRequest {
 
     public void setUserType(UserType userType) {
         this.userType = userType;
+    }
+
+    public int isPassword() {
+        return password[0];
+    }
+
+    public void setPassword(int password[]) {
+        this.password = password;
     }
 }

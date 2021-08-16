@@ -1,14 +1,12 @@
 package com.alpha5.autoaid.service;
 
 
-import com.alpha5.autoaid.dto.request.AddRepairSubCatRequest;
-import com.alpha5.autoaid.dto.request.AddSectionRequest;
-import com.alpha5.autoaid.dto.request.AddSlotRequest;
-import com.alpha5.autoaid.dto.request.AddStaffRequest;
+import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
 import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
 import com.alpha5.autoaid.enums.SlotStatus;
+import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.repository.*;
@@ -39,6 +37,37 @@ public class AdminService {
     @Autowired
     private SlotRepository slotRepository;
 
+    //returns false if member exists
+    public boolean checkStaffMemberExists(long staffId){
+        if(staffRepository.findByStaffId(staffId)!=null){
+            return false;
+        }else return true;
+    }
+
+    public boolean checkUserNameExistsInOtherUsers(String username, long staffId){
+        if (staffRepository.findByUserData_UserName(username)==staffRepository.findByStaffId(staffId)){
+            return false;
+        }else if (userRepository.findByUserName(username)!=null){
+            return true;
+        }else return false;
+    }
+
+    public boolean checkEmailExistsInOtherUsers(String email, long staffId){
+        if (staffRepository.findByUserData_Email(email)==staffRepository.findByStaffId(staffId)){
+            return false;
+        }else if (userRepository.findByEmail(email)!=null){
+            return true;
+        }else return false;
+    }
+
+    public boolean checkContactExistsInOtherUsers(String contact, long staffId){
+        if (staffRepository.findByUserData_ContactNo(contact)==staffRepository.findByStaffId(staffId)){
+            return false;
+        }else if (userRepository.findByContactNo(contact)!=null){
+            return true;
+        }else return false;
+    }
+
     public boolean checkIfSectionExists(String sectionName){
         if(sectionRepository.findBySectionName(sectionName) != null){
             return true;
@@ -58,21 +87,20 @@ public class AdminService {
         }else return false;
     }
 
-    //-----------_______________________--------------------ADD to TO Real ------------____________________-----//
-
     //------------------Staff Add------------------//
     public AddStaffRespond insertStaff(AddStaffRequest addStaffRequest){
     //object 2
         UserData userData = new UserData();
         Staff staff =new Staff();
         //assign values to user data
-        userData.setPassword(passwordEncoder.encode(addStaffRequest.getPassword()));
+        userData.setPassword(passwordEncoder.encode("Staff123"));
         userData.setAddress(addStaffRequest.getAddress());
         userData.setCity(addStaffRequest.getCity());
         userData.setContactNo(addStaffRequest.getContactNum());
         userData.setEmail(addStaffRequest.getEmail());
         userData.setUserName(addStaffRequest.getUserName());
         userData.setUserType(addStaffRequest.getUserType());
+        userData.setUserStatus(UserStatus.ACTIVATED);
         //assign values ti staff
 
         UserData newuserdata = userRepository.save(userData);
@@ -89,10 +117,6 @@ public class AdminService {
 
         return addStaffRespond;
     }
-
-    //------XXX------------Staff Add-----XXX-------------//
-
-
 
     //------------------Staff Handling NavBar Data------------------//
     public List<StaffListRespond> getStaffList(UserType userType){
@@ -119,6 +143,7 @@ public class AdminService {
     public GetStaffMemInfoRespond getStaffMemInfo(long sid){
         Staff memInfo = staffRepository.findByStaffId(sid);
         GetStaffMemInfoRespond response =new GetStaffMemInfoRespond();
+        response.setStaffId(memInfo.getStaffId());
         response.setFirstName(memInfo.getFirstName());
         response.setLastName(memInfo.getLastName());
 
@@ -126,15 +151,13 @@ public class AdminService {
         response.setAddress(user_data.getAddress());
         response.setCity(user_data.getCity());
         response.setEmail(user_data.getEmail());
-        response.setPassword(user_data.getPassword());
         response.setUserType(user_data.getUserType());
+        response.setUserStatus(user_data.getUserStatus());
 
         response.setContactNum(user_data.getContactNo());
         response.setUserName(user_data.getUserName());
         return response;
     }
-
-
 
 //-----------XXXX--------get nxt staff Mem Info -------XXX-----------//
 
@@ -163,6 +186,48 @@ public class AdminService {
         slot.setStatus(SlotStatus.AVAILABLE);
 
         slotRepository.save(slot);
+    }
+
+    public void updateStaff(UpdateStaffRequest updateStaffRequest){
+        Staff staffMember= staffRepository.findByStaffId(updateStaffRequest.getStaffId());
+        UserData userData= staffMember.getUserData();
+
+        // add data to userData
+        userData.setEmail(updateStaffRequest.getEmail());
+        userData.setContactNo(updateStaffRequest.getContactNum());
+        userData.setUserType(updateStaffRequest.getUserType());
+        userData.setUserName(updateStaffRequest.getUserName());
+        userData.setAddress(updateStaffRequest.getAddress());
+        userData.setCity(updateStaffRequest.getCity());
+        if(updateStaffRequest.isPassword()==1){
+            userData.setPassword(passwordEncoder.encode("Staff123"));
+        }
+        userRepository.save(userData);
+//        System.out.println(updateStaffRequest.isPassword());
+
+        // add data to staff member
+        staffMember.setFirstName(updateStaffRequest.getFirstName());
+        staffMember.setLastName(updateStaffRequest.getLastName());
+        staffMember.setUserData(userData);
+
+        staffRepository.save(staffMember);
+    }
+    //Activate or deactivate staff accounts
+    public String accountActivation(StaffAccountActivateRequest staffAccountActivateRequest){
+        String response;
+        UserData userData=staffRepository.findByStaffId(staffAccountActivateRequest.getStaffId()).getUserData();
+        if(staffAccountActivateRequest.getUserStatus()==UserStatus.ACTIVATED){
+            userData.setUserStatus(UserStatus.DEACTIVATED);
+            response="User Deactivated";
+            userRepository.save(userData);
+        }else if(staffAccountActivateRequest.getUserStatus()==UserStatus.DEACTIVATED){
+            userData.setUserStatus(UserStatus.ACTIVATED);
+            response="User Activated";
+            userRepository.save(userData);
+        }else {
+            response="User Status Unidentified";
+        }
+        return response;
     }
 }
 
