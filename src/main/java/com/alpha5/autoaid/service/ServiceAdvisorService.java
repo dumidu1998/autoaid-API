@@ -5,6 +5,7 @@ import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
+import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
@@ -12,11 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Stream;
 
 @Service
 public class ServiceAdvisorService {
@@ -117,6 +114,7 @@ public class ServiceAdvisorService {
         userData.setAddress(addSketchyCustomerRequest.getAddress());
         userData.setCity(addSketchyCustomerRequest.getCity());
         userData.setUserType(UserType.SKETCHY_CUSTOMER);
+        userData.setUserStatus(UserStatus.ACTIVATED);
 
         //set Customer Object
         customer.setFirstName(addSketchyCustomerRequest.getFirstName());
