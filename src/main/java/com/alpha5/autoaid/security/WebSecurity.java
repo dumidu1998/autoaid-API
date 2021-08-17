@@ -73,7 +73,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/user/login").permitAll()
                 .antMatchers("/auth/staff").permitAll()
                 .antMatchers("/customer/**").permitAll()
-                .antMatchers("/admin/**").permitAll()
+//                .antMatchers("/admin/**").permitAll()
+                .antMatchers("/admin/getnextstaffid").permitAll()
 
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
