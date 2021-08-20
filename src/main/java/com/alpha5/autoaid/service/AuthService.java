@@ -119,7 +119,7 @@ public class AuthService implements UserDetailsService {
             throw new RuntimeException("Invalid Password");
         }
         //get jwt token
-        String token = jwtTokenUtil.generateToken(customerSignInRequest.getEmail());
+        String token = jwtTokenUtil.generateToken(user.getEmail());
 
         UserSigned response = new UserSigned();
         response.setId(user.getId());
