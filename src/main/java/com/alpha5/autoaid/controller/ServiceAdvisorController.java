@@ -7,10 +7,7 @@ import com.alpha5.autoaid.model.UserData;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/advisor")
@@ -38,12 +35,12 @@ public class ServiceAdvisorController {
             return ResponseEntity.ok().body("vehicle Added Succesfully");
         }
     }
-    @PostMapping("/getCustomer")
-    public ResponseEntity getCustomerDetails(@RequestBody GetCustomerDetailsRequest getCustomerDetailsRequest){
-        GetCustomerDetailsRespond respond=serviceAdvisorService.autoFillCustomerDetails(getCustomerDetailsRequest.getContactNumber());
+    @GetMapping("/getCustomer/{contactNo}")
+    public ResponseEntity getCustomerDetails(@PathVariable String contactNo){
+        GetCustomerDetailsRespond respond=serviceAdvisorService.autoFillCustomerDetails(contactNo);
         if(respond!=null){
             return ResponseEntity.ok().body(respond);
-        }else return ResponseEntity.badRequest().body("User is Not There. Add New");
+        }else return ResponseEntity.badRequest().body("Add Customer");
     }
 
     //add new aketchy account for customer
