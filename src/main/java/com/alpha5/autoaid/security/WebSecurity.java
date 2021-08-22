@@ -66,7 +66,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     //disable authenticate for below APIs
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors().and().authorizeRequests()
+        http.csrf().disable().cors().disable().authorizeRequests()
                 //Add paths here to remove authentication
                 .antMatchers("/auth/gettoken").permitAll()
                 .antMatchers("/auth/signup").permitAll()
