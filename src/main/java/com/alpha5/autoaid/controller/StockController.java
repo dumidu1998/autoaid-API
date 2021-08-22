@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins ="http://localhost:3000", maxAge = 3600)
 @RestController
-@RequestMapping("/inventry") // this...........................................................
+@RequestMapping("/inventry")
 public class StockController {
 
     @Autowired
@@ -19,6 +19,8 @@ public class StockController {
         InventryStockRespond response = stockService.inventryItemStock(itemName) ;
         return response;
     }
+
+
 
 
 }
