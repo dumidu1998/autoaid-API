@@ -17,10 +17,14 @@ public class ServiceAdvisorController {
     ServiceAdvisorService serviceAdvisorService;
 
     // auto fill vehicle details on the ve
-    @PostMapping("/get vehicle")
-    public VehicleDetailsAutofillResponse getVehicleDetails(@RequestBody VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest) {
-        VehicleDetailsAutofillResponse response = serviceAdvisorService.autoFillVehicleDetails(vehicleDetailsAutofillRequest);
-        return response;
+    @GetMapping("/getvehicle/{vin}")
+    public ResponseEntity getVehicleDetails(@PathVariable String vin) {
+        if(serviceAdvisorService.checkIfVehicleExists(vin)){
+            VehicleDetailsAutofillResponse response = serviceAdvisorService.autoFillVehicleDetails(vin);
+            return ResponseEntity.ok().body(response);
+        }
+
+        return ResponseEntity.badRequest().body("Vehicle Not Exists");
 
     }
 
@@ -40,20 +44,23 @@ public class ServiceAdvisorController {
         GetCustomerDetailsRespond respond=serviceAdvisorService.autoFillCustomerDetails(contactNo);
         if(respond!=null){
             return ResponseEntity.ok().body(respond);
-        }else return ResponseEntity.badRequest().body("Add Customer");
+
+        }
+        return ResponseEntity.badRequest().body("Add Customer");
     }
 
     //add new aketchy account for customer
     // it doesnt check for existing contact since it was filtered early. So, add non existing contact
-    @PostMapping("/customer/add new")
+    @PostMapping("/customer/addNew")
     public ResponseEntity addNewCustomerSketchy(@RequestBody AddSketchyCustomerRequest addSketchyCustomerRequest){
         serviceAdvisorService.addNewCustomerSketchy(addSketchyCustomerRequest);
         return ResponseEntity.ok().body("customer added Successfully");
     }
 
-    @PostMapping("/add repair")
+    @PostMapping("/addRepair")
     public ResponseEntity addNewRepair(@RequestBody AddNewRepairsRequest addNewRepairsRequest){
         serviceAdvisorService.addNewRepair(addNewRepairsRequest);
+
         return ResponseEntity.ok().body("Repair Added Successfully");
     }
 

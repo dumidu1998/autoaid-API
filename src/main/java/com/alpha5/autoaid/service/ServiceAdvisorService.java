@@ -50,6 +50,8 @@ public class ServiceAdvisorService {
 
     public GetCustomerDetailsRespond autoFillCustomerDetails(String contact){
         UserData user= userRepository.findByContactNo(contact);
+        if (user!=null) {
+
         GetCustomerDetailsRespond respond=new GetCustomerDetailsRespond();
         List<Vehicle> vehicles=vehicleRepository.findAllByCustomer_UserData_Email(user.getEmail());
         List<VehicleListResponse> vehicleListResponses =new ArrayList<>();
@@ -62,7 +64,7 @@ public class ServiceAdvisorService {
         }
 
 
-        if (user!=null) {
+
             respond.setFirstName(user.getCustomer().getFirstName());
             respond.setLastName(user.getCustomer().getLastName());
             respond.setAddress(user.getAddress());
@@ -73,16 +75,18 @@ public class ServiceAdvisorService {
         return null;
     }
 
-    public VehicleDetailsAutofillResponse autoFillVehicleDetails(VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest) {
+    public VehicleDetailsAutofillResponse autoFillVehicleDetails(String vin) {
         //check whether vehicle exists
-        Vehicle vehicle = vehicleRepository.findByVin(vehicleDetailsAutofillRequest.getVin());
+        Vehicle vehicle = vehicleRepository.findByVin(vin);
         if (vehicle != null) {
             VehicleDetailsAutofillResponse response = new VehicleDetailsAutofillResponse();
-            response.setVehiceId(vehicle.getVehicleId());
+            response.setVin(vehicle.getVin());
+            response.setVehicleNumber(vehicle.getVehicleNumber());
             response.setChassisNo(vehicle.getChassisNo());
-            response.setEnginNo(vehicle.getEngineNo());
+            response.setEngineNo(vehicle.getEngineNo());
             response.setMake(vehicle.getMake());
             response.setModel(vehicle.getModel());
+            response.setContactNo(vehicle.getCustomer().getUserData().getContactNo());
 
             return response;
         } else throw new RuntimeException("Vehicle not registered. Add details");
