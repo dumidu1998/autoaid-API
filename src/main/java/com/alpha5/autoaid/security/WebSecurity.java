@@ -70,9 +70,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 //Add paths here to remove authentication
                 .antMatchers("/auth/gettoken").permitAll()
                 .antMatchers("/auth/signup").permitAll()
-                .antMatchers("/auth/customer/login").permitAll()
+                .antMatchers("/auth/user/login").permitAll()
                 .antMatchers("/auth/staff").permitAll()
-                .antMatchers("/customer/*").permitAll()
+                .antMatchers("/customer/**").permitAll()
+                .antMatchers("/admin/**").permitAll()
 
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
