@@ -1,18 +1,36 @@
 package com.alpha5.autoaid.dto.response;
 
 public class VehicleDetailsAutofillResponse {
-    private int vehiceId;
+    private String vin;
+    private String vehicleNumber;
     private String chassisNo;
-    private String enginNo;
+    private String engineNo;
     private String model;
     private String make;
+    private String contactNo;
 
-    public int getVehiceId() {
-        return vehiceId;
+    public String getVin() {
+        return vin;
     }
 
-    public void setVehiceId(int vehiceId) {
-        this.vehiceId = vehiceId;
+    public void setVin(String vin) {
+        this.vin = vin;
+    }
+
+    public String getVehicleNumber() {
+        return vehicleNumber;
+    }
+
+    public void setVehicleNumber(String vehicleNumber) {
+        this.vehicleNumber = vehicleNumber;
+    }
+
+    public String getContactNo() {
+        return contactNo;
+    }
+
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
     }
 
     public String getChassisNo() {
@@ -23,12 +41,12 @@ public class VehicleDetailsAutofillResponse {
         this.chassisNo = chassisNo;
     }
 
-    public String getEnginNo() {
-        return enginNo;
+    public String getEngineNo() {
+        return engineNo;
     }
 
-    public void setEnginNo(String enginNo) {
-        this.enginNo = enginNo;
+    public void setEngineNo(String engineNo) {
+        this.engineNo = engineNo;
     }
 
     public String getModel() {
