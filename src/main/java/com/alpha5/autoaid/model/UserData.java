@@ -1,11 +1,12 @@
 package com.alpha5.autoaid.model;
 
+import com.alpha5.autoaid.enums.UserStatus;
+import com.alpha5.autoaid.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -34,8 +35,11 @@ public class UserData {
     @Column(nullable = true)
     private String city;
 
-    @Column
-    private String userType;
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
 
     @OneToOne(targetEntity = Customer.class, mappedBy = "userData", cascade = CascadeType.ALL)
     private Customer customer;
@@ -61,10 +65,6 @@ public class UserData {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
     }
 
     public void setCustomer(Customer customer) {
@@ -95,10 +95,6 @@ public class UserData {
         return password;
     }
 
-    public String getUserType() {
-        return userType;
-    }
-
     public Customer getCustomer() {
         return customer;
     }
@@ -121,5 +117,21 @@ public class UserData {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
+
+    public UserStatus getUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
 }
