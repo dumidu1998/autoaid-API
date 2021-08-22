@@ -23,11 +23,17 @@ public class AdminController {
     //------------------Staff Add------------------//
     @PostMapping("/addstaff")
     public ResponseEntity insertStaffDetails(@RequestBody AddStaffRequest addStaffRequest){
-        //TODO
-        //check whether username exists
-        //check whether email exists
-        //check whether contact exists
-        return ResponseEntity.ok().body(adminService.insertStaff(addStaffRequest));
+        String response;
+        if(adminService.checkUserNameExists(addStaffRequest.getUserName())){
+            response="Username Exists";
+        }else if(adminService.checkEmailExists(addStaffRequest.getEmail())){
+            response="Email Exists";
+        }else if(adminService.checkContactExists(addStaffRequest.getContactNum())){
+            response="Contact Number Exists";
+        }else{
+            return ResponseEntity.ok().body(adminService.insertStaff(addStaffRequest));
+        }
+       return ResponseEntity.badRequest().body(response);
 
     }
     //-------------XXX-----Staff Add-----XX-------------//

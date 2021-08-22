@@ -44,6 +44,22 @@ public class AdminService {
         }else return true;
     }
 
+    public boolean checkUserNameExists(String username){
+        if (userRepository.findByUserName(username)!=null){
+            return true;
+        }else return false;
+    }
+    public boolean checkEmailExists(String email){
+        if (userRepository.findByEmail(email)!=null){
+            return true;
+        }else return false;
+    }
+    public boolean checkContactExists(String contact){
+        if (userRepository.findByContactNo(contact)!=null){
+            return true;
+        }else return false;
+    }
+
     public boolean checkUserNameExistsInOtherUsers(String username, long staffId){
         if (staffRepository.findByUserData_UserName(username)==staffRepository.findByStaffId(staffId)){
             return false;
