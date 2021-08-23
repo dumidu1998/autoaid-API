@@ -75,6 +75,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers("/customer/**").permitAll()
                 .antMatchers("/admin/**").permitAll()
                 .antMatchers("/advisor/**").permitAll()
+                .antMatchers("/inventory/**").permitAll()
 
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
