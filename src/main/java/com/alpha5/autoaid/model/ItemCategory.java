@@ -17,7 +17,7 @@ public class ItemCategory {
     @GeneratedValue
     private long categoryId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String categoryName;
 
     @OneToMany(targetEntity = InventoryItem.class, mappedBy = "category", cascade = CascadeType.ALL)
