@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Data
@@ -21,17 +22,17 @@ public class InventoryItem {
     @Column(nullable = false)
     private String itemName;
 
-    @Column(nullable = false)
-    private int price;
+    @Column(nullable = false, precision = 10,scale = 2)
+    private BigDecimal price;
 
-    @Column(nullable = false)
-    private int stock;
+    @Column(nullable = false, precision = 10,scale = 2)
+    private BigDecimal stock;
 
     @Enumerated(EnumType.STRING)
     private InventoryStatus status;
 
-    @Column(nullable = false)
-    private int reorderLevel;
+    @Column(nullable = false, precision = 10,scale = 2)
+    private BigDecimal reorderLevel;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -55,27 +56,27 @@ public class InventoryItem {
         this.itemName = itemName;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public int getStock() {
+    public BigDecimal getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(BigDecimal stock) {
         this.stock = stock;
     }
 
-    public int getReorderLevel() {
+    public BigDecimal getReorderLevel() {
         return reorderLevel;
     }
 
-    public void setReorderLevel(int reorderLevel) {
+    public void setReorderLevel(BigDecimal reorderLevel) {
         this.reorderLevel = reorderLevel;
     }
 
