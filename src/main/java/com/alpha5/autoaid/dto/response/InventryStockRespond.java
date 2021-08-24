@@ -1,10 +1,12 @@
 package com.alpha5.autoaid.dto.response;
 
+import java.math.BigDecimal;
+
 public class InventryStockRespond {
 
     private long itemNo;
-    private int stock;
-    private int price;
+    private BigDecimal stock;
+    private BigDecimal price;
 
     public long getItemNo() {
         return itemNo;
@@ -14,19 +16,19 @@ public class InventryStockRespond {
         this.itemNo = itemNo;
     }
 
-    public int getStock() {
+    public BigDecimal getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(BigDecimal stock) {
         this.stock = stock;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 }
