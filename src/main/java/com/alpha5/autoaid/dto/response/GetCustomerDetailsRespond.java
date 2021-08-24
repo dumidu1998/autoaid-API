@@ -1,10 +1,21 @@
 package com.alpha5.autoaid.dto.response;
 
+import java.util.List;
+
 public class GetCustomerDetailsRespond {
     private String firstName;
     private String lastName;
     private String address;
     private String city;
+    private List<VehicleListResponse> vehicleList;
+
+    public List<VehicleListResponse> getVehicleList() {
+        return vehicleList;
+    }
+
+    public void setVehicleList(List<VehicleListResponse> vehicleList) {
+        this.vehicleList = vehicleList;
+    }
 
     public String getFirstName() {
         return firstName;

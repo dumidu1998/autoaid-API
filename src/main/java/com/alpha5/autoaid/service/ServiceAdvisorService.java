@@ -3,6 +3,7 @@ package com.alpha5.autoaid.service;
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
+import com.alpha5.autoaid.dto.response.VehicleListResponse;
 import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.UserStatus;
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class ServiceAdvisorService {
@@ -49,27 +50,43 @@ public class ServiceAdvisorService {
 
     public GetCustomerDetailsRespond autoFillCustomerDetails(String contact){
         UserData user= userRepository.findByContactNo(contact);
-        GetCustomerDetailsRespond respond=new GetCustomerDetailsRespond();
         if (user!=null) {
+
+        GetCustomerDetailsRespond respond=new GetCustomerDetailsRespond();
+        List<Vehicle> vehicles=vehicleRepository.findAllByCustomer_UserData_Email(user.getEmail());
+        List<VehicleListResponse> vehicleListResponses =new ArrayList<>();
+
+        for (Vehicle vehicle:vehicles){
+            VehicleListResponse vehicleListResponse =new VehicleListResponse();
+            vehicleListResponse.setVehicleNumber(vehicle.getVehicleNumber());
+            vehicleListResponse.setVin(vehicle.getVin());
+            vehicleListResponses.add(vehicleListResponse);
+        }
+
+
+
             respond.setFirstName(user.getCustomer().getFirstName());
             respond.setLastName(user.getCustomer().getLastName());
             respond.setAddress(user.getAddress());
             respond.setCity(user.getCity());
+            respond.setVehicleList(vehicleListResponses);
             return respond ;
         }
         return null;
     }
 
-    public VehicleDetailsAutofillResponse autoFillVehicleDetails(VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest) {
+    public VehicleDetailsAutofillResponse autoFillVehicleDetails(String vin) {
         //check whether vehicle exists
-        Vehicle vehicle = vehicleRepository.findByVin(vehicleDetailsAutofillRequest.getVin());
+        Vehicle vehicle = vehicleRepository.findByVin(vin);
         if (vehicle != null) {
             VehicleDetailsAutofillResponse response = new VehicleDetailsAutofillResponse();
-            response.setVehiceId(vehicle.getVehicleId());
+            response.setVin(vehicle.getVin());
+            response.setVehicleNumber(vehicle.getVehicleNumber());
             response.setChassisNo(vehicle.getChassisNo());
-            response.setEnginNo(vehicle.getEngineNo());
+            response.setEngineNo(vehicle.getEngineNo());
             response.setMake(vehicle.getMake());
             response.setModel(vehicle.getModel());
+            response.setContactNo(vehicle.getCustomer().getUserData().getContactNo());
 
             return response;
         } else throw new RuntimeException("Vehicle not registered. Add details");

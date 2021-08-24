@@ -130,38 +130,6 @@ public class AuthService implements UserDetailsService {
         return response;
     }
 
-    // staff login verification
-//    public StaffLogged staffLogin(StaffLoginRequest staffLogin) {
-//
-//        // object of relevant customer
-//        Staff staff = this.authStaffRepository.findByFirstName(staffLogin.getUserName());
-//
-//        //check whether customer exists
-//        if (staff == null) {
-//            throw new RuntimeException("User Name is Invalid");
-//        } else {
-//            //check password and email with authentication manager
-//            try {
-//                authenticationManager.authenticate(
-//                        new UsernamePasswordAuthenticationToken(staffLogin.getUserName(), staffLogin.getPassword())
-//                );
-//            } catch (Exception ex) {
-//                //throw error if emaila and password does not match
-//                throw new RuntimeException("Email and Password is Not matching");
-//            }
-//            //get jwt token
-//            String token = jwtTokenUtil.generateToken(staffLogin.getUserName());
-//            StaffLogged response = new StaffLogged();
-//
-//            response.setStaffId(staff.getStaffId());
-//            response.setJwt(token);
-//            response.setUserName(staff.getFirstName());
-//            response.setRole(staff.getRole());
-//
-//            return response;
-//        }
-//    }
-
     public List<Customer> getAll() {
         return authCustomerRepository.findAll();
     }
