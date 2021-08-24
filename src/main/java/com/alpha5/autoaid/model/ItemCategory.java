@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class ItemCategory {
     @Column(nullable = false, unique = true)
     private String categoryName;
 
+    @JsonIgnore
     @OneToMany(targetEntity = InventoryItem.class, mappedBy = "category", cascade = CascadeType.ALL)
     private Set<InventoryItem> inventoryItems;
 }

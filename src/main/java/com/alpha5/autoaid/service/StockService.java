@@ -9,6 +9,8 @@ import com.alpha5.autoaid.repository.ItemCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StockService {
 
@@ -37,5 +39,17 @@ public class StockService {
         ItemCategory itemCategory = new ItemCategory();
         itemCategory.setCategoryName(addItemCategory.getCategoryName());
         itemCategoryRepository.save(itemCategory);
+    }
+
+    public void updateCategory(ItemCategory itemCategory) {
+        itemCategoryRepository.save(itemCategory);
+    }
+
+    public List<ItemCategory> getAllCategories() {
+        return itemCategoryRepository.findAll();
+    }
+
+    public ItemCategory getCategoryById(long itemId) {
+        return itemCategoryRepository.findByCategoryId(itemId);
     }
 }
