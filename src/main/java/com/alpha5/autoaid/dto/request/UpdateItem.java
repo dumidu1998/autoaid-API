@@ -7,7 +7,16 @@ public class UpdateItem {
     private String itemName;
     private BigDecimal reorderLevel;
     private BigDecimal price;
+    private BigDecimal stock;
     private long categoryId;
+
+    public BigDecimal getStock() {
+        return stock;
+    }
+
+    public void setStock(BigDecimal stock) {
+        this.stock = stock;
+    }
 
     public long getItemId() {
         return itemId;

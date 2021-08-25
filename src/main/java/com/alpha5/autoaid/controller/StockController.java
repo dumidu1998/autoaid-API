@@ -2,6 +2,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.AddItem;
 import com.alpha5.autoaid.dto.request.AddItemCategory;
+import com.alpha5.autoaid.dto.request.UpdateItem;
 import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
 import com.alpha5.autoaid.model.ItemCategory;
@@ -99,10 +100,16 @@ public class StockController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PutMapping("/item") //TODO
-    public ResponseEntity updateItem(@RequestBody AddItem addItem){
-//        List<InventryStockRespond> response = stockService.updateitem(addItem) ;
-        return ResponseEntity.ok().body("TODO");
+    @PutMapping("/item")
+    public ResponseEntity updateItem(@RequestBody UpdateItem updateItem){
+        stockService.updateItem(updateItem);
+        return ResponseEntity.ok().body("Updated Sucesssfully!!");
+    }
+
+    @PutMapping("/updateitemstatus/{itemId}")
+    public ResponseEntity updateItemStatus(@PathVariable long itemId){
+        stockService.updateItemStatus(itemId);
+        return ResponseEntity.ok().body("Availability Updated Sucesssfully!!");
     }
 
 
