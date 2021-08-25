@@ -99,4 +99,11 @@ public class StockController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PutMapping("/item") //TODO
+    public ResponseEntity updateItem(@RequestBody AddItem addItem){
+//        List<InventryStockRespond> response = stockService.updateitem(addItem) ;
+        return ResponseEntity.ok().body("TODO");
+    }
+
+
 }
