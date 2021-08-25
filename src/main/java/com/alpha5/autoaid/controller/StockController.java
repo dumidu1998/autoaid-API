@@ -1,6 +1,8 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.AddItem;
 import com.alpha5.autoaid.dto.request.AddItemCategory;
+import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
 import com.alpha5.autoaid.model.ItemCategory;
 import com.alpha5.autoaid.service.StockService;
@@ -17,11 +19,7 @@ public class StockController {
     @Autowired
     StockService stockService;
 
-    @GetMapping("/itemName/{itemName}")
-    public ResponseEntity getItemByName(@PathVariable String itemName){
-        InventryStockRespond response = stockService.inventryItemStock(itemName) ;
-        return ResponseEntity.ok().body(response);
-    }
+
 
     @PostMapping("/category")
     public ResponseEntity addItemCategory(@RequestBody AddItemCategory addItemCategory){
@@ -61,6 +59,27 @@ public class StockController {
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Error!!");
         }
+    }
+
+    @PostMapping("/item")
+    public ResponseEntity addItem(@RequestBody AddItem addItem){
+        try{
+            if(stockService.findByCategoryId(addItem.getCategoryId())!=null) {
+                AddItemRespond respond = stockService.addItem(addItem, stockService.findByCategoryId(addItem.getCategoryId()));
+                return ResponseEntity.ok().body(respond);
+            }else{
+                return ResponseEntity.badRequest().body("Invalid Item Category!");
+            }
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Item already Exist!");
+        }
+    }
+
+
+    @GetMapping("/itemName/{itemName}")
+    public ResponseEntity getItemByName(@PathVariable String itemName){
+        InventryStockRespond response = stockService.inventryItemStock(itemName) ;
+        return ResponseEntity.ok().body(response);
     }
 
 

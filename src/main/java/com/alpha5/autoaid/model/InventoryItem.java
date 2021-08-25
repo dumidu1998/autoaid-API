@@ -19,7 +19,7 @@ public class InventoryItem {
     @GeneratedValue
     private long itemNo;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String itemName;
 
     @Column(nullable = false, precision = 10,scale = 2)
