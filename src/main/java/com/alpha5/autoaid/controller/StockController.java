@@ -75,13 +75,28 @@ public class StockController {
         }
     }
 
-
-    @GetMapping("/itemName/{itemName}")
+    @GetMapping("/itembyname/{itemName}")
     public ResponseEntity getItemByName(@PathVariable String itemName){
-        InventryStockRespond response = stockService.inventryItemStock(itemName) ;
+        InventryStockRespond response = stockService.getItemByName(itemName) ;
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/searchitembyname/{itemName}")
+    public ResponseEntity searchItembyname(@PathVariable String itemName){
+       List <InventryStockRespond> response = stockService.searchItem(itemName);
+        return ResponseEntity.ok().body(response);
+    }
 
+    @GetMapping("/itembyid/{itemId}")
+    public ResponseEntity getItemById(@PathVariable long itemId){
+        InventryStockRespond response = stockService.getItemById(itemId) ;
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/itemswithlowqty")
+    public ResponseEntity getItemById(){
+        List<InventryStockRespond> response = stockService.getlowstockitems() ;
+        return ResponseEntity.ok().body(response);
+    }
 
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +25,7 @@ public class StockService {
     @Autowired
     private ItemCategoryRepository itemCategoryRepository;
 
-    public InventryStockRespond inventryItemStock(String itemName){
+    public InventryStockRespond getItemByName(String itemName){
         InventoryItem item = inventryItemRepository.findByItemName(itemName);
 
         if(item == null){
@@ -32,8 +33,10 @@ public class StockService {
         }else{
             InventryStockRespond response = new InventryStockRespond();
             response.setItemNo(item.getItemNo());
+            response.setItemName(item.getItemName());
             response.setStock(item.getStock());
             response.setPrice(item.getPrice());
+            response.setReorderLevel(item.getReorderLevel());
 
             return response;
         }
@@ -78,5 +81,48 @@ public class StockService {
         else{
             return itemCategory;
         }
+    }
+
+    public List<InventryStockRespond> searchItem(String itemName) {
+        List <InventoryItem> items = inventryItemRepository.findAllByItemNameIsContaining(itemName);
+        List <InventryStockRespond> respond = new ArrayList<InventryStockRespond>();
+        for(InventoryItem item:items){
+            InventryStockRespond newItem = new InventryStockRespond();
+            newItem.setItemNo(item.getItemNo());
+            newItem.setItemName(item.getItemName());
+            newItem.setStock(item.getStock());
+            newItem.setPrice(item.getPrice());
+            newItem.setReorderLevel(item.getReorderLevel());
+            respond.add(newItem);
+        }
+        return respond;
+    }
+
+
+    public InventryStockRespond getItemById(long itemId) {
+        InventoryItem item = inventryItemRepository.findByItemNo(itemId);
+        InventryStockRespond respond = new InventryStockRespond();
+        respond.setItemName(item.getItemName());
+        respond.setItemNo(item.getItemNo());
+        respond.setPrice(item.getPrice());
+        respond.setReorderLevel(item.getReorderLevel());
+        respond.setStock(item.getStock());
+
+        return respond;
+    }
+
+    public List<InventryStockRespond> getlowstockitems() {
+        List<InventoryItem> out = inventryItemRepository.getLowStockItems();
+        List<InventryStockRespond> respond = new ArrayList<>();
+        for(InventoryItem item:out){
+            InventryStockRespond newItem = new InventryStockRespond();
+            newItem.setItemNo(item.getItemNo());
+            newItem.setItemName(item.getItemName());
+            newItem.setStock(item.getStock());
+            newItem.setPrice(item.getPrice());
+            newItem.setReorderLevel(item.getReorderLevel());
+            respond.add(newItem);
+        }
+        return respond;
     }
 }

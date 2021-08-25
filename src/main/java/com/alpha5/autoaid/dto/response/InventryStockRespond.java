@@ -5,8 +5,26 @@ import java.math.BigDecimal;
 public class InventryStockRespond {
 
     private long itemNo;
+    private String itemName;
     private BigDecimal stock;
     private BigDecimal price;
+    private BigDecimal reorderLevel;
+
+    public BigDecimal getReorderLevel() {
+        return reorderLevel;
+    }
+
+    public void setReorderLevel(BigDecimal reorderLevel) {
+        this.reorderLevel = reorderLevel;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
 
     public long getItemNo() {
         return itemNo;
