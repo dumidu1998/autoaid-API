@@ -2,7 +2,6 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
-import com.alpha5.autoaid.dto.response.SubCatListRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.dto.response.VehicleListResponse;
 import com.alpha5.autoaid.enums.RepairStatus;
@@ -166,23 +165,24 @@ public class ServiceAdvisorService {
         return randomKey;
     }
     //Add new Repair
-    public void addNewRepair(AddNewRepairsRequest addNewRepairsRequest){
+    public long addNewRepair(AddNewRepairsRequest addNewRepairsRequest){
         Vehicle vehicle=vehicleRepository.findByVin(addNewRepairsRequest.getVin());
-        Staff serviceAdvisor=staffRepository.findByUserData(userRepository.findByUserName(addNewRepairsRequest.getUserName()));
+        Staff serviceAdvisor=staffRepository.findByUserData_Id(addNewRepairsRequest.getUserId());
 
         Repair newRepair= new Repair();
-        newRepair.setPaymentType(addNewRepairsRequest.getPayment_type());
+        newRepair.setPaymentType(addNewRepairsRequest.getPaymentType());
         newRepair.setVehicle(vehicle);
         newRepair.setStaff(serviceAdvisor);
         newRepair.setStatus(RepairStatus.ONGOING);
 
         repairRepository.save(newRepair);
-
+        Repair repair=repairRepository.findByStatusAndAndVehicle(RepairStatus.ONGOING,vehicle);
+        return repair.getRepairId();
     }
     // Add new service entry
     public void addNewServiceEntry(AddNewServiceEntryRequest addNewServiceEntryRequest){
         String out="";
-        Staff staff = staffRepository.findByStaffId(addNewServiceEntryRequest.getStaffId());
+        Staff staff = staffRepository.findByUserData_Id(addNewServiceEntryRequest.getUserId());
         Repair repair = repairRepository.findByRepairId(addNewServiceEntryRequest.getRepairId());
 
         for (ServiceEntryInstance serviceEntryInstance :addNewServiceEntryRequest.getServiceEntryInstances()) {

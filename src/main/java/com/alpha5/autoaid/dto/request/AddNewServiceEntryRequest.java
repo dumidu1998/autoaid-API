@@ -1,16 +1,16 @@
 package com.alpha5.autoaid.dto.request;
 
 public class AddNewServiceEntryRequest {
-     private long staffId;
+     private long userId;
      private long repairId;
      private ServiceEntryInstance[] serviceEntryInstances;
 
-    public long getStaffId() {
-        return staffId;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setStaffId(long staffId) {
-        this.staffId = staffId;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public long getRepairId() {

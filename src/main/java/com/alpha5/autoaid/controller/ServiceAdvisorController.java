@@ -58,9 +58,9 @@ public class ServiceAdvisorController {
 
     @PostMapping("/addRepair")
     public ResponseEntity addNewRepair(@RequestBody AddNewRepairsRequest addNewRepairsRequest){
-        serviceAdvisorService.addNewRepair(addNewRepairsRequest);
+        long repairId=serviceAdvisorService.addNewRepair(addNewRepairsRequest);
 
-        return ResponseEntity.ok().body("Repair Added Successfully");
+        return ResponseEntity.ok().body(repairId);
     }
 
     @PostMapping("/add service entries")

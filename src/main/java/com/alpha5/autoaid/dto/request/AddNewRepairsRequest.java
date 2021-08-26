@@ -3,24 +3,24 @@ package com.alpha5.autoaid.dto.request;
 import com.alpha5.autoaid.enums.PaymentType;
 
 public class AddNewRepairsRequest {
-    private PaymentType payment_type;
-    private String userName;
+    private PaymentType paymentType;
+    private long userId;
     private String vin;
 
-    public PaymentType getPayment_type() {
-        return payment_type;
+    public PaymentType getPaymentType() {
+        return paymentType;
     }
 
-    public void setPayment_type(PaymentType payment_type) {
-        this.payment_type = payment_type;
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
     }
 
-    public String getUserName() {
-        return userName;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserId(long userName) {
+        this.userId = userName;
     }
 
     public String getVin() {
