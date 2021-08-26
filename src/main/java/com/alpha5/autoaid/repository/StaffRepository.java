@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface StaffRepository extends JpaRepository<Staff,Long> {
     Staff findByStaffId(long sid);
+    Staff findByUserData_Id(long userId);
     Staff findByUserData_UserName(String userName);
     Staff findByUserData_Email(String email);
     Staff findByUserData_ContactNo(String contact);
