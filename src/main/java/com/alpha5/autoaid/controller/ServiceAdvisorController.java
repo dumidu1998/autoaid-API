@@ -3,7 +3,6 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
-import com.alpha5.autoaid.model.UserData;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +64,40 @@ public class ServiceAdvisorController {
     }
 
     @PostMapping("/add service entries")
-    public ResponseEntity addServiceEntries(@RequestBody AddNewServiceEntryRequest[] addNewServiceEntryRequest){
+    public ResponseEntity addServiceEntries(@RequestBody AddNewServiceEntryRequest addNewServiceEntryRequest){
         serviceAdvisorService.addNewServiceEntry(addNewServiceEntryRequest);
         return ResponseEntity.ok().body("Added to the DB");
+    }
+
+    @GetMapping("/getSubCategories/{secId}")
+    public ResponseEntity getSubCategories(@PathVariable int secId){
+        String section;
+        switch (secId){
+            case 1:
+                section="General Repair";
+                break;
+            case 2:
+                section="Wheel Alignment";
+                break;
+            case 3:
+                section="Service";
+                break;
+            case 4:
+                section="Express Maintainance";
+                break;
+            case 5:
+                section="Truck and Bus";
+                break;
+            default:
+                return ResponseEntity.badRequest().body("invalid Selection");
+        }
+        return ResponseEntity.ok().body(serviceAdvisorService.getSubCatList(section));
+    }
+
+    @GetMapping("/nextslot/{repairId}")
+    public ResponseEntity setNextSlot(@PathVariable long repairId){
+        String slot=serviceAdvisorService.getNextSlot(repairId);
+        return ResponseEntity.badRequest().body("Not Completed yet");
     }
 
 

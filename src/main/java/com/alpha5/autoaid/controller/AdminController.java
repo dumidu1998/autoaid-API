@@ -130,7 +130,7 @@ public class AdminController {
             return ResponseEntity.ok().body("Staff Updated");
 
         }
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.badRequest().body(response);
     }
 
     @PostMapping("/staff/activation")

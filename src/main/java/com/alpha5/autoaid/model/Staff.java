@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Staff {
     private String lastName;
 
     @OneToOne
+    @JsonIgnore
     private UserData userData;
 
     @OneToMany(targetEntity = Appointment.class, mappedBy = "staff", cascade = CascadeType.ALL)

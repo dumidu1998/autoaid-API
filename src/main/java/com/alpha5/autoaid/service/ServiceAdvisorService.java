@@ -2,6 +2,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
+import com.alpha5.autoaid.dto.response.SubCatListRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.dto.response.VehicleListResponse;
 import com.alpha5.autoaid.enums.RepairStatus;
@@ -41,6 +42,9 @@ public class ServiceAdvisorService {
 
     @Autowired
     private ServiceEntryRepository serviceEntryRepository;
+
+    @Autowired
+    private SectionRepository  sectionRepository;
 
     public boolean checkIfVehicleExists(String vin){
         if(vehicleRepository.findByVin(vin)!=null){
@@ -176,22 +180,42 @@ public class ServiceAdvisorService {
 
     }
     // Add new service entry
-    public void addNewServiceEntry(AddNewServiceEntryRequest[] addNewServiceEntryRequests){
+    public void addNewServiceEntry(AddNewServiceEntryRequest addNewServiceEntryRequest){
         String out="";
-        for (AddNewServiceEntryRequest addNewServiceEntryRequest:addNewServiceEntryRequests) {
-            SubCategory subCategory = subCategoryRepository.findBySubCatId(addNewServiceEntryRequest.getSub_cat_id());
-            Repair repair = repairRepository.findByRepairId(addNewServiceEntryRequest.getRepair_id());
-            Staff staff = staffRepository.findByStaffId(addNewServiceEntryRequest.getStaff_id());
+        Staff staff = staffRepository.findByStaffId(addNewServiceEntryRequest.getStaffId());
+        Repair repair = repairRepository.findByRepairId(addNewServiceEntryRequest.getRepairId());
 
+        for (ServiceEntryInstance serviceEntryInstance :addNewServiceEntryRequest.getServiceEntryInstances()) {
+            SubCategory subCategory = subCategoryRepository.findBySubCatId(serviceEntryInstance.getSub_cat_id());
             ServiceEntry serviceEntry = new ServiceEntry();
             serviceEntry.setStaff(staff);
-            serviceEntry.setDescription(addNewServiceEntryRequest.getDescription());
+            serviceEntry.setDescription(serviceEntryInstance.getDescription());
             serviceEntry.setRepair(repair);
             serviceEntry.setSubCategory(subCategory);
             serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ADDED);
 
             serviceEntryRepository.save(serviceEntry);
         }
+    }
+
+    // get subcategories for sections
+    public List<SubCategory> getSubCatList(String sectionName){
+        Section section=sectionRepository.findBySectionName(sectionName);
+        List<SubCategory> subCategories=subCategoryRepository.findAllBySection(section);
+//        List<SubCatListRespond> subCatListResponds=new ArrayList<>();
+//
+//        for(SubCategory subCategory:subCategories){
+//            SubCatListRespond subCatListRespond=new SubCatListRespond();
+//            subCatListRespond.setSubCatId(subCategory.getSubCatId());
+//            subCatListRespond.setSubcatName(subCategory.getSubCatName());
+//            subCatListResponds.add(subCatListRespond);
+//        }
+        return subCategories;
+    }
+
+    public String getNextSlot(long repairId){
+
+        return null;
     }
 
 }
