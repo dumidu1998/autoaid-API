@@ -1,17 +1,17 @@
 package com.alpha5.autoaid.dto.request;
 
 public class ServiceEntryInstance {
-    private long sub_cat_id;
+    private long subCatId;
     private String description;
     private String time;
     private String price;
 
-    public long getSub_cat_id() {
-        return sub_cat_id;
+    public long getSubCatId() {
+        return subCatId;
     }
 
-    public void setSub_cat_id(long sub_cat_id) {
-        this.sub_cat_id = sub_cat_id;
+    public void setSubCatId(long subCatId) {
+        this.subCatId = subCatId;
     }
 
     public String getDescription() {
