@@ -29,5 +29,9 @@ public class StockService {
 
     }
 
+    @Autowired
+    private InventryItemRepository inventryItemRepository;
+
+    public
 
 }

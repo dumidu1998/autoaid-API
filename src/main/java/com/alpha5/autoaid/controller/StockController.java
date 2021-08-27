@@ -1,5 +1,7 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.AddInventryItemRequest;
+import com.alpha5.autoaid.dto.response.AddInventryItemResponed;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
 import com.alpha5.autoaid.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,5 +22,11 @@ public class StockController {
         return response;
     }
 
+    @PostMapping("/addInventryItem")
+    public AddInventryItemResponed addInventryItem(@RequestBody AddInventryItemRequest addInventryItemRequest){
+
+        InventryStockRespond response = stockService.
+
+    }
 
 }
