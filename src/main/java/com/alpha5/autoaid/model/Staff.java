@@ -30,18 +30,23 @@ public class Staff {
     private UserData userData;
 
     @OneToMany(targetEntity = Appointment.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Appointment> appointments;
 
     @OneToMany(targetEntity = Section.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Section> sections;
 
     @OneToMany(targetEntity = ItemRequest.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<ItemRequest> itemRequests;
 
     @OneToMany(targetEntity = ServiceEntry.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<ServiceEntry> serviceEntries;
 
     @OneToMany(targetEntity = Repair.class, mappedBy = "staff", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Repair> repairs;
 
 }

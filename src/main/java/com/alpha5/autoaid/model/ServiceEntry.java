@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,18 +33,22 @@ public class ServiceEntry {
     private ServiceEntryStatus serviceEntryStatus;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "repair_id")
     Repair repair;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "staff_id")
     Staff staff;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "sub_cat_id")
     SubCategory subCategory;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "slot_id")
     Slot slot;
 
