@@ -205,63 +205,81 @@ public class ServiceAdvisorService {
     public List<SubCategory> getSubCatList(String sectionName){
         Section section=sectionRepository.findBySectionName(sectionName);
         List<SubCategory> subCategories=subCategoryRepository.findAllBySection(section);
-//        List<SubCatListRespond> subCatListResponds=new ArrayList<>();
-//
-//        for(SubCategory subCategory:subCategories){
-//            SubCatListRespond subCatListRespond=new SubCatListRespond();
-//            subCatListRespond.setSubCatId(subCategory.getSubCatId());
-//            subCatListRespond.setSubcatName(subCategory.getSubCatName());
-//            subCatListResponds.add(subCatListRespond);
-//        }
         return subCategories;
     }
 
-    public String getNextSlot(long repairId){
+    public Slot getNextSlot(long repairId){
         List<ServiceEntry> serviceEntries=serviceEntryRepository.findAllByRepair_RepairId(repairId);
+
         //take out the categories
         List<ServiceEntry> entriesList1 = serviceEntries.stream()
                 .filter(serviceEntry -> !(serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
                         serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment")))
                 .collect(Collectors.toList());
-//        System.out.println("list 1");
-//        entriesList1.forEach(serviceEntry -> System.out.println(serviceEntry.getEntryId()));
-//        System.out.println("List 2");
+
         List<ServiceEntry> entriesList2 = serviceEntries.stream()
                 .filter(serviceEntry -> serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
                         serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment"))
                 .collect(Collectors.toList());
-//        entriesList2.forEach(serviceEntry -> System.out.println(serviceEntry.getEntryId()));
+
         if(entriesList1.isEmpty()){
-            entriesList2.forEach(serviceEntry -> getAvailableSlotsOfSection(serviceEntry.getSubCategory().getSection().getSectionName()));
+            return getAvailSlot(entriesList2);
         }else {
             System.out.println("Entry list1");
+            return getAvailSlot(entriesList1);
+        }
+    }
 
-            List<String> sectionList1 = entriesList1.stream()
-                    .map(getSectionName) //map according to the function
-                    .distinct() //removes duplicates of the list
-                    .collect(Collectors.toList());
-            sectionList1.forEach(s -> getAvailableSlotsOfSection(s));
+    public Slot getAvailSlot(List<ServiceEntry> entryList){
+        //get section list from entries list
+
+        List<String> sectionList1 = entryList.stream()
+                .map(getSectionName) //map according to the function
+                .distinct() //removes duplicates of the list
+                .collect(Collectors.toList());
+
+//        System.out.println("Section List");
+//        sectionList1.forEach(s -> System.out.println(s));
+//        System.out.println("Not null Section List");
+
+        //get first slot if it's Available
+        try {
+            Optional<Slot> next = sectionList1.stream()
+                    .filter(s -> getAvailableSlotsOfSection(s) != null)
+                    .distinct()
+                    .map(s -> getAvailableSlotsOfSection(s))
+                    .findFirst();
+
+//            System.out.println("Next "+ next.get().getSlotName());
+            Slot assignedSlot=next.get();
+            assignedSlot.setStatus(SlotStatus.RESERVED);
+            slotRepository.save(assignedSlot);
+            return assignedSlot;
+
+        }
+        catch (Exception e){
+            return null;
         }
 
-        return null;
     }
+
     static Function<ServiceEntry,String> getSectionName=
             serviceEntry -> serviceEntry.getSubCategory().getSection().getSectionName();
 
     //get available slot of a section
-    public void getAvailableSlotsOfSection(String sectionName){
-        List<Slot> slots=slotRepository.findAllBySection_SectionName(sectionName);
-        List<Slot> freeSlots = slots.stream()
-                .filter(slot -> slot.getStatus().equals(SlotStatus.AVAILABLE))
-                .collect(Collectors.toList());
-        if(freeSlots.isEmpty()){
-            System.out.println("Slots are full");
-        }else{
-            System.out.println("free slots are");
-            freeSlots.stream()
-                    .forEach((slot -> System.out.println(slot.getSlotName())));
+    public Slot getAvailableSlotsOfSection(String sectionName){
+//        System.out.println("function " + sectionName);
+        List<Slot> slots= (slotRepository.findAllBySection_SectionName(sectionName));
+            //get free slot
+            Optional<Slot> freeSlot = slots.stream()
+                    .dropWhile(slot -> !(slot.getStatus().equals(SlotStatus.AVAILABLE)))
+                    .findFirst();
+            if(freeSlot.isPresent()){
+//                System.out.println(freeSlot.get().getSlotName());
+                return freeSlot.get();
+            }else{
+                return null;
+            }
         }
-
     }
 
-}
