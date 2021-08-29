@@ -3,7 +3,7 @@ package com.alpha5.autoaid.dto.request;
 public class ServiceEntryInstance {
     private long subCatId;
     private String description;
-    private String time;
+    private int time;
     private String price;
 
     public long getSubCatId() {
@@ -22,11 +22,11 @@ public class ServiceEntryInstance {
         this.description = description;
     }
 
-    public String getTime() {
+    public int getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(int time) {
         this.time = time;
     }
 

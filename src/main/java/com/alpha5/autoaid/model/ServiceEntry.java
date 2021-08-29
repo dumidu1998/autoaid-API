@@ -29,6 +29,9 @@ public class ServiceEntry {
     @Column
     private Date completedTime;
 
+    @Column
+    private int estimatedTime;
+
     @Enumerated(EnumType.STRING)
     private ServiceEntryStatus serviceEntryStatus;
 
@@ -47,7 +50,7 @@ public class ServiceEntry {
     @JoinColumn(name = "sub_cat_id")
     SubCategory subCategory;
 
-    @OneToOne
+    @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "slot_id")
     Slot slot;

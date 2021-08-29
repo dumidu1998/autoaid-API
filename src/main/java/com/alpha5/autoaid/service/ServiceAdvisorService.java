@@ -195,6 +195,7 @@ public class ServiceAdvisorService {
             serviceEntry.setDescription(serviceEntryInstance.getDescription());
             serviceEntry.setRepair(repair);
             serviceEntry.setSubCategory(subCategory);
+            serviceEntry.setEstimatedTime(serviceEntryInstance.getTime());
             serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ADDED);
 
             serviceEntryRepository.save(serviceEntry);
@@ -210,41 +211,46 @@ public class ServiceAdvisorService {
 
     public Slot getNextSlot(long repairId){
         List<ServiceEntry> serviceEntries=serviceEntryRepository.findAllByRepair_RepairId(repairId);
-
+//        serviceEntries.stream().forEach(serviceEntry -> System.out.println(serviceEntry.getEntryId()));
         //take out the categories
         List<ServiceEntry> entriesList1 = serviceEntries.stream()
                 .filter(serviceEntry -> !(serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
-                        serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment")))
+                        serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment"))
+                        && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED))
                 .collect(Collectors.toList());
+        entriesList1.forEach(serviceEntry -> System.out.println(serviceEntry.getSubCategory().getSection().getSectionName()));
 
         List<ServiceEntry> entriesList2 = serviceEntries.stream()
-                .filter(serviceEntry -> serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
-                        serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment"))
+                .filter(serviceEntry -> (serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
+                        serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment")
+                                && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED)))
                 .collect(Collectors.toList());
 
-        if(entriesList1.isEmpty()){
-            return getAvailSlot(entriesList2);
+
+        if(!(entriesList1.isEmpty())){
+            return getAvailSlot(entriesList1,repairId);
+        }else if(!(entriesList2.isEmpty())){
+            return getAvailSlot(entriesList2,repairId);
         }else {
-            System.out.println("Entry list1");
-            return getAvailSlot(entriesList1);
+            throw new RuntimeException("All Processes are done");
         }
     }
 
-    public Slot getAvailSlot(List<ServiceEntry> entryList){
+    public Slot getAvailSlot(List<ServiceEntry> entryList, long repairId){
         //get section list from entries list
 
-        List<String> sectionList1 = entryList.stream()
+        List<String> sectionList = entryList.stream()
                 .map(getSectionName) //map according to the function
                 .distinct() //removes duplicates of the list
                 .collect(Collectors.toList());
 
 //        System.out.println("Section List");
-//        sectionList1.forEach(s -> System.out.println(s));
+//        sectionList.forEach(s -> System.out.println(s));
 //        System.out.println("Not null Section List");
 
         //get first slot if it's Available
         try {
-            Optional<Slot> next = sectionList1.stream()
+            Optional<Slot> next = sectionList.stream()
                     .filter(s -> getAvailableSlotsOfSection(s) != null)
                     .distinct()
                     .map(s -> getAvailableSlotsOfSection(s))
@@ -254,11 +260,17 @@ public class ServiceAdvisorService {
             Slot assignedSlot=next.get();
             assignedSlot.setStatus(SlotStatus.RESERVED);
             slotRepository.save(assignedSlot);
+            List<ServiceEntry> serviceEntriesOfSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,assignedSlot.getSection().getSectionName());
+            serviceEntriesOfSlot.forEach(serviceEntry -> {
+                serviceEntry.setSlot(assignedSlot);
+                serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
+                        serviceEntryRepository.save(serviceEntry);
+            });
             return assignedSlot;
 
         }
         catch (Exception e){
-            return null;
+            throw new RuntimeException("Slots Are Full Added to The Queue");
         }
 
     }
