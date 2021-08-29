@@ -30,9 +30,9 @@ public class Slot {
     @JsonIgnore
     Section section;
 
-    @OneToOne(targetEntity = ServiceEntry.class, mappedBy = "slot", cascade = CascadeType.ALL)
+    @OneToMany (targetEntity = ServiceEntry.class, mappedBy = "slot", cascade = CascadeType.ALL)
     @JsonIgnore
-    private ServiceEntry serviceEntries;
+    private Set<ServiceEntry> serviceEntries;
 
 
 }
