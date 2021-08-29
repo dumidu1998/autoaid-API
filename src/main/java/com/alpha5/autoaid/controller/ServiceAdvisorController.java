@@ -3,6 +3,7 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
+import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +97,10 @@ public class ServiceAdvisorController {
 
     @GetMapping("/nextslot/{repairId}")
     public ResponseEntity setNextSlot(@PathVariable long repairId){
-        String slot=serviceAdvisorService.getNextSlot(repairId);
+        Slot slot=serviceAdvisorService.getNextSlot(repairId);
+        if(slot!=null){
+            return ResponseEntity.ok().body(slot);
+        }
         return ResponseEntity.badRequest().body("Not Completed yet");
     }
 
