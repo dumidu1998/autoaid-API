@@ -3,6 +3,7 @@ package com.alpha5.autoaid.service;
 import com.alpha5.autoaid.dto.request.AddItem;
 import com.alpha5.autoaid.dto.request.AddItemCategory;
 import com.alpha5.autoaid.dto.request.UpdateItem;
+import com.alpha5.autoaid.dto.response.AddInventryItemResponed;
 import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
 import com.alpha5.autoaid.enums.InventoryStatus;
@@ -145,5 +146,21 @@ public class StockService {
         InventoryItem item = inventryItemRepository.findByItemNo(itemId);
         item.setStatus(((item.getStatus().toString()=="AVAILABLE")?InventoryStatus.UNAVAILABLE:InventoryStatus.AVAILABLE));
         inventryItemRepository.save(item);
+    }
+
+    public List<AddInventryItemResponed> getAllItems() {
+       List<InventoryItem> all =  inventryItemRepository.findAll();
+       List<AddInventryItemResponed> respond = new ArrayList<>();
+        for(InventoryItem item : all){
+            AddInventryItemResponed newitem = new AddInventryItemResponed();
+            newitem.setItemName(item.getItemName());
+            newitem.setItemNo(item.getItemNo());
+            newitem.setStock(item.getStock());
+            newitem.setPrice(item.getPrice());
+            newitem.setReorderLevel(item.getReorderLevel());
+            newitem.setStatus(item.getStatus());
+            respond.add(newitem);
+        }
+        return respond;
     }
 }

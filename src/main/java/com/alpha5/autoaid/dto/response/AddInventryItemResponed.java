@@ -2,19 +2,21 @@ package com.alpha5.autoaid.dto.response;
 
 import com.alpha5.autoaid.enums.InventoryStatus;
 
+import java.math.BigDecimal;
+
 public class AddInventryItemResponed {
 
     private long itemNo;
 
     private String itemName;
 
-    private int price;
+    private BigDecimal price;
 
-    private int stock;
+    private BigDecimal stock;
 
     private InventoryStatus status;
 
-    private int reorderLevel;
+    private BigDecimal reorderLevel;
 
     public long getItemNo() {
         return itemNo;
@@ -22,6 +24,30 @@ public class AddInventryItemResponed {
 
     public void setItemNo(long itemNo) {
         this.itemNo = itemNo;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public BigDecimal getStock() {
+        return stock;
+    }
+
+    public void setStock(BigDecimal stock) {
+        this.stock = stock;
+    }
+
+    public BigDecimal getReorderLevel() {
+        return reorderLevel;
+    }
+
+    public void setReorderLevel(BigDecimal reorderLevel) {
+        this.reorderLevel = reorderLevel;
     }
 
     public String getItemName() {
@@ -32,21 +58,6 @@ public class AddInventryItemResponed {
         this.itemName = itemName;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
 
     public InventoryStatus getStatus() {
         return status;
@@ -56,11 +67,5 @@ public class AddInventryItemResponed {
         this.status = status;
     }
 
-    public int getReorderLevel() {
-        return reorderLevel;
-    }
 
-    public void setReorderLevel(int reorderLevel) {
-        this.reorderLevel = reorderLevel;
-    }
 }
