@@ -218,7 +218,8 @@ public class ServiceAdvisorService {
                         serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment"))
                         && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED))
                 .collect(Collectors.toList());
-        entriesList1.forEach(serviceEntry -> System.out.println(serviceEntry.getSubCategory().getSection().getSectionName()));
+
+//        entriesList1.forEach(serviceEntry -> System.out.println(serviceEntry.getSubCategory().getSection().getSectionName()));
 
         List<ServiceEntry> entriesList2 = serviceEntries.stream()
                 .filter(serviceEntry -> (serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
@@ -258,8 +259,8 @@ public class ServiceAdvisorService {
 
 //            System.out.println("Next "+ next.get().getSlotName());
             Slot assignedSlot=next.get();
-            assignedSlot.setStatus(SlotStatus.RESERVED);
-            slotRepository.save(assignedSlot);
+//            assignedSlot.setStatus(SlotStatus.RESERVED);
+//            slotRepository.save(assignedSlot);
             List<ServiceEntry> serviceEntriesOfSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,assignedSlot.getSection().getSectionName());
             serviceEntriesOfSlot.forEach(serviceEntry -> {
                 serviceEntry.setSlot(assignedSlot);
@@ -284,7 +285,7 @@ public class ServiceAdvisorService {
         List<Slot> slots= (slotRepository.findAllBySection_SectionName(sectionName));
             //get free slot
             Optional<Slot> freeSlot = slots.stream()
-                    .dropWhile(slot -> !(slot.getStatus().equals(SlotStatus.AVAILABLE)))
+                    .dropWhile(slot -> (slot.getStatus().equals(SlotStatus.NOTAVAILABLE)))
                     .findFirst();
             if(freeSlot.isPresent()){
 //                System.out.println(freeSlot.get().getSlotName());
