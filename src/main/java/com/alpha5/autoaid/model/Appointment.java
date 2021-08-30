@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.sql.Time;
@@ -21,8 +22,12 @@ public class Appointment {
     @GeneratedValue
     private long appointmentId;
 
-    @CreationTimestamp
+    @DateTimeFormat
     private Date date;
+
+    @ManyToOne
+    @JoinColumn(name = "AppointmentSlot")
+    AppointmentSlot appointmentSlot;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -39,10 +44,4 @@ public class Appointment {
         this.appointmentId = appointmentId;
     }
 
-    public Date getDate() {
-        return date;
-    }
-    public void setDate(Date date) {
-        this.date = date;
-    }
 }
