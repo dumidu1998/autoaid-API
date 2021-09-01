@@ -119,4 +119,16 @@ public class StockController {
         return ResponseEntity.ok().body("Availability Updated Sucesssfully!!");
     }
 
+    @GetMapping("/searchitembycategory/{categoryId}")
+    public ResponseEntity getCategoryitems(@PathVariable long categoryId){
+        if(categoryId == 0){
+            List<AddInventryItemResponed> response = stockService.getAllItems();
+            return ResponseEntity.ok().body(response);
+        }else{
+            List<AddInventryItemResponed> response = stockService.getCategoryitems(categoryId);
+            return ResponseEntity.ok().body(response);
+        }
+
+    }
+
 }
