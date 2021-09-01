@@ -2,6 +2,7 @@ package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,9 +43,11 @@ public class UserData {
     private UserStatus userStatus;
 
     @OneToOne(targetEntity = Customer.class, mappedBy = "userData", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Customer customer;
 
     @OneToOne (targetEntity = Staff.class, mappedBy = "userData", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Staff staff;
 
     public void setId(long id) {
