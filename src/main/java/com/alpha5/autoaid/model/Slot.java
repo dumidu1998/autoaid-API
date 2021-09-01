@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.SlotStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,10 +27,12 @@ public class Slot {
 
     @ManyToOne
     @JoinColumn(name = "section_id")
+    @JsonIgnore
     Section section;
 
-    @OneToOne(targetEntity = ServiceEntry.class, mappedBy = "slot", cascade = CascadeType.ALL)
-    private ServiceEntry serviceEntries;
+    @OneToMany (targetEntity = ServiceEntry.class, mappedBy = "slot", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ServiceEntry> serviceEntries;
 
 
 }

@@ -36,6 +36,7 @@ public class Vehicle {
     private String model;
 
     @ManyToOne
+    @JsonIgnore
     private Customer customer;
 
     @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
