@@ -163,4 +163,20 @@ public class StockService {
         }
         return respond;
     }
+
+    public List<AddInventryItemResponed> getCategoryitems(long categoryId) {
+        List<InventoryItem> categoryAll =  inventryItemRepository.findAllByCategory_CategoryId(categoryId);
+        List<AddInventryItemResponed> respond = new ArrayList<>();
+        for(InventoryItem item : categoryAll){
+            AddInventryItemResponed newitem = new AddInventryItemResponed();
+            newitem.setItemName(item.getItemName());
+            newitem.setItemNo(item.getItemNo());
+            newitem.setStock(item.getStock());
+            newitem.setPrice(item.getPrice());
+            newitem.setReorderLevel(item.getReorderLevel());
+            newitem.setStatus(item.getStatus());
+            respond.add(newitem);
+        }
+        return respond;
+    }
 }
