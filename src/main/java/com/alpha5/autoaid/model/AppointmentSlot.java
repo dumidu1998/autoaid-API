@@ -16,7 +16,7 @@ public class AppointmentSlot {
 
     @Id
     @GeneratedValue
-    private int appointmentSlotId;
+    private long appointmentSlotId;
 
     @Column(nullable = false)
     private String slotTime;
