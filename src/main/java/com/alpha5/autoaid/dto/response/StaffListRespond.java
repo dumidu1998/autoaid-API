@@ -13,8 +13,6 @@ public class StaffListRespond {
         this.id = id;
     }
 
-
-
     public String getFirstName() {
         return firstName;
     }
@@ -30,8 +28,6 @@ public class StaffListRespond {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
-
-
 
 }
 

@@ -1,10 +1,11 @@
 package com.alpha5.autoaid.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,16 +20,21 @@ public class Appointment {
     @GeneratedValue
     private long appointmentId;
 
-    @DateTimeFormat
+    @Column
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-dd-MM")
     private Date date;
+
+    @CreationTimestamp
+    private Date addedDate;
 
     @ManyToOne
     @JoinColumn(name = "appointment_slot")
     AppointmentSlot appointmentSlot;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    Customer customer;
+    @JoinColumn(name = "vehicle_id")
+    Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")
