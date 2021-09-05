@@ -18,7 +18,7 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
     @Query(value = "SELECT MAX(staff_id) FROM staff  " , nativeQuery = true)
     long getMaxStaffId();
 
-    @Query(value = "SELECT * FROM staff INNER JOIN user_data ON staff.user_data_id=user_data.id WHERE staff_id NOT IN (SELECT Staff_id FROM appointment WHERE date=?1 ) AND user_data.user_type='SERVICE_ADVISOR'" , nativeQuery = true)
-    List<Staff> findAvailableServiceAdvisorsByDate(String date);
+    @Query(value = "SELECT * FROM staff INNER JOIN user_data ON staff.user_data_id=user_data.id WHERE staff_id NOT IN (SELECT Staff_id FROM appointment WHERE date=?1 AND appointment_slot=?2) AND user_data.user_type='SERVICE_ADVISOR'" , nativeQuery = true)
+    List<Staff> findAvailableServiceAdvisorsByDate(String date,long id);
 
 }

@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.AddAppointment;
+import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.model.AppointmentSlot;
 import com.alpha5.autoaid.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +37,21 @@ public class AppointmentController {
     @GetMapping("/getslotsfromdate/{date}")
     ResponseEntity getSlotsFromDate(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
         List<AppointmentSlot> slots = appointmentService.getFreeSlotsByDate(date);
-        return ResponseEntity.ok().body(appointmentService.getFreeSlotsByDate(date));
+        if(slots.isEmpty()) {
+            return ResponseEntity.badRequest().body("Sorry No any Free Slots Available on the Date you Selected!");
+        }else{
+            return ResponseEntity.ok().body(appointmentService.getFreeSlotsByDate(date));
+        }
     }
 
-    @GetMapping("/getadvisorfromdate/{date}")
-    ResponseEntity getAdvisorFromDate(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return ResponseEntity.ok().body(appointmentService.getServiceAdvisorFromDate(date));
+    @GetMapping("/getadvisorfromdateandslot/{date}/{id}")
+    ResponseEntity getAdvisorFromDate(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,@PathVariable long id) {
+        List<StaffListRespond> result = appointmentService.getServiceAdvisorFromDate(date,id);
+        if(result.size()==0){
+            return ResponseEntity.badRequest().body("No Any Service Advisors Available Today!!");
+        }else {
+            return ResponseEntity.ok().body(appointmentService.getServiceAdvisorFromDate(date, id));
+        }
     }
 
 //    @GetMapping("/getupcommingAppointments/{id}")

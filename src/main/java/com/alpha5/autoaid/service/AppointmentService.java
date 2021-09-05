@@ -57,9 +57,9 @@ public class AppointmentService {
         }
     }
 
-    public List<StaffListRespond> getServiceAdvisorFromDate(Date date) {
+    public List<StaffListRespond> getServiceAdvisorFromDate(Date date,long id) {
         String shortDate=new SimpleDateFormat("YYYY-MM-dd").format(date);
-        List<Staff> output=staffRepository.findAvailableServiceAdvisorsByDate(shortDate);
+        List<Staff> output=staffRepository.findAvailableServiceAdvisorsByDate(shortDate,id);
         List<StaffListRespond> response = new ArrayList<>();
         for(Staff staff:output){
             StaffListRespond out = new StaffListRespond();
