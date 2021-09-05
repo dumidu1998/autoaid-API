@@ -6,7 +6,7 @@ public class AddAppointment {
 
     private Date date;
     private long slotId;
-    private long userId;
+    private long vehicleId;
     private long staffId;
 
     public Date getDate() {
@@ -25,12 +25,12 @@ public class AddAppointment {
         this.slotId = slotId;
     }
 
-    public long getUserId() {
-        return userId;
+    public long getVehicleId() {
+        return vehicleId;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setVehicleId(long vehicleId) {
+        this.vehicleId = vehicleId;
     }
 
     public long getStaffId() {

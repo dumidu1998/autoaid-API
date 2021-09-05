@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -24,13 +25,16 @@ public class Appointment {
     @JsonFormat(pattern = "yyyy-dd-MM")
     private Date date;
 
+    @CreationTimestamp
+    private Date addedDate;
+
     @ManyToOne
     @JoinColumn(name = "appointment_slot")
     AppointmentSlot appointmentSlot;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    Customer customer;
+    @JoinColumn(name = "vehicle_id")
+    Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")

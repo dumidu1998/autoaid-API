@@ -22,4 +22,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     int customerSummary4(long userId);
 
     Customer findByUserData_Id(long userId);
+
 }

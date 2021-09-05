@@ -34,9 +34,7 @@ public class Customer {
     @JsonIgnore
     private UserData userData;
 
-    @OneToMany(targetEntity = Appointment.class, mappedBy = "customer", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Appointment> appointments;
+
 
     @OneToMany(targetEntity = Vehicle.class, mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonIgnore

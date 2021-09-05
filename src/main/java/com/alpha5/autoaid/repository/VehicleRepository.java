@@ -10,4 +10,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     List<Vehicle> findAllByCustomer_UserData_Email(String email);
 
     List<Vehicle> findAllByCustomer_CustomerId(long id);
+
+    Vehicle findByVehicleId(long id);
 }
