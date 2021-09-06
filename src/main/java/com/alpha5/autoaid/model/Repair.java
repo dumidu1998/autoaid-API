@@ -36,6 +36,7 @@ public class Repair {
     private RepairStatus status;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "vehicle_id")
     Vehicle vehicle;
 

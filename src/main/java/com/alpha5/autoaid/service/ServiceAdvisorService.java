@@ -4,10 +4,7 @@ import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.dto.response.VehicleListResponse;
-import com.alpha5.autoaid.enums.RepairStatus;
-import com.alpha5.autoaid.enums.ServiceEntryStatus;
-import com.alpha5.autoaid.enums.UserStatus;
-import com.alpha5.autoaid.enums.UserType;
+import com.alpha5.autoaid.enums.*;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ServiceAdvisorService {
@@ -41,6 +41,12 @@ public class ServiceAdvisorService {
 
     @Autowired
     private ServiceEntryRepository serviceEntryRepository;
+
+    @Autowired
+    private SectionRepository  sectionRepository;
+
+    @Autowired
+    private SlotRepository slotRepository;
 
     public boolean checkIfVehicleExists(String vin){
         if(vehicleRepository.findByVin(vin)!=null){
@@ -162,36 +168,131 @@ public class ServiceAdvisorService {
         return randomKey;
     }
     //Add new Repair
-    public void addNewRepair(AddNewRepairsRequest addNewRepairsRequest){
+    public long addNewRepair(AddNewRepairsRequest addNewRepairsRequest){
         Vehicle vehicle=vehicleRepository.findByVin(addNewRepairsRequest.getVin());
-        Staff serviceAdvisor=staffRepository.findByUserData(userRepository.findByUserName(addNewRepairsRequest.getUserName()));
+        Staff serviceAdvisor=staffRepository.findByUserData_Id(addNewRepairsRequest.getUserId());
 
         Repair newRepair= new Repair();
-        newRepair.setPaymentType(addNewRepairsRequest.getPayment_type());
+        newRepair.setPaymentType(addNewRepairsRequest.getPaymentType());
         newRepair.setVehicle(vehicle);
         newRepair.setStaff(serviceAdvisor);
         newRepair.setStatus(RepairStatus.ONGOING);
 
         repairRepository.save(newRepair);
-
+        Repair repair=repairRepository.findByStatusAndAndVehicle(RepairStatus.ONGOING,vehicle);
+        return repair.getRepairId();
     }
     // Add new service entry
-    public void addNewServiceEntry(AddNewServiceEntryRequest[] addNewServiceEntryRequests){
+    public void addNewServiceEntry(AddNewServiceEntryRequest addNewServiceEntryRequest){
         String out="";
-        for (AddNewServiceEntryRequest addNewServiceEntryRequest:addNewServiceEntryRequests) {
-            SubCategory subCategory = subCategoryRepository.findBySubCatId(addNewServiceEntryRequest.getSub_cat_id());
-            Repair repair = repairRepository.findByRepairId(addNewServiceEntryRequest.getRepair_id());
-            Staff staff = staffRepository.findByStaffId(addNewServiceEntryRequest.getStaff_id());
+        Staff staff = staffRepository.findByUserData_Id(addNewServiceEntryRequest.getUserId());
+        Repair repair = repairRepository.findByRepairId(addNewServiceEntryRequest.getRepairId());
 
+        for (ServiceEntryInstance serviceEntryInstance :addNewServiceEntryRequest.getServiceEntryInstances()) {
+            SubCategory subCategory = subCategoryRepository.findBySubCatId(serviceEntryInstance.getSubCatId());
             ServiceEntry serviceEntry = new ServiceEntry();
             serviceEntry.setStaff(staff);
-            serviceEntry.setDescription(addNewServiceEntryRequest.getDescription());
+            serviceEntry.setDescription(serviceEntryInstance.getDescription());
             serviceEntry.setRepair(repair);
             serviceEntry.setSubCategory(subCategory);
+            serviceEntry.setEstimatedTime(serviceEntryInstance.getTime());
             serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ADDED);
 
             serviceEntryRepository.save(serviceEntry);
         }
     }
 
-}
+    // get subcategories for sections
+    public List<SubCategory> getSubCatList(String sectionName){
+        Section section=sectionRepository.findBySectionName(sectionName);
+        List<SubCategory> subCategories=subCategoryRepository.findAllBySection(section);
+        return subCategories;
+    }
+
+    public Slot getNextSlot(long repairId){
+        List<ServiceEntry> serviceEntries=serviceEntryRepository.findAllByRepair_RepairId(repairId);
+//        serviceEntries.stream().forEach(serviceEntry -> System.out.println(serviceEntry.getEntryId()));
+        //take out the categories
+        List<ServiceEntry> entriesList1 = serviceEntries.stream()
+                .filter(serviceEntry -> !(serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
+                        serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment"))
+                        && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED))
+                .collect(Collectors.toList());
+
+//        entriesList1.forEach(serviceEntry -> System.out.println(serviceEntry.getSubCategory().getSection().getSectionName()));
+
+        List<ServiceEntry> entriesList2 = serviceEntries.stream()
+                .filter(serviceEntry -> (serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
+                        serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment")
+                                && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED)))
+                .collect(Collectors.toList());
+
+
+        if(!(entriesList1.isEmpty())){
+            return getAvailSlot(entriesList1,repairId);
+        }else if(!(entriesList2.isEmpty())){
+            return getAvailSlot(entriesList2,repairId);
+        }else {
+            throw new RuntimeException("All Processes are done");
+        }
+    }
+
+    public Slot getAvailSlot(List<ServiceEntry> entryList, long repairId){
+        //get section list from entries list
+
+        List<String> sectionList = entryList.stream()
+                .map(getSectionName) //map according to the function
+                .distinct() //removes duplicates of the list
+                .collect(Collectors.toList());
+
+//        System.out.println("Section List");
+//        sectionList.forEach(s -> System.out.println(s));
+//        System.out.println("Not null Section List");
+
+        //get first slot if it's Available
+        try {
+            Optional<Slot> next = sectionList.stream()
+                    .filter(s -> getAvailableSlotsOfSection(s) != null)
+                    .distinct()
+                    .map(s -> getAvailableSlotsOfSection(s))
+                    .findFirst();
+
+//            System.out.println("Next "+ next.get().getSlotName());
+            Slot assignedSlot=next.get();
+//            assignedSlot.setStatus(SlotStatus.RESERVED);
+//            slotRepository.save(assignedSlot);
+            List<ServiceEntry> serviceEntriesOfSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,assignedSlot.getSection().getSectionName());
+            serviceEntriesOfSlot.forEach(serviceEntry -> {
+                serviceEntry.setSlot(assignedSlot);
+                serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
+                        serviceEntryRepository.save(serviceEntry);
+            });
+            return assignedSlot;
+
+        }
+        catch (Exception e){
+            throw new RuntimeException("Slots Are Full Added to The Queue");
+        }
+
+    }
+
+    static Function<ServiceEntry,String> getSectionName=
+            serviceEntry -> serviceEntry.getSubCategory().getSection().getSectionName();
+
+    //get available slot of a section
+    public Slot getAvailableSlotsOfSection(String sectionName){
+//        System.out.println("function " + sectionName);
+        List<Slot> slots= (slotRepository.findAllBySection_SectionName(sectionName));
+            //get free slot
+            Optional<Slot> freeSlot = slots.stream()
+                    .dropWhile(slot -> (slot.getStatus().equals(SlotStatus.NOTAVAILABLE)))
+                    .findFirst();
+            if(freeSlot.isPresent()){
+//                System.out.println(freeSlot.get().getSlotName());
+                return freeSlot.get();
+            }else{
+                return null;
+            }
+        }
+    }
+
