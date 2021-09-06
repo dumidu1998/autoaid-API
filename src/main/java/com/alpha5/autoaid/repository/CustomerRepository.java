@@ -21,5 +21,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query(value = "SELECT COUNT(*) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id INNER JOIN customer as c ON c.customer_id=v.customer_customer_id WHERE v.customer_customer_id=?1 AND r.status != 'COMPLETED'" , nativeQuery = true)
     int customerSummary4(long userId);
 
+    Customer findByUserData_Id(long userId);
 
 }

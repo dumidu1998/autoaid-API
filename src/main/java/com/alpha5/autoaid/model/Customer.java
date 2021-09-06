@@ -34,9 +34,7 @@ public class Customer {
     @JsonIgnore
     private UserData userData;
 
-    @OneToMany(targetEntity = Appointment.class, mappedBy = "customer", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Appointment> appointments;
+
 
     @OneToMany(targetEntity = Vehicle.class, mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -46,31 +44,5 @@ public class Customer {
     @JsonIgnore
     private Set<RateAndReview> rateAndReviews;
 
-    public long getCustomerId(){return customerId; }
-    public void setCustomerId(long CustomerId){
-        this.customerId = CustomerId;
-    }
-
-    public String getFirstName(){
-        return firstName;
-    }
-    public void setFirstName(String firstName){
-        this.firstName= firstName;
-    }
-
-    public String getLastName(){
-        return lastName;
-    }
-    public void setLastName(String lastName){
-        this.lastName= lastName;
-    }
-
-
-    public Date getRegDate(){
-        return registeredDate;
-    }
-    public void setRegDate(Date registeredDate){
-        this.registeredDate= registeredDate;
-    }
 
 }

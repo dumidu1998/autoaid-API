@@ -2,11 +2,13 @@ package com.alpha5.autoaid.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -14,7 +16,7 @@ public class AppointmentSlot {
 
     @Id
     @GeneratedValue
-    private int appointmentSlotId;
+    private long appointmentSlotId;
 
     @Column(nullable = false)
     private String slotTime;
