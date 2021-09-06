@@ -9,6 +9,15 @@ public class InventryStockRespond {
     private BigDecimal stock;
     private BigDecimal price;
     private BigDecimal reorderLevel;
+    private String catName;
+
+    public String getCatName() {
+        return catName;
+    }
+
+    public void setCatName(String catName) {
+        this.catName = catName;
+    }
 
     public BigDecimal getReorderLevel() {
         return reorderLevel;
