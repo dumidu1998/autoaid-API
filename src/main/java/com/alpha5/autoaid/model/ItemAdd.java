@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -20,8 +21,8 @@ public class ItemAdd {
     @GeneratedValue
     private long grnNo;
 
-    @Column(nullable = false)
-    private int quantity;
+    @Column(nullable = false, precision = 10,scale = 2)
+    private BigDecimal quantity;
 
     @CreationTimestamp
     private Date dateTime;
@@ -29,6 +30,9 @@ public class ItemAdd {
     @ManyToOne
     @JoinColumn(name = "item_no")
     InventoryItem item;
+
+    @Column(nullable = false, precision = 10,scale = 2)
+    private BigDecimal buyingPrice;
 
 
 

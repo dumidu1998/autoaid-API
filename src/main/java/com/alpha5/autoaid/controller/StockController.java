@@ -2,6 +2,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.AddItem;
 import com.alpha5.autoaid.dto.request.AddItemCategory;
+import com.alpha5.autoaid.dto.request.AddItemNewStock;
 import com.alpha5.autoaid.dto.request.UpdateItem;
 import com.alpha5.autoaid.dto.response.AddInventryItemResponed;
 import com.alpha5.autoaid.dto.response.AddItemRespond;
@@ -129,6 +130,13 @@ public class StockController {
             return ResponseEntity.ok().body(response);
         }
 
+    }
+    @PostMapping("/updateStock")
+    public ResponseEntity updateNewItemStock(@RequestBody AddItemNewStock addItemNewStock){
+        boolean out=stockService.updateNewItemStock(addItemNewStock);
+        if(out)
+        return ResponseEntity.ok().body("New stock updated");
+        else return ResponseEntity.badRequest().body("Error!!");
     }
 
 }
