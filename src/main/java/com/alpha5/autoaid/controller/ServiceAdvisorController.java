@@ -98,10 +98,10 @@ public class ServiceAdvisorController {
     @GetMapping("/nextslot/{repairId}")
     public ResponseEntity setNextSlot(@PathVariable long repairId){
         Slot slot=serviceAdvisorService.getNextSlot(repairId);
-        if(slot!=null){
-            return ResponseEntity.ok().body(slot);
+        if(slot==null){
+            return ResponseEntity.badRequest().body("All Repairs Completed");
         }
-        return ResponseEntity.badRequest().body("Not Completed yet");
+        return ResponseEntity.ok().body(slot);
     }
 
 
