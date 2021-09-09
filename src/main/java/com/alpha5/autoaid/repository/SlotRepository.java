@@ -11,4 +11,5 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     Slot findByStatus(SlotStatus status);
     List<Slot> findAllBySection_SectionName(String sectionName);
     List<Slot> findAllBySection_SectionNameAndStatusIsNot(String sectionName, SlotStatus status);
+
 }

@@ -3,6 +3,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
+import com.alpha5.autoaid.service.ServiceAdvisorService;
 import com.alpha5.autoaid.service.TechnicianService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,9 @@ public class TechnicianController {
 
     @Autowired
     private TechnicianService technicianService;
+
+    @Autowired
+    private ServiceAdvisorService serviceAdvisorService;
 
     @PostMapping("/complete/subcat")
     public ResponseEntity completeSubCat(@RequestBody SubCatCompleteRequest subCatCompleteRequest){
@@ -30,7 +34,6 @@ public class TechnicianController {
         if(technicianService.checkWhetherAllEntriesCompleted(repairCompletedRequest)){
             technicianService.completeRepair(repairCompletedRequest);
             String response="Find next Slot";
-
             return ResponseEntity.ok().body(response);
         }else
         return ResponseEntity.badRequest().body("All entries Not Completed Yet");

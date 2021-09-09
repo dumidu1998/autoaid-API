@@ -211,7 +211,6 @@ public class ServiceAdvisorService {
 
     public Slot getNextSlot(long repairId){
         List<ServiceEntry> serviceEntries=serviceEntryRepository.findAllByRepair_RepairId(repairId);
-//        serviceEntries.stream().forEach(serviceEntry -> System.out.println(serviceEntry.getEntryId()));
         //take out the categories
         List<ServiceEntry> entriesList1 = serviceEntries.stream()
                 .filter(serviceEntry -> !(serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
@@ -219,21 +218,19 @@ public class ServiceAdvisorService {
                         && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED))
                 .collect(Collectors.toList());
 
-//        entriesList1.forEach(serviceEntry -> System.out.println(serviceEntry.getSubCategory().getSection().getSectionName()));
-
         List<ServiceEntry> entriesList2 = serviceEntries.stream()
                 .filter(serviceEntry -> (serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
                         serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment")
                                 && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED)))
                 .collect(Collectors.toList());
 
-
+        //redirect to prioratized sections
         if(!(entriesList1.isEmpty())){
             return getAvailSlot(entriesList1,repairId);
         }else if(!(entriesList2.isEmpty())){
             return getAvailSlot(entriesList2,repairId);
         }else {
-            throw new RuntimeException("All Processes are done");
+            return null;
         }
     }
 
@@ -245,7 +242,7 @@ public class ServiceAdvisorService {
                 .distinct() //removes duplicates of the list
                 .collect(Collectors.toList());
 
-        //get first slot if it's Available
+        //get first slot if it's Available else move to pending
         try {
             Optional<Slot> next = sectionList.stream()
                     .filter(s -> getAvailableSlotsOfSection(s) != null)
@@ -256,7 +253,6 @@ public class ServiceAdvisorService {
             assignedSlot.setStatus(SlotStatus.RESERVED);
             slotRepository.save(assignedSlot);
             return getSlot(repairId, assignedSlot);
-
         }
         catch (Exception e){
             Slot latest=latestSlot(sectionList);
