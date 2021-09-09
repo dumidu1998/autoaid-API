@@ -245,61 +245,62 @@ public class ServiceAdvisorService {
                 .distinct() //removes duplicates of the list
                 .collect(Collectors.toList());
 
-        //if slot is available
-            //get the first slot then assign it make stat as pending.
-            // make slot status as reserved
-            //TODO
-        //if no slot is available
-            //find the latest slot going to free
-                // get all slot working and match to the repair sections.
-                //get pending list of entries of that slots
-                //find the min time and assign
-            // assign to entry
-            // make it as pending
-            // do nothing to slot status
-
         //get first slot if it's Available
         try {
             Optional<Slot> next = sectionList.stream()
                     .filter(s -> getAvailableSlotsOfSection(s) != null)
-//                    .distinct()
                     .map(s -> getAvailableSlotsOfSection(s))
                     .findFirst();
 
             Slot assignedSlot=next.get();
             assignedSlot.setStatus(SlotStatus.RESERVED);
             slotRepository.save(assignedSlot);
-            //get list of service entries assigned to slot
-            List<ServiceEntry> serviceEntriesOfSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,assignedSlot.getSection().getSectionName());
-            serviceEntriesOfSlot.forEach(serviceEntry -> {
-                serviceEntry.setSlot(assignedSlot);
-                serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
-                        serviceEntryRepository.save(serviceEntry);
-            });
-            return assignedSlot;
+            return getSlot(repairId, assignedSlot);
 
         }
         catch (Exception e){
-            latestSlot(sectionList);
-            throw new RuntimeException("Slots Are Full Added to The Queue");
+            Slot latest=latestSlot(sectionList);
+            return getSlot(repairId, latest);
         }
+    }
 
+    //return slot assigned
+    private Slot getSlot(long repairId, Slot latest) {
+        //get list of service entries assigned to slot
+        List<ServiceEntry> serviceEntriesOfLatestSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,latest.getSection().getSectionName());
+        serviceEntriesOfLatestSlot.forEach(serviceEntry -> {
+            serviceEntry.setSlot(latest);
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
+            serviceEntryRepository.save(serviceEntry);
+        });
+        return latest;
     }
 
     static Function<ServiceEntry,String> getSectionName=
             serviceEntry -> serviceEntry.getSubCategory().getSection().getSectionName();
 
-    public void latestSlot(List<String> sectionList){
+    public Slot latestSlot(List<String> sectionList){
+        //get on process slots
         List<Slot> workingSlots = new ArrayList<>();
         for (String section:sectionList){
-            //get on process slots
               List<Slot> slots= (slotRepository.findAllBySection_SectionNameAndStatusIsNot(section,SlotStatus.NOTAVAILABLE));
               slots.forEach(slot -> workingSlots.add(slot));
-//              slots.stream().forEach(slot -> System.out.println(slot.getSlotName()));
         }
 
-        System.out.println("Final slot list");
-        workingSlots.stream().forEach(slot -> System.out.println(slot.getSlotName()));
+        //get min time slot in the pending list of entries of slots
+        int bestTime = 0;
+        Slot latestAvailSlot = null;
+
+        for (Slot slot:workingSlots){
+            if(bestTime==0){
+                bestTime=serviceEntryRepository.findSumOfPending(slot.getSlotID());
+                latestAvailSlot=slot;
+            }else if(bestTime>serviceEntryRepository.findSumOfPending(slot.getSlotID())){
+                bestTime=serviceEntryRepository.findSumOfPending(slot.getSlotID());
+                latestAvailSlot=slot;
+            }
+        }
+    return latestAvailSlot;
     }
 
     //get available slot of a section
