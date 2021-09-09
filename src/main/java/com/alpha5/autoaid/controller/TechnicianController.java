@@ -3,6 +3,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
+import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import com.alpha5.autoaid.service.TechnicianService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class TechnicianController {
     public ResponseEntity completeRepair(@RequestBody RepairCompletedRequest repairCompletedRequest){
         if(technicianService.checkWhetherAllEntriesCompleted(repairCompletedRequest)){
             technicianService.completeRepair(repairCompletedRequest);
-            String response="Find next Slot";
-            return ResponseEntity.ok().body(response);
+            Slot slot=serviceAdvisorService.getNextSlot(repairCompletedRequest.getRepairId());
+            return ResponseEntity.ok().body(slot);
         }else
         return ResponseEntity.badRequest().body("All entries Not Completed Yet");
     }
@@ -47,6 +48,7 @@ public class TechnicianController {
             response="all coompleted";
         return ResponseEntity.ok().body(response);
     }
+
     //TODO
     //find next repair ekedi added date eka consider krnna
     //repair acceptancy- if repair completed slot avaiable unama ekata next appointment set krna

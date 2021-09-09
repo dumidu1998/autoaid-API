@@ -256,7 +256,11 @@ public class ServiceAdvisorService {
         }
         catch (Exception e){
             Slot latest=latestSlot(sectionList);
-            return getSlot(repairId, latest);
+            if(latest==null){
+                throw new RuntimeException("Slots are Not Available currently");
+            }else{
+                return getSlot(repairId, latest);
+            }
         }
     }
 
@@ -282,26 +286,36 @@ public class ServiceAdvisorService {
               List<Slot> slots= (slotRepository.findAllBySection_SectionNameAndStatusIsNot(section,SlotStatus.NOTAVAILABLE));
               slots.forEach(slot -> workingSlots.add(slot));
         }
+//        workingSlots.forEach(slot -> System.out.println(slot.getSlotName()));
+        //if no slot is available
+        if(workingSlots.isEmpty()){
+            return null;
+        }else {
+            //get min time slot in the pending list of entries of slots
+            int bestTime = 0;
+            Slot latestAvailSlot = null;
 
-        //get min time slot in the pending list of entries of slots
-        int bestTime = 0;
-        Slot latestAvailSlot = null;
-
-        for (Slot slot:workingSlots){
-            if(bestTime==0){
-                bestTime=serviceEntryRepository.findSumOfPending(slot.getSlotID());
-                latestAvailSlot=slot;
-            }else if(bestTime>serviceEntryRepository.findSumOfPending(slot.getSlotID())){
-                bestTime=serviceEntryRepository.findSumOfPending(slot.getSlotID());
-                latestAvailSlot=slot;
+            for (Slot slot : workingSlots) {
+                if (bestTime == 0) {
+                    bestTime = serviceEntryRepository.findSumOfPending(slot.getSlotID());
+//                    System.out.println("bestTime1");
+//                    System.out.println(bestTime);
+                    latestAvailSlot = slot;
+                } else if (bestTime > serviceEntryRepository.findSumOfPending(slot.getSlotID())) {
+                    bestTime = serviceEntryRepository.findSumOfPending(slot.getSlotID());
+//                    System.out.println("bestTime 2");
+//                    System.out.println(bestTime);
+                    latestAvailSlot = slot;
+                }
             }
+//            System.out.println(bestTime+ " And "+latestAvailSlot.getSlotName());
+            return latestAvailSlot;
         }
-    return latestAvailSlot;
     }
 
     //get available slot of a section
     public Slot getAvailableSlotsOfSection(String sectionName){
-        System.out.println("function " + sectionName);
+//        System.out.println("function " + sectionName);
         List<Slot> slots= (slotRepository.findAllBySection_SectionName(sectionName));
             //get free slot
             Optional<Slot> freeSlot = slots.stream()
