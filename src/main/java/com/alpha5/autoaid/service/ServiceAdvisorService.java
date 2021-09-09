@@ -238,29 +238,38 @@ public class ServiceAdvisorService {
     }
 
     public Slot getAvailSlot(List<ServiceEntry> entryList, long repairId){
-        //get section list from entries list
 
+        //get section list from entries list
         List<String> sectionList = entryList.stream()
                 .map(getSectionName) //map according to the function
                 .distinct() //removes duplicates of the list
                 .collect(Collectors.toList());
 
-//        System.out.println("Section List");
-//        sectionList.forEach(s -> System.out.println(s));
-//        System.out.println("Not null Section List");
+        //if slot is available
+            //get the first slot then assign it make stat as pending.
+            // make slot status as reserved
+            //TODO
+        //if no slot is available
+            //find the latest slot going to free
+                // get all slot working and match to the repair sections.
+                //get pending list of entries of that slots
+                //find the min time and assign
+            // assign to entry
+            // make it as pending
+            // do nothing to slot status
 
         //get first slot if it's Available
         try {
             Optional<Slot> next = sectionList.stream()
                     .filter(s -> getAvailableSlotsOfSection(s) != null)
-                    .distinct()
+//                    .distinct()
                     .map(s -> getAvailableSlotsOfSection(s))
                     .findFirst();
 
-//            System.out.println("Next "+ next.get().getSlotName());
             Slot assignedSlot=next.get();
-//            assignedSlot.setStatus(SlotStatus.RESERVED);
-//            slotRepository.save(assignedSlot);
+            assignedSlot.setStatus(SlotStatus.RESERVED);
+            slotRepository.save(assignedSlot);
+            //get list of service entries assigned to slot
             List<ServiceEntry> serviceEntriesOfSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,assignedSlot.getSection().getSectionName());
             serviceEntriesOfSlot.forEach(serviceEntry -> {
                 serviceEntry.setSlot(assignedSlot);
@@ -271,6 +280,7 @@ public class ServiceAdvisorService {
 
         }
         catch (Exception e){
+            latestSlot(sectionList);
             throw new RuntimeException("Slots Are Full Added to The Queue");
         }
 
@@ -279,16 +289,28 @@ public class ServiceAdvisorService {
     static Function<ServiceEntry,String> getSectionName=
             serviceEntry -> serviceEntry.getSubCategory().getSection().getSectionName();
 
+    public void latestSlot(List<String> sectionList){
+        List<Slot> workingSlots = new ArrayList<>();
+        for (String section:sectionList){
+            //get on process slots
+              List<Slot> slots= (slotRepository.findAllBySection_SectionNameAndStatusIsNot(section,SlotStatus.NOTAVAILABLE));
+              slots.forEach(slot -> workingSlots.add(slot));
+//              slots.stream().forEach(slot -> System.out.println(slot.getSlotName()));
+        }
+
+        System.out.println("Final slot list");
+        workingSlots.stream().forEach(slot -> System.out.println(slot.getSlotName()));
+    }
+
     //get available slot of a section
     public Slot getAvailableSlotsOfSection(String sectionName){
-//        System.out.println("function " + sectionName);
+        System.out.println("function " + sectionName);
         List<Slot> slots= (slotRepository.findAllBySection_SectionName(sectionName));
             //get free slot
             Optional<Slot> freeSlot = slots.stream()
-                    .dropWhile(slot -> (slot.getStatus().equals(SlotStatus.NOTAVAILABLE)))
+                    .dropWhile(slot -> !(slot.getStatus().equals(SlotStatus.AVAILABLE)))
                     .findFirst();
             if(freeSlot.isPresent()){
-//                System.out.println(freeSlot.get().getSlotName());
                 return freeSlot.get();
             }else{
                 return null;
