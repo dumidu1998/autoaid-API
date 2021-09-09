@@ -1,6 +1,9 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.AddItem;
 import com.alpha5.autoaid.dto.request.AddItemCategory;
+import com.alpha5.autoaid.dto.request.UpdateItem;
+import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
 import com.alpha5.autoaid.model.ItemCategory;
 import com.alpha5.autoaid.service.StockService;
@@ -17,11 +20,7 @@ public class StockController {
     @Autowired
     StockService stockService;
 
-    @GetMapping("/itemName/{itemName}")
-    public ResponseEntity getItemByName(@PathVariable String itemName){
-        InventryStockRespond response = stockService.inventryItemStock(itemName) ;
-        return ResponseEntity.ok().body(response);
-    }
+
 
     @PostMapping("/category")
     public ResponseEntity addItemCategory(@RequestBody AddItemCategory addItemCategory){
@@ -63,6 +62,55 @@ public class StockController {
         }
     }
 
+    @PostMapping("/item")
+    public ResponseEntity addItem(@RequestBody AddItem addItem){
+        try{
+            if(stockService.findByCategoryId(addItem.getCategoryId())!=null) {
+                AddItemRespond respond = stockService.addItem(addItem, stockService.findByCategoryId(addItem.getCategoryId()));
+                return ResponseEntity.ok().body(respond);
+            }else{
+                return ResponseEntity.badRequest().body("Invalid Item Category!");
+            }
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Item already Exist!");
+        }
+    }
+
+    @GetMapping("/itembyname/{itemName}")
+    public ResponseEntity getItemByName(@PathVariable String itemName){
+        InventryStockRespond response = stockService.getItemByName(itemName) ;
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/searchitembyname/{itemName}")
+    public ResponseEntity searchItembyname(@PathVariable String itemName){
+       List <InventryStockRespond> response = stockService.searchItem(itemName);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/itembyid/{itemId}")
+    public ResponseEntity getItemById(@PathVariable long itemId){
+        InventryStockRespond response = stockService.getItemById(itemId) ;
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/itemswithlowqty")
+    public ResponseEntity getItemById(){
+        List<InventryStockRespond> response = stockService.getlowstockitems() ;
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/item")
+    public ResponseEntity updateItem(@RequestBody UpdateItem updateItem){
+        stockService.updateItem(updateItem);
+        return ResponseEntity.ok().body("Updated Sucesssfully!!");
+    }
+
+    @PutMapping("/updateitemstatus/{itemId}")
+    public ResponseEntity updateItemStatus(@PathVariable long itemId){
+        stockService.updateItemStatus(itemId);
+        return ResponseEntity.ok().body("Availability Updated Sucesssfully!!");
+    }
 
 
 }
