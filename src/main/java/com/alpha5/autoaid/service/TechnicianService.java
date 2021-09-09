@@ -34,11 +34,9 @@ public class TechnicianService {
         }else return false;
     }
     public boolean checkWhetherNoneCompletedEntries(long repairId){
-        List<ServiceEntry> serviceEntries=serviceEntryRepository.findAllByRepair_RepairId(repairId);
-        List<ServiceEntry> entryListofRepair = serviceEntries.stream()
-                .filter(serviceEntry -> !(serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.COMPLETED)))
-                .collect(Collectors.toList());
-        if (entryListofRepair.isEmpty()){
+        List<ServiceEntry> serviceEntries=serviceEntryRepository.findAllByRepair_RepairIdAndServiceEntryStatusIsNot(repairId,ServiceEntryStatus.COMPLETED);
+
+        if (serviceEntries.isEmpty()){
             return false;
 //            returns false if list is empty
         }else {
@@ -69,11 +67,7 @@ public class TechnicianService {
 //        System.out.println(slot.getSlotName());
         slot.setStatus(SlotStatus.AVAILABLE);
         slotRepository.save(slot);
-        getNextSlot(repairCompletedRequest.getRepairId());
-    }
-
-    public void getNextSlot(long repairId){
-
+//        getNextSlot(repairCompletedRequest.getRepairId());
     }
 
 }
