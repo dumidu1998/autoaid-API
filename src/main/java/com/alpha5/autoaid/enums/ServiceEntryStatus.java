@@ -4,5 +4,6 @@ public enum ServiceEntryStatus {
     ADDED,
     PENDING,
     ASSIGNED,
+    ONGOING,
     COMPLETED
 }

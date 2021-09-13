@@ -211,7 +211,6 @@ public class ServiceAdvisorService {
 
     public Slot getNextSlot(long repairId){
         List<ServiceEntry> serviceEntries=serviceEntryRepository.findAllByRepair_RepairId(repairId);
-//        serviceEntries.stream().forEach(serviceEntry -> System.out.println(serviceEntry.getEntryId()));
         //take out the categories
         List<ServiceEntry> entriesList1 = serviceEntries.stream()
                 .filter(serviceEntry -> !(serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
@@ -219,65 +218,100 @@ public class ServiceAdvisorService {
                         && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED))
                 .collect(Collectors.toList());
 
-//        entriesList1.forEach(serviceEntry -> System.out.println(serviceEntry.getSubCategory().getSection().getSectionName()));
-
         List<ServiceEntry> entriesList2 = serviceEntries.stream()
                 .filter(serviceEntry -> (serviceEntry.getSubCategory().getSection().getSectionName().equals("Washing") ||
                         serviceEntry.getSubCategory().getSection().getSectionName().equals("Wheel Alignment")
                                 && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED)))
                 .collect(Collectors.toList());
 
-
+        //redirect to prioratized sections
         if(!(entriesList1.isEmpty())){
             return getAvailSlot(entriesList1,repairId);
         }else if(!(entriesList2.isEmpty())){
             return getAvailSlot(entriesList2,repairId);
         }else {
-            throw new RuntimeException("All Processes are done");
+            return null;
         }
     }
 
     public Slot getAvailSlot(List<ServiceEntry> entryList, long repairId){
-        //get section list from entries list
 
+        //get section list from entries list
         List<String> sectionList = entryList.stream()
                 .map(getSectionName) //map according to the function
                 .distinct() //removes duplicates of the list
                 .collect(Collectors.toList());
 
-//        System.out.println("Section List");
-//        sectionList.forEach(s -> System.out.println(s));
-//        System.out.println("Not null Section List");
-
-        //get first slot if it's Available
+        //get first slot if it's Available else move to pending
         try {
             Optional<Slot> next = sectionList.stream()
                     .filter(s -> getAvailableSlotsOfSection(s) != null)
-                    .distinct()
                     .map(s -> getAvailableSlotsOfSection(s))
                     .findFirst();
 
-//            System.out.println("Next "+ next.get().getSlotName());
             Slot assignedSlot=next.get();
-//            assignedSlot.setStatus(SlotStatus.RESERVED);
-//            slotRepository.save(assignedSlot);
-            List<ServiceEntry> serviceEntriesOfSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,assignedSlot.getSection().getSectionName());
-            serviceEntriesOfSlot.forEach(serviceEntry -> {
-                serviceEntry.setSlot(assignedSlot);
-                serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
-                        serviceEntryRepository.save(serviceEntry);
-            });
-            return assignedSlot;
-
+            assignedSlot.setStatus(SlotStatus.RESERVED);
+            slotRepository.save(assignedSlot);
+            return getSlot(repairId, assignedSlot);
         }
         catch (Exception e){
-            throw new RuntimeException("Slots Are Full Added to The Queue");
+            Slot latest=latestSlot(sectionList);
+            if(latest==null){
+                throw new RuntimeException("Slots are Not Available currently");
+            }else{
+                return getSlot(repairId, latest);
+            }
         }
+    }
 
+    //return slot assigned
+    private Slot getSlot(long repairId, Slot latest) {
+        //get list of service entries assigned to slot
+        List<ServiceEntry> serviceEntriesOfLatestSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,latest.getSection().getSectionName());
+        serviceEntriesOfLatestSlot.forEach(serviceEntry -> {
+            serviceEntry.setSlot(latest);
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
+            serviceEntryRepository.save(serviceEntry);
+        });
+        return latest;
     }
 
     static Function<ServiceEntry,String> getSectionName=
             serviceEntry -> serviceEntry.getSubCategory().getSection().getSectionName();
+
+    public Slot latestSlot(List<String> sectionList){
+        //get on process slots
+        List<Slot> workingSlots = new ArrayList<>();
+        for (String section:sectionList){
+              List<Slot> slots= (slotRepository.findAllBySection_SectionNameAndStatusIsNot(section,SlotStatus.NOTAVAILABLE));
+              slots.forEach(slot -> workingSlots.add(slot));
+        }
+//        workingSlots.forEach(slot -> System.out.println(slot.getSlotName()));
+        //if no slot is available
+        if(workingSlots.isEmpty()){
+            return null;
+        }else {
+            //get min time slot in the pending list of entries of slots
+            int bestTime = 0;
+            Slot latestAvailSlot = null;
+
+            for (Slot slot : workingSlots) {
+                if (bestTime == 0) {
+                    bestTime = serviceEntryRepository.findSumOfPending(slot.getSlotID());
+//                    System.out.println("bestTime1");
+//                    System.out.println(bestTime);
+                    latestAvailSlot = slot;
+                } else if (bestTime > serviceEntryRepository.findSumOfPending(slot.getSlotID())) {
+                    bestTime = serviceEntryRepository.findSumOfPending(slot.getSlotID());
+//                    System.out.println("bestTime 2");
+//                    System.out.println(bestTime);
+                    latestAvailSlot = slot;
+                }
+            }
+//            System.out.println(bestTime+ " And "+latestAvailSlot.getSlotName());
+            return latestAvailSlot;
+        }
+    }
 
     //get available slot of a section
     public Slot getAvailableSlotsOfSection(String sectionName){
@@ -285,10 +319,9 @@ public class ServiceAdvisorService {
         List<Slot> slots= (slotRepository.findAllBySection_SectionName(sectionName));
             //get free slot
             Optional<Slot> freeSlot = slots.stream()
-                    .dropWhile(slot -> (slot.getStatus().equals(SlotStatus.NOTAVAILABLE)))
+                    .dropWhile(slot -> !(slot.getStatus().equals(SlotStatus.AVAILABLE)))
                     .findFirst();
             if(freeSlot.isPresent()){
-//                System.out.println(freeSlot.get().getSlotName());
                 return freeSlot.get();
             }else{
                 return null;
