@@ -95,11 +95,11 @@ public class TechnicianService {
         GetNextRepairResponse getNextRepairResponse=new GetNextRepairResponse();
         //check if there are Available slots
         List<Slot> availSlots = slotRepository.findAllBySection_SectionNameAndStatusIs(section, SlotStatus.AVAILABLE);
-        System.out.println("Availa Slots");
-
+        System.out.println("Available Slots");
         availSlots.forEach(slot -> System.out.println(slot.getSlotName()));
+
         if ((!availSlots.isEmpty())) {
-            //which means has availslots
+            //which means has available slots
             try {
                 //if there is a repair in pending for that slots / if it's get repair / btn activate
                 long nextRepairId = findFirstAddedRepairForSection(availSlots);
@@ -109,8 +109,31 @@ public class TechnicianService {
                 return getNextRepairResponse;
             }
             catch (Exception e){
-                //if pending repairs are not in that slot
-                System.out.println("pending repairs NO");
+                //if pending repairs are not in that slot / then get next pending repair of section
+
+                List<Long> slotRepairIdList = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(section, ServiceEntryStatus.PENDING).stream()
+                        .map(serviceEntry -> serviceEntry.getRepair().getRepairId())
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                //oldest id from the list
+                long nextRepairId = slotRepairIdList.stream().sorted().findFirst().get();
+                getNextRepairResponse.setRepairId(nextRepairId);
+                getNextRepairResponse.setBtnStatus("Activated");
+
+                //get available slot to repair service entries
+                Slot newSlot=availSlots.stream().findFirst().get();
+
+                // save new slot in database
+                List<ServiceEntry> serviceEntriesRepair=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(nextRepairId,section);
+                serviceEntriesRepair.forEach(serviceEntry -> {
+                    serviceEntry.setSlot(newSlot);
+                    serviceEntryRepository.save(serviceEntry);
+                });
+
+                System.out.println(newSlot.getSlotID());
+
+                return getNextRepairResponse;
             }
 
         } else {
@@ -144,7 +167,7 @@ public class TechnicianService {
         //oldest id from the list
         System.out.println("List");
         repairIdList.forEach(aLong -> System.out.println(aLong));
-        Long firstRepairId = repairIdList.stream().sorted().findFirst().get();
+        long firstRepairId = repairIdList.stream().sorted().findFirst().get();
 
         return firstRepairId;
     }
