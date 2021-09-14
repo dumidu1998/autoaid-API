@@ -48,6 +48,14 @@ public class TechnicianService {
         }
     }
 
+    public boolean checkWhetherAllSlotsNotDeactivated(String section){
+        if(slotRepository.findAllBySection_SectionNameAndStatusIsNot(section,SlotStatus.NOTAVAILABLE).isEmpty()){
+            //all slots are at in not available status
+            return true;
+        }else
+            return false;
+    }
+
     public void completeSubCat(SubCatCompleteRequest subCatCompleteRequest) {
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
         serviceEntry.setServiceEntryStatus(ServiceEntryStatus.COMPLETED);
@@ -87,35 +95,43 @@ public class TechnicianService {
         GetNextRepairResponse getNextRepairResponse=new GetNextRepairResponse();
         //check if there are Available slots
         List<Slot> availSlots = slotRepository.findAllBySection_SectionNameAndStatusIs(section, SlotStatus.AVAILABLE);
+        System.out.println("Availa Slots");
 
+        availSlots.forEach(slot -> System.out.println(slot.getSlotName()));
         if ((!availSlots.isEmpty())) {
-            //filter which has no pending repairs
-            List<Stream<Long>> pendingRepairIdList = availSlots.stream()
-                    .map(slot -> serviceEntryRepository.findAllBySlotAndServiceEntryStatusIs(slot, ServiceEntryStatus.PENDING)
-                            .stream().map(serviceEntry -> serviceEntry.getRepair().getRepairId()))
-                    .distinct()
-                    .collect(Collectors.toList());
-            if (pendingRepairIdList.isEmpty()) {
-                //find first added repair of pending list of that section/ then assign newly available slot to that pending entries and return with btn status activate
-            } else {
-                //get first added repair from repair table and return with btn status activate
-                System.out.println("repair list is not empty");
-                pendingRepairIdList.forEach(longStream -> System.out.println(longStream));
+            //which means has availslots
+            try {
+                //if there is a repair in pending for that slots / if it's get repair / btn activate
+                long nextRepairId = findFirstAddedRepairForSection(availSlots);
+                getNextRepairResponse.setRepairId(nextRepairId);
+                getNextRepairResponse.setBtnStatus("Activate");
+
+                return getNextRepairResponse;
+            }
+            catch (Exception e){
+                //if pending repairs are not in that slot
+                System.out.println("pending repairs NO");
             }
 
-
         } else {
-            long nextRepairId=findFirstAddedRepairForSection(section);
-            getNextRepairResponse.setRepairId(nextRepairId);
-            getNextRepairResponse.setBtnStatus("Deactivate");
+            List<Slot> workingSlots = slotRepository.findAllBySection_SectionNameAndStatusIsNot(section, SlotStatus.NOTAVAILABLE);
+            try {
+                long nextRepairId=findFirstAddedRepairForSection(workingSlots);
+                getNextRepairResponse.setRepairId(nextRepairId);
+                getNextRepairResponse.setBtnStatus("Deactivate");
 
-            return getNextRepairResponse;
+                return getNextRepairResponse;
+            }catch (Exception e){
+                //if pending repairs are not in that slot
+                System.out.println("No Pending Repairs");
+            }
+
         }
         return null;
     }
 
-    public long findFirstAddedRepairForSection(String sectionName) {
-        List<Slot> workingSlots = slotRepository.findAllBySection_SectionNameAndStatusIsNot(sectionName, SlotStatus.NOTAVAILABLE);
+    public long findFirstAddedRepairForSection(List<Slot> workingSlots) {
+
         List<Long> repairIdList=new ArrayList<>();
         for (Slot slot : workingSlots) {
             List<Long> slotRepairIdList = serviceEntryRepository.findAllBySlotAndServiceEntryStatusIs(slot, ServiceEntryStatus.PENDING).stream()
@@ -126,6 +142,8 @@ public class TechnicianService {
             slotRepairIdList.forEach(aLong -> repairIdList.add(aLong));
         }
         //oldest id from the list
+        System.out.println("List");
+        repairIdList.forEach(aLong -> System.out.println(aLong));
         Long firstRepairId = repairIdList.stream().sorted().findFirst().get();
 
         return firstRepairId;

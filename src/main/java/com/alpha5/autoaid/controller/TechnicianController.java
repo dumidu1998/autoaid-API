@@ -51,9 +51,14 @@ public class TechnicianController {
     }
 
     @GetMapping("/getnext/repair/{sectionName}")
-    public ResponseEntity getNextRepair(@PathVariable String sectionName){
-        GetNextRepairResponse getNextRepairResponse= technicianService.getNextRepair(sectionName);
-        return ResponseEntity.badRequest().body("Not Completed yet");
+    public ResponseEntity getNextRepair(@PathVariable String sectionName) {
+        //check whether all slots not deactivated
+        if (technicianService.checkWhetherAllSlotsNotDeactivated(sectionName)) {
+            return ResponseEntity.badRequest().body("Slots are not working now !!");
+        } else {
+            GetNextRepairResponse getNextRepairResponse = technicianService.getNextRepair(sectionName);
+            return ResponseEntity.ok().body(getNextRepairResponse);
+        }
     }
     //TODO
     //find next repair ekedi added date eka consider krnna
