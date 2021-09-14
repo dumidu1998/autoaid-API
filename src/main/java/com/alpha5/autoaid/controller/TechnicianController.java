@@ -61,7 +61,6 @@ public class TechnicianController {
         }
     }
     //TODO
-    //find next repair ekedi added date eka consider krnna
     //repair acceptancy- if repair completed slot avaiable unama ekata next appointment set krna
 
 }

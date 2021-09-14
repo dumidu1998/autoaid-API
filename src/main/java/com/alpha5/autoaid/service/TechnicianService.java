@@ -146,11 +146,9 @@ public class TechnicianService {
                 return getNextRepairResponse;
             }catch (Exception e){
                 //if pending repairs are not in that slot
-                System.out.println("No Pending Repairs");
+                throw new RuntimeException("No pending repairs to this sections");
             }
-
         }
-        return null;
     }
 
     public long findFirstAddedRepairForSection(List<Slot> workingSlots) {
