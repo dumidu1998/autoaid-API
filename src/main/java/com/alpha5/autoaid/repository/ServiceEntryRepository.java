@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.repository;
 
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
+import com.alpha5.autoaid.model.Repair;
 import com.alpha5.autoaid.model.ServiceEntry;
 import com.alpha5.autoaid.model.Slot;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -3,6 +3,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
+import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
 import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import com.alpha5.autoaid.service.TechnicianService;
@@ -49,6 +50,11 @@ public class TechnicianController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/getnext/repair/{sectionName}")
+    public ResponseEntity getNextRepair(@PathVariable String sectionName){
+        GetNextRepairResponse getNextRepairResponse= technicianService.getNextRepair(sectionName);
+        return ResponseEntity.badRequest().body("Not Completed yet");
+    }
     //TODO
     //find next repair ekedi added date eka consider krnna
     //repair acceptancy- if repair completed slot avaiable unama ekata next appointment set krna
