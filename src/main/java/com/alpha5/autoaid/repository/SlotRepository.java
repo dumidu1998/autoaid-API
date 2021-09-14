@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.repository;
 
 import com.alpha5.autoaid.enums.SlotStatus;
+import com.alpha5.autoaid.model.Repair;
 import com.alpha5.autoaid.model.Slot;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,5 +12,6 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     Slot findByStatus(SlotStatus status);
     List<Slot> findAllBySection_SectionName(String sectionName);
     List<Slot> findAllBySection_SectionNameAndStatusIsNot(String sectionName, SlotStatus status);
+    List<Slot> findAllBySection_SectionNameAndStatusIs(String sectionName, SlotStatus status);
 
 }
