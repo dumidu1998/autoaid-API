@@ -24,8 +24,6 @@ import java.util.stream.Stream;
 
 @Service
 public class TechnicianService {
-    @Autowired
-    private RepairRepository repairRepository;
 
     @Autowired
     private SlotRepository slotRepository;
@@ -60,8 +58,10 @@ public class TechnicianService {
     }
 
     public void completeSubCat(SubCatCompleteRequest subCatCompleteRequest) {
+        Date date=new Date();
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
         serviceEntry.setServiceEntryStatus(ServiceEntryStatus.COMPLETED);
+        serviceEntry.setCompletedTime(date);
         serviceEntryRepository.save(serviceEntry);
     }
 
