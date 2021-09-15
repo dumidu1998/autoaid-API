@@ -3,6 +3,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
+import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
 import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
@@ -60,7 +61,11 @@ public class TechnicianController {
             return ResponseEntity.ok().body(getNextRepairResponse);
         }
     }
-    //TODO
-    //repair acceptancy- if repair completed slot avaiable unama ekata next appointment set krna
+
+    @PostMapping("/repair/acceptance")
+    public ResponseEntity repairAcceptance(@RequestBody TechnicianRepairAcceptanceRequest technicianRepairAcceptanceRequest){
+        technicianService.acceptRepair(technicianRepairAcceptanceRequest);
+        return ResponseEntity.ok().body("Repair Assigned");
+    }
 
 }

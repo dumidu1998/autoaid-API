@@ -2,6 +2,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
+import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
@@ -13,7 +14,9 @@ import com.alpha5.autoaid.repository.SlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,17 +83,9 @@ public class TechnicianService {
 //        System.out.println(slot.getSlotName());
         slot.setStatus(SlotStatus.AVAILABLE);
         slotRepository.save(slot);
-//        getNextSlot(repairCompletedRequest.getRepairId());
     }
 
     public GetNextRepairResponse getNextRepair(String section) {
-        //check if there are Available slots
-        //if any one has no pending repairs
-        //find first added repair of pending list of that section/ then assign newly available slot to that pending entries and return with btn status activate
-        //else
-        //get first added repair from repair table and return with btn status activate
-        //slot's are not in available but in process
-        //find first added repair of pending list of that section and return with btn status deactivate
 
         GetNextRepairResponse getNextRepairResponse=new GetNextRepairResponse();
         //check if there are Available slots
@@ -168,5 +163,21 @@ public class TechnicianService {
         long firstRepairId = repairIdList.stream().sorted().findFirst().get();
 
         return firstRepairId;
+    }
+
+    public void acceptRepair(TechnicianRepairAcceptanceRequest technicianRepairAcceptanceRequest){
+        List<ServiceEntry> serviceEntriesOfRepair=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(technicianRepairAcceptanceRequest.getRepairId(),technicianRepairAcceptanceRequest.getSectionName());
+        Slot slot=serviceEntriesOfRepair.stream().findFirst().get().getSlot();
+
+        SimpleDateFormat dateFormat=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date=new Date();
+        System.out.println(dateFormat.format(date));
+        for (ServiceEntry serviceEntry:serviceEntriesOfRepair){
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ASSIGNED);
+            serviceEntry.setAssignedTime(date);
+            serviceEntryRepository.save(serviceEntry);
+        }
+        slot.setStatus(SlotStatus.ONPROCESS);
+        slotRepository.save(slot);
     }
 }
