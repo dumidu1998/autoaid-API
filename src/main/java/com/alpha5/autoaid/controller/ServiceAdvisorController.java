@@ -104,5 +104,14 @@ public class ServiceAdvisorController {
         return ResponseEntity.ok().body(slot);
     }
 
+    @GetMapping("/Repairs/Ongoing/{advisorId}")
+    public ResponseEntity getOngoingRepairs(@PathVariable long advisorId){
+        if(serviceAdvisorService.checkIfAdvisorExists(advisorId)){
+
+            return ResponseEntity.ok().body("yet");
+        }else
+        return ResponseEntity.badRequest().body("Advisor Not Exists");
+    }
+
 
 }
