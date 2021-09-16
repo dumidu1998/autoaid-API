@@ -53,6 +53,12 @@ public class ServiceAdvisorService {
             return true;
         } return false;
     }
+    public boolean checkIfAdvisorExists(long staffId){
+        Staff staff=staffRepository.findByStaffId(staffId);
+        if(staff.getUserData().getUserType().equals(UserType.SERVICE_ADVISOR)){
+            return true;
+        }else return false;
+    }
 
     public GetCustomerDetailsRespond autoFillCustomerDetails(String contact){
         UserData user= userRepository.findByContactNo(contact);
@@ -315,7 +321,6 @@ public class ServiceAdvisorService {
 
     //get available slot of a section
     public Slot getAvailableSlotsOfSection(String sectionName){
-//        System.out.println("function " + sectionName);
         List<Slot> slots= (slotRepository.findAllBySection_SectionName(sectionName));
             //get free slot
             Optional<Slot> freeSlot = slots.stream()
@@ -325,7 +330,11 @@ public class ServiceAdvisorService {
                 return freeSlot.get();
             }else{
                 return null;
-            }
-        }
+          }
+      }
+
+    public void getOngoingRepairList(long staffId){
+
     }
+}
 
