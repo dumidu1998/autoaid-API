@@ -2,6 +2,7 @@ package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,96 +43,11 @@ public class UserData {
     private UserStatus userStatus;
 
     @OneToOne(targetEntity = Customer.class, mappedBy = "userData", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Customer customer;
 
     @OneToOne (targetEntity = Staff.class, mappedBy = "userData", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Staff staff;
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setContactNo(String contactNo) {
-        this.contactNo = contactNo;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getContactNo() {
-        return contactNo;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public Staff getStaff() {
-        return staff;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public UserType getUserType() {
-        return userType;
-    }
-
-    public void setUserType(UserType userType) {
-        this.userType = userType;
-    }
-
-    public UserStatus getUserStatus() {
-        return userStatus;
-    }
-
-    public void setUserStatus(UserStatus userStatus) {
-        this.userStatus = userStatus;
-    }
 }

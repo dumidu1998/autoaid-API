@@ -1,6 +1,8 @@
 package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,27 +25,36 @@ public class ServiceEntry {
     private String description;
 
     @Column
+//    @Temporal(TemporalType.DATE)
+//    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private Date assignedTime;
 
     @Column
     private Date completedTime;
 
+    @Column
+    private int estimatedTime;
+
     @Enumerated(EnumType.STRING)
     private ServiceEntryStatus serviceEntryStatus;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "repair_id")
     Repair repair;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "staff_id")
     Staff staff;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "sub_cat_id")
     SubCategory subCategory;
 
-    @OneToOne
+    @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "slot_id")
     Slot slot;
 

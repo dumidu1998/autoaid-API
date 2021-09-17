@@ -3,14 +3,11 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
-import com.alpha5.autoaid.model.UserData;
+import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/advisor")
@@ -20,10 +17,14 @@ public class ServiceAdvisorController {
     ServiceAdvisorService serviceAdvisorService;
 
     // auto fill vehicle details on the ve
-    @PostMapping("/get vehicle")
-    public VehicleDetailsAutofillResponse getVehicleDetails(@RequestBody VehicleDetailsAutofillRequest vehicleDetailsAutofillRequest) {
-        VehicleDetailsAutofillResponse response = serviceAdvisorService.autoFillVehicleDetails(vehicleDetailsAutofillRequest);
-        return response;
+    @GetMapping("/getvehicle/{vin}")
+    public ResponseEntity getVehicleDetails(@PathVariable String vin) {
+        if(serviceAdvisorService.checkIfVehicleExists(vin)){
+            VehicleDetailsAutofillResponse response = serviceAdvisorService.autoFillVehicleDetails(vin);
+            return ResponseEntity.ok().body(response);
+        }
+
+        return ResponseEntity.badRequest().body("Vehicle Not Exists");
 
     }
 
@@ -38,32 +39,78 @@ public class ServiceAdvisorController {
             return ResponseEntity.ok().body("vehicle Added Succesfully");
         }
     }
-    @PostMapping("/getCustomer")
-    public ResponseEntity getCustomerDetails(@RequestBody GetCustomerDetailsRequest getCustomerDetailsRequest){
-        GetCustomerDetailsRespond respond=serviceAdvisorService.autoFillCustomerDetails(getCustomerDetailsRequest.getContactNumber());
+    @GetMapping("/getCustomer/{contactNo}")
+    public ResponseEntity getCustomerDetails(@PathVariable String contactNo){
+        GetCustomerDetailsRespond respond=serviceAdvisorService.autoFillCustomerDetails(contactNo);
         if(respond!=null){
             return ResponseEntity.ok().body(respond);
-        }else return ResponseEntity.badRequest().body("User is Not There. Add New");
+
+        }
+        return ResponseEntity.badRequest().body("Add Customer");
     }
 
     //add new aketchy account for customer
     // it doesnt check for existing contact since it was filtered early. So, add non existing contact
-    @PostMapping("/customer/add new")
+    @PostMapping("/customer/addNew")
     public ResponseEntity addNewCustomerSketchy(@RequestBody AddSketchyCustomerRequest addSketchyCustomerRequest){
         serviceAdvisorService.addNewCustomerSketchy(addSketchyCustomerRequest);
         return ResponseEntity.ok().body("customer added Successfully");
     }
 
-    @PostMapping("/add repair")
+    @PostMapping("/addRepair")
     public ResponseEntity addNewRepair(@RequestBody AddNewRepairsRequest addNewRepairsRequest){
-        serviceAdvisorService.addNewRepair(addNewRepairsRequest);
-        return ResponseEntity.ok().body("Repair Added Successfully");
+        long repairId=serviceAdvisorService.addNewRepair(addNewRepairsRequest);
+
+        return ResponseEntity.ok().body(repairId);
     }
 
     @PostMapping("/add service entries")
-    public ResponseEntity addServiceEntries(@RequestBody AddNewServiceEntryRequest[] addNewServiceEntryRequest){
+    public ResponseEntity addServiceEntries(@RequestBody AddNewServiceEntryRequest addNewServiceEntryRequest){
         serviceAdvisorService.addNewServiceEntry(addNewServiceEntryRequest);
         return ResponseEntity.ok().body("Added to the DB");
+    }
+
+    @GetMapping("/getSubCategories/{secId}")
+    public ResponseEntity getSubCategories(@PathVariable int secId){
+        String section;
+        switch (secId){
+            case 1:
+                section="General Repair";
+                break;
+            case 2:
+                section="Wheel Alignment";
+                break;
+            case 3:
+                section="Service";
+                break;
+            case 4:
+                section="Express Maintainance";
+                break;
+            case 5:
+                section="Truck and Bus";
+                break;
+            default:
+                return ResponseEntity.badRequest().body("invalid Selection");
+        }
+        return ResponseEntity.ok().body(serviceAdvisorService.getSubCatList(section));
+    }
+
+    @GetMapping("/nextslot/{repairId}")
+    public ResponseEntity setNextSlot(@PathVariable long repairId){
+        Slot slot=serviceAdvisorService.getNextSlot(repairId);
+        if(slot==null){
+            return ResponseEntity.badRequest().body("All Repairs Completed");
+        }
+        return ResponseEntity.ok().body(slot);
+    }
+
+    @GetMapping("/Repairs/Ongoing/{advisorId}")
+    public ResponseEntity getOngoingRepairs(@PathVariable long advisorId){
+        if(serviceAdvisorService.checkIfAdvisorExists(advisorId)){
+
+            return ResponseEntity.ok().body("yet");
+        }else
+        return ResponseEntity.badRequest().body("Advisor Not Exists");
     }
 
 

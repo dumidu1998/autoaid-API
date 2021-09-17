@@ -1,59 +1,77 @@
 package com.alpha5.autoaid.service;
 
-import com.alpha5.autoaid.dto.request.NewAppointmentRequest;
-import com.alpha5.autoaid.dto.response.NewAppointmentRespond;
+import com.alpha5.autoaid.dto.request.AddAppointment;
+import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.model.Appointment;
-import com.alpha5.autoaid.model.Customer;
+import com.alpha5.autoaid.model.AppointmentSlot;
 import com.alpha5.autoaid.model.Staff;
-import com.alpha5.autoaid.model.Vehicle;
-import com.alpha5.autoaid.repository.AppointmentRepository;
-import com.alpha5.autoaid.repository.CustomerRepository;
-import com.alpha5.autoaid.repository.StaffRepository;
-import com.alpha5.autoaid.repository.VehicleRepository;
+import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Null;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class AppointmentService {
-    @Autowired
-    private CustomerRepository customerRepository;
 
     @Autowired
-    private StaffRepository staffRepository;
-
+    AppointmentSlotsRepository appointmentSlotsRepository;
     @Autowired
-    private VehicleRepository vehicleRepository;
-
+    AppointmentRepository appointmentRepository;
     @Autowired
-    private AppointmentRepository appointmentRepository;
+    CustomerRepository customerRepository;
+    @Autowired
+    VehicleRepository vehicleRepository;
+    @Autowired
+    StaffRepository staffRepository;
 
-    public NewAppointmentRespond newAppointment(NewAppointmentRequest newAppointmentRequest) {
-        Customer customer = customerRepository.findByCustomerId(newAppointmentRequest.getCustomerId());
-        Staff staff = staffRepository.findByStaffId(newAppointmentRequest.getServiceAdvisorId());
+    public List<AppointmentSlot> getAllSlots() {
+        return appointmentSlotsRepository.findAll();
+    }
 
-        Vehicle vehicle = new Vehicle();
-        if(newAppointmentRequest.getVehicleId()!= null) {
-             vehicle = vehicleRepository.findByVehicleId(newAppointmentRequest.getVehicleId());
-        }
-
+    public boolean addAppointment(AddAppointment addAppointment) {
         Appointment appointment = new Appointment();
 
-        appointment.setCustomer(customer);
-        appointment.setStaff(staff);
-        appointment.setVehicle(vehicle);
-        appointment.setDateAppointment(newAppointmentRequest.getDate());
-        appointment.setTimeAppointment(newAppointmentRequest.getTime());
-        appointment.setVehicleName(newAppointmentRequest.getVehicleName());
+        appointment.setVehicle(vehicleRepository.findByVehicleId(addAppointment.getVehicleId()));
+        appointment.setDate(addAppointment.getDate());
+        appointment.setStaff(staffRepository.findByStaffId(addAppointment.getStaffId()));
+        appointment.setAppointmentSlot(appointmentSlotsRepository.findByAppointmentSlotId(addAppointment.getSlotId()));
 
-        Appointment newAppointment = appointmentRepository.save(appointment);
-        NewAppointmentRespond newAppointmentRespond = new NewAppointmentRespond();
-
-        newAppointmentRespond.setDate(newAppointment.getDateAppointment());
-        newAppointmentRespond.setTime(newAppointment.getTimeAppointment());
-
-        return newAppointmentRespond;
-
+        if(appointmentRepository.save(appointment)!=null){
+            return true;
+        }else{
+            return false;
+        }
     }
+
+    public List<AppointmentSlot> getFreeSlotsByDate(Date date) {
+        String shortDate=new SimpleDateFormat("YYYY-MM-dd").format(date);
+        List<AppointmentSlot> response = appointmentSlotsRepository.findAvailableSlotsbyDate(shortDate);
+        if(response!=null) {
+            return response;
+        }else{
+            return null;
+        }
+    }
+
+    public List<StaffListRespond> getServiceAdvisorFromDate(Date date,long id) {
+        String shortDate=new SimpleDateFormat("YYYY-MM-dd").format(date);
+        List<Staff> output=staffRepository.findAvailableServiceAdvisorsByDate(shortDate,id);
+        List<StaffListRespond> response = new ArrayList<>();
+        for(Staff staff:output){
+            StaffListRespond out = new StaffListRespond();
+            out.setFirstName(staff.getFirstName());
+            out.setLastname(staff.getLastName());
+            out.setId(staff.getStaffId());
+            response.add(out);
+        }
+        return response;
+    }
+
+//    public ResponseEntity getUpcomingAppointments(long id) {
+//        List<Appointments> appointments = staffRepository.
+//    }
 }

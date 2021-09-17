@@ -15,7 +15,7 @@ import java.util.Set;
 public class Vehicle {
     @Id
     @GeneratedValue
-    private int vehicleId;
+    private long vehicleId;
 
     @Column(nullable = false)
     private String vin;
@@ -36,41 +36,16 @@ public class Vehicle {
     private String model;
 
     @ManyToOne
+    @JsonIgnore
     private Customer customer;
 
     @OneToMany(targetEntity = Repair.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Repair> repairs;
 
-    public int getVehicleId() {
-        return vehicleId;
-    }
+    @OneToMany(targetEntity = Appointment.class, mappedBy = "vehicle", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Appointment> appointments;
 
-    public String getVin() {
-        return vin;
-    }
 
-    public String getEngineNo() {
-        return engineNo;
-    }
-
-    public String getChassisNo() {
-        return chassisNo;
-    }
-
-    public String getMake() {
-        return make;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public Set<Repair> getRepairs() {
-        return repairs;
-    }
 }
