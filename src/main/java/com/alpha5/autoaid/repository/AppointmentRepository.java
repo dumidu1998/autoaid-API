@@ -8,8 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-
-
+    List<Appointment> findAllByStaff_StaffIdAndDate(long staffId,Date date);
 
 
 }

@@ -3,7 +3,9 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.OngoingRepairResponse;
+import com.alpha5.autoaid.dto.response.UpcomingAppointmentResponse;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
+import com.alpha5.autoaid.model.Appointment;
 import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,13 +109,13 @@ public class ServiceAdvisorController {
         return ResponseEntity.ok().body(slot);
     }
 
-    @GetMapping("/repairs/ongoing/{advisorId}")
-    public ResponseEntity getOngoingRepairs(@PathVariable long advisorId){
+    @GetMapping("/repairs/ongoing/{userId}")
+    public ResponseEntity getOngoingRepairs(@PathVariable long userId){
+        long advisorId=serviceAdvisorService.getStaffId(userId);
         if(serviceAdvisorService.checkIfAdvisorExists(advisorId)){
-            System.out.println("in");
             List<OngoingRepairResponse> ongoingRepairResponses=serviceAdvisorService.getOngoingRepairList(advisorId);
             if(ongoingRepairResponses.isEmpty()){
-                return ResponseEntity.ok().body("No ongoing repairs");
+                return ResponseEntity.badRequest().body("No ongoing repairs !");
             }else {
                 return ResponseEntity.ok().body(ongoingRepairResponses);
             }
@@ -121,5 +123,18 @@ public class ServiceAdvisorController {
         return ResponseEntity.badRequest().body("Advisor Not Exists");
     }
 
+    @GetMapping("/appointments/today/{userId}")
+    public ResponseEntity getUpcomingAppointments(@PathVariable long userId){
+        long advisorId=serviceAdvisorService.getStaffId(userId);
+        if(serviceAdvisorService.checkIfAdvisorExists(advisorId)){
+            List<UpcomingAppointmentResponse> upcomingAppointmentResponses=serviceAdvisorService.getPendingAppointments(advisorId);
+            if(upcomingAppointmentResponses.isEmpty()){
+                return ResponseEntity.badRequest().body("No Upcoming Appointments !");
+            }else {
+                return ResponseEntity.ok().body(upcomingAppointmentResponses);
+            }
+        }else
+            return ResponseEntity.badRequest().body("Advisor Not Exists");
+    }
 
 }
