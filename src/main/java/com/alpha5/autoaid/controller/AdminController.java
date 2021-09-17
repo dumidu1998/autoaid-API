@@ -148,5 +148,11 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.getAllSectionsDetails());
     }
 
+    @GetMapping("/slots/getdetails/{sectionName}")
+    public ResponseEntity getSlotsDetails(@PathVariable  String sectionName){
+        return ResponseEntity.ok().body(adminService.getSlotsDetails(sectionName));
+    }
+
+
 }
 

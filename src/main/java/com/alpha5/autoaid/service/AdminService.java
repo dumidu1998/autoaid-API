@@ -2,10 +2,7 @@ package com.alpha5.autoaid.service;
 
 
 import com.alpha5.autoaid.dto.request.*;
-import com.alpha5.autoaid.dto.response.AddStaffRespond;
-import com.alpha5.autoaid.dto.response.AdminGetSectionResponse;
-import com.alpha5.autoaid.dto.response.StaffListRespond;
-import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
+import com.alpha5.autoaid.dto.response.*;
 import com.alpha5.autoaid.enums.SlotStatus;
 import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.model.*;
@@ -271,6 +268,24 @@ public class AdminService {
         }
 
         return adminGetSectionResponses;
+    }
+    public List<AdminGetSlotDetailsResponse> getSlotsDetails(String sectionName){
+        List<AdminGetSlotDetailsResponse> adminGetSlotDetailsResponses=new ArrayList<>();
+        List<Slot> slots=slotRepository.findAllBySection_SectionName(sectionName);
+
+        for (Slot slot:slots){
+            AdminGetSlotDetailsResponse adminGetSlotDetailsResponse=new AdminGetSlotDetailsResponse();
+
+            adminGetSlotDetailsResponse.setSlotId(slot.getSlotID());
+            adminGetSlotDetailsResponse.setSlotName(slot.getSlotName());
+            adminGetSlotDetailsResponse.setSlotStatus(slot.getStatus());
+            adminGetSlotDetailsResponse.setAssignedVehicle(null);
+            adminGetSlotDetailsResponse.setAssignedTechnicianName(null);
+
+            adminGetSlotDetailsResponses.add(adminGetSlotDetailsResponse);
+        }
+
+        return adminGetSlotDetailsResponses;
     }
 }
 
