@@ -1,9 +1,7 @@
 package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.*;
-import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
-import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
-import com.alpha5.autoaid.dto.response.VehicleListResponse;
+import com.alpha5.autoaid.dto.response.*;
 import com.alpha5.autoaid.enums.*;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
@@ -18,6 +16,12 @@ import java.util.stream.Stream;
 
 @Service
 public class ServiceAdvisorService {
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Autowired
+    private AppointmentSlotsRepository appointmentSlotsRepository;
+
     @Autowired
     private StaffRepository staffRepository;
 
@@ -48,16 +52,29 @@ public class ServiceAdvisorService {
     @Autowired
     private SlotRepository slotRepository;
 
+    public long getStaffId(long userId){
+        try {
+            long staffId=staffRepository.findByUserData_Id(userId).getStaffId();
+            return staffId;
+        }catch (Exception e){
+            throw new RuntimeException("Invalid User");
+        }
+    }
     public boolean checkIfVehicleExists(String vin){
         if(vehicleRepository.findByVin(vin)!=null){
             return true;
         } return false;
     }
     public boolean checkIfAdvisorExists(long staffId){
-        Staff staff=staffRepository.findByStaffId(staffId);
-        if(staff.getUserData().getUserType().equals(UserType.SERVICE_ADVISOR)){
-            return true;
-        }else return false;
+        try {
+            Staff staff=staffRepository.findByStaffId(staffId);
+            if (staff.getUserData().getUserType().equals(UserType.SERVICE_ADVISOR)) {
+                return true;
+            }
+            else return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public GetCustomerDetailsRespond autoFillCustomerDetails(String contact){
@@ -333,8 +350,31 @@ public class ServiceAdvisorService {
           }
       }
 
-    public void getOngoingRepairList(long staffId){
+    public  List<OngoingRepairResponse> getOngoingRepairList(long staffId) {
+        List<OngoingRepairResponse> ongoingRepairResponses=new ArrayList<>();
+        List<Repair> repairs = repairRepository.findAllByStaff_StaffIdAndStatusIsNot(staffId, RepairStatus.HANDOVER);
 
+        for (Repair repair:repairs){
+            OngoingRepairResponse ongoingRepairResponse=new OngoingRepairResponse();
+            ongoingRepairResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+            ongoingRepairResponse.setStatus(repair.getStatus());
+
+            ongoingRepairResponses.add(ongoingRepairResponse);
+        }
+            return ongoingRepairResponses;
+    }
+
+    public List<UpcomingAppointmentResponse> getPendingAppointments(long staffId){
+        Date date=new Date();
+        List<UpcomingAppointmentResponse> upcomingAppointmentResponses=new ArrayList<>();
+        List<Appointment> allAppointmentsOnDate = appointmentRepository.findAllByStaff_StaffIdAndDate(staffId, date);
+        for (Appointment appointment:allAppointmentsOnDate){
+            UpcomingAppointmentResponse upcomingAppointmentResponse=new UpcomingAppointmentResponse();
+            upcomingAppointmentResponse.setVehicleNumber(appointment.getVehicle().getVehicleNumber());
+            upcomingAppointmentResponse.setVin(appointment.getVehicle().getVin());
+            upcomingAppointmentResponses.add(upcomingAppointmentResponse);
+        }
+
+        return upcomingAppointmentResponses;
     }
 }
-
