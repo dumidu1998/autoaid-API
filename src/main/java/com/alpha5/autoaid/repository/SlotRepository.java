@@ -18,4 +18,6 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     int getTotalCount(long sectionId);
     @Query(value = "SELECT COUNT(slotid) FROM `slot` WHERE section_id=?1 AND status='AVAILABLE'",nativeQuery = true)
     int getFreeSlotCount(long sectionId);
+    @Query(value = "SELECT COUNT(slotid) FROM `slot` WHERE section_id=?1 AND status='NOTAVAILABLE'",nativeQuery = true)
+    int getNotAvailSlots(long sectionId);
 }

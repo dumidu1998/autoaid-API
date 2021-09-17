@@ -254,6 +254,7 @@ public class AdminService {
             AdminGetSectionResponse adminGetSectionResponse=new AdminGetSectionResponse();
             int numOfSlots=slotRepository.getTotalCount(section.getSectionId());
             int freeSlots=slotRepository.getFreeSlotCount(section.getSectionId());
+            int notAvailSlots=slotRepository.getNotAvailSlots(section.getSectionId());
             String staffName="";
             try {
                 staffName=section.getStaff().getFirstName()+" "+section.getStaff().getLastName();
@@ -263,7 +264,7 @@ public class AdminService {
             adminGetSectionResponse.setSectionName(section.getSectionName());
             adminGetSectionResponse.setNumberOfSlots(numOfSlots);
             adminGetSectionResponse.setFreeSlots(freeSlots);
-            adminGetSectionResponse.setOccupiedSlots(numOfSlots-freeSlots);
+            adminGetSectionResponse.setOccupiedSlots(numOfSlots-notAvailSlots);
             adminGetSectionResponse.setTechnicianName(staffName);
 
             adminGetSectionResponses.add(adminGetSectionResponse);
