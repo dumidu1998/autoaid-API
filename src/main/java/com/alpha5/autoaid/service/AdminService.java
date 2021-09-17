@@ -3,6 +3,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
+import com.alpha5.autoaid.dto.response.AdminGetSectionResponse;
 import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
 import com.alpha5.autoaid.enums.SlotStatus;
@@ -244,6 +245,31 @@ public class AdminService {
             response="User Status Unidentified";
         }
         return response;
+    }
+
+    public List<AdminGetSectionResponse> getAllSectionsDetails(){
+        List<AdminGetSectionResponse> adminGetSectionResponses=new ArrayList<>();
+        List<Section> sections=sectionRepository.findAll();
+        for(Section section:sections){
+            AdminGetSectionResponse adminGetSectionResponse=new AdminGetSectionResponse();
+            int numOfSlots=slotRepository.getTotalCount(section.getSectionId());
+            int freeSlots=slotRepository.getFreeSlotCount(section.getSectionId());
+            String staffName="";
+            try {
+                staffName=section.getStaff().getFirstName()+" "+section.getStaff().getLastName();
+            }catch  (Exception e){
+                staffName="UNASSIGNED";
+            }
+            adminGetSectionResponse.setSectionName(section.getSectionName());
+            adminGetSectionResponse.setNumberOfSlots(numOfSlots);
+            adminGetSectionResponse.setFreeSlots(freeSlots);
+            adminGetSectionResponse.setOccupiedSlots(numOfSlots-freeSlots);
+            adminGetSectionResponse.setTechnicianName(staffName);
+
+            adminGetSectionResponses.add(adminGetSectionResponse);
+        }
+
+        return adminGetSectionResponses;
     }
 }
 

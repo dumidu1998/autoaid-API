@@ -143,5 +143,10 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/section/getall")
+    public ResponseEntity getAllSections(){
+        return ResponseEntity.ok().body(adminService.getAllSectionsDetails());
+    }
+
 }
 
