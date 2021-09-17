@@ -2,6 +2,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
+import com.alpha5.autoaid.dto.response.OngoingRepairResponse;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.dto.response.VehicleListResponse;
 import com.alpha5.autoaid.enums.*;
@@ -54,10 +55,15 @@ public class ServiceAdvisorService {
         } return false;
     }
     public boolean checkIfAdvisorExists(long staffId){
-        Staff staff=staffRepository.findByStaffId(staffId);
-        if(staff.getUserData().getUserType().equals(UserType.SERVICE_ADVISOR)){
-            return true;
-        }else return false;
+        try {
+            Staff staff=staffRepository.findByStaffId(staffId);
+            if (staff.getUserData().getUserType().equals(UserType.SERVICE_ADVISOR)) {
+                return true;
+            }
+            else return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public GetCustomerDetailsRespond autoFillCustomerDetails(String contact){
@@ -333,8 +339,17 @@ public class ServiceAdvisorService {
           }
       }
 
-    public void getOngoingRepairList(long staffId){
+    public  List<OngoingRepairResponse> getOngoingRepairList(long staffId) {
+        List<OngoingRepairResponse> ongoingRepairResponses=new ArrayList<>();
+        List<Repair> repairs = repairRepository.findAllByStaff_StaffIdAndStatusIsNot(staffId, RepairStatus.COMPLETED);
 
+        for (Repair repair:repairs){
+            OngoingRepairResponse ongoingRepairResponse=new OngoingRepairResponse();
+            ongoingRepairResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+            ongoingRepairResponse.setStatus(repair.getStatus());
+
+            ongoingRepairResponses.add(ongoingRepairResponse);
+        }
+            return ongoingRepairResponses;
     }
 }
-

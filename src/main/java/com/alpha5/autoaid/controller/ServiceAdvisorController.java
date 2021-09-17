@@ -2,12 +2,15 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
+import com.alpha5.autoaid.dto.response.OngoingRepairResponse;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
 import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/advisor")
@@ -104,11 +107,16 @@ public class ServiceAdvisorController {
         return ResponseEntity.ok().body(slot);
     }
 
-    @GetMapping("/Repairs/Ongoing/{advisorId}")
+    @GetMapping("/repairs/ongoing/{advisorId}")
     public ResponseEntity getOngoingRepairs(@PathVariable long advisorId){
         if(serviceAdvisorService.checkIfAdvisorExists(advisorId)){
-
-            return ResponseEntity.ok().body("yet");
+            System.out.println("in");
+            List<OngoingRepairResponse> ongoingRepairResponses=serviceAdvisorService.getOngoingRepairList(advisorId);
+            if(ongoingRepairResponses.isEmpty()){
+                return ResponseEntity.ok().body("No ongoing repairs");
+            }else {
+                return ResponseEntity.ok().body(ongoingRepairResponses);
+            }
         }else
         return ResponseEntity.badRequest().body("Advisor Not Exists");
     }
