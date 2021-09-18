@@ -280,6 +280,7 @@ public class AdminService {
         for (Slot slot:slots){
             AdminGetSlotDetailsResponse adminGetSlotDetailsResponse=new AdminGetSlotDetailsResponse();
             String vehicleNumber="";
+            String technicianName="";
             try {
                 vehicleNumber=serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
                         .stream()
@@ -288,11 +289,16 @@ public class AdminService {
             }catch (Exception e){
                 vehicleNumber=null;
             }
+            try {
+                technicianName=slot.getStaff().getFirstName()+" "+slot.getStaff().getLastName();
+            }catch (Exception e){
+                technicianName=null;
+            }
             adminGetSlotDetailsResponse.setSlotId(slot.getSlotID());
             adminGetSlotDetailsResponse.setSlotName(slot.getSlotName());
             adminGetSlotDetailsResponse.setSlotStatus(slot.getStatus());
             adminGetSlotDetailsResponse.setAssignedVehicle(vehicleNumber);
-            adminGetSlotDetailsResponse.setAssignedTechnicianName(null);
+            adminGetSlotDetailsResponse.setAssignedTechnicianName(technicianName);
 
             adminGetSlotDetailsResponses.add(adminGetSlotDetailsResponse);
         }
