@@ -327,6 +327,8 @@ public class AdminService {
             String vin="";
             String customerName="";
             String contactNo="";
+            String vehicleNo="";
+
             try {
                 vin=serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
                         .stream()
@@ -339,12 +341,13 @@ public class AdminService {
                 Vehicle vehicle=vehicleRepository.findByVin(vin);
                 customerName=vehicle.getCustomer().getFirstName()+" "+vehicle.getCustomer().getLastName();
                 contactNo=vehicle.getCustomer().getUserData().getContactNo();
+                vehicleNo=vehicle.getVehicleNumber();
 
             }catch (Exception e){
-                customerName=null;
-                contactNo=null;
+                customerName=vehicleNo=contactNo=null;
             }
-            adminSectionsOngoingVehicleResponse.setVehicleNumber(vin);
+            adminSectionsOngoingVehicleResponse.setVin(vin);
+            adminSectionsOngoingVehicleResponse.setVehicleNumber(vehicleNo);
             adminSectionsOngoingVehicleResponse.setRepairStatus(serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
                                                             .stream()
                                                             .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))

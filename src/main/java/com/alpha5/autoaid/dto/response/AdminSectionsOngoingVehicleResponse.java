@@ -4,9 +4,18 @@ import com.alpha5.autoaid.enums.RepairStatus;
 
 public class AdminSectionsOngoingVehicleResponse {
     private String vehicleNumber;
+    private String vin;
     private RepairStatus repairStatus;
     private String customerName;
     private String contactNo;
+
+    public String getVin() {
+        return vin;
+    }
+
+    public void setVin(String vin) {
+        this.vin = vin;
+    }
 
     public String getContactNo() {
         return contactNo;
