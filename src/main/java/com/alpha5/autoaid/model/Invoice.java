@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -19,8 +20,8 @@ public class Invoice {
     @GeneratedValue
     private long invoiceId;
 
-    @Column(nullable = false)
-    private int amount;
+    @Column(nullable = false, precision = 10,scale = 2)
+    private BigDecimal amount;
 
     @CreationTimestamp
     private Date invoiceDate;

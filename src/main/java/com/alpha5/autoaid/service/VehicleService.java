@@ -42,4 +42,16 @@ public class VehicleService {
     public List<Vehicle> getVehicleByUserId(long id) {
         return vehicleRepository.findAllByCustomer_UserData_Id(id);
     }
+
+    public Vehicle getDetailsByVid(long id) {
+        return vehicleRepository.findByVehicleId(id);
+    }
+
+    public ExpenseResponse getExpensesByVid(long id) {
+        float totalSpent = vehicleRepository.vehicleSummary(id);
+        float totalSpentMonth = vehicleRepository.vehicleSummary2(id);
+        float  repairsPerMonth = vehicleRepository.vehicleSummary3(id);
+        int  activeRepairs = vehicleRepository.vehicleSummary4(id);
+        return new ExpenseResponse(totalSpent,totalSpentMonth,totalSpent/12,repairsPerMonth,activeRepairs);
+    }
 }
