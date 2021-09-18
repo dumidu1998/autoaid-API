@@ -3,6 +3,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.*;
+import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
 import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.model.*;
@@ -34,6 +35,9 @@ public class AdminService {
 
     @Autowired
     private SlotRepository slotRepository;
+
+    @Autowired
+    private ServiceEntryRepository serviceEntryRepository;
 
     //returns false if member exists
     public boolean checkStaffMemberExists(long staffId){
@@ -275,12 +279,26 @@ public class AdminService {
 
         for (Slot slot:slots){
             AdminGetSlotDetailsResponse adminGetSlotDetailsResponse=new AdminGetSlotDetailsResponse();
-
+            String vehicleNumber="";
+            String technicianName="";
+            try {
+                vehicleNumber=serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
+                        .stream()
+                        .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                        .map(serviceEntry -> serviceEntry.getRepair().getVehicle().getVehicleNumber()).findFirst().get();
+            }catch (Exception e){
+                vehicleNumber=null;
+            }
+            try {
+                technicianName=slot.getStaff().getFirstName()+" "+slot.getStaff().getLastName();
+            }catch (Exception e){
+                technicianName=null;
+            }
             adminGetSlotDetailsResponse.setSlotId(slot.getSlotID());
             adminGetSlotDetailsResponse.setSlotName(slot.getSlotName());
             adminGetSlotDetailsResponse.setSlotStatus(slot.getStatus());
-            adminGetSlotDetailsResponse.setAssignedVehicle(null);
-            adminGetSlotDetailsResponse.setAssignedTechnicianName(null);
+            adminGetSlotDetailsResponse.setAssignedVehicle(vehicleNumber);
+            adminGetSlotDetailsResponse.setAssignedTechnicianName(technicianName);
 
             adminGetSlotDetailsResponses.add(adminGetSlotDetailsResponse);
         }
