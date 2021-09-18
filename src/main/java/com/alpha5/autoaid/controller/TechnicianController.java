@@ -47,7 +47,7 @@ public class TechnicianController {
         if(technicianService.checkWhetherNoneCompletedEntries(repairId)){
             response="entries exists";
         }else
-            response="all coompleted";
+            response="all completed";
         return ResponseEntity.ok().body(response);
     }
 
