@@ -2,13 +2,17 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.AddItem;
 import com.alpha5.autoaid.dto.request.AddItemCategory;
+import com.alpha5.autoaid.dto.request.AddItemNewStock;
 import com.alpha5.autoaid.dto.request.UpdateItem;
+import com.alpha5.autoaid.dto.response.AddInventryItemResponed;
 import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
 import com.alpha5.autoaid.enums.InventoryStatus;
 import com.alpha5.autoaid.model.InventoryItem;
+import com.alpha5.autoaid.model.ItemAdd;
 import com.alpha5.autoaid.model.ItemCategory;
 import com.alpha5.autoaid.repository.InventryItemRepository;
+import com.alpha5.autoaid.repository.ItemAddRepository;
 import com.alpha5.autoaid.repository.ItemCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,8 @@ public class StockService {
 
     @Autowired
     private ItemCategoryRepository itemCategoryRepository;
+    @Autowired
+    private ItemAddRepository itemAddRepository;
 
     public InventryStockRespond getItemByName(String itemName){
         InventoryItem item = inventryItemRepository.findByItemName(itemName);
@@ -38,6 +44,7 @@ public class StockService {
             response.setStock(item.getStock());
             response.setPrice(item.getPrice());
             response.setReorderLevel(item.getReorderLevel());
+
 
             return response;
         }
@@ -71,7 +78,7 @@ public class StockService {
         item.setCategory(itemCategory);
         InventoryItem addeditem = inventryItemRepository.save(item);
 
-        AddItemRespond respond = new AddItemRespond(addeditem.getItemName());
+        AddItemRespond respond = new AddItemRespond(addeditem.getItemNo(), addeditem.getItemName());
 
         return respond;
     }
@@ -108,6 +115,7 @@ public class StockService {
         respond.setPrice(item.getPrice());
         respond.setReorderLevel(item.getReorderLevel());
         respond.setStock(item.getStock());
+        respond.setCatName(item.getCategory().getCategoryName());
 
         return respond;
     }
@@ -145,5 +153,55 @@ public class StockService {
         InventoryItem item = inventryItemRepository.findByItemNo(itemId);
         item.setStatus(((item.getStatus().toString()=="AVAILABLE")?InventoryStatus.UNAVAILABLE:InventoryStatus.AVAILABLE));
         inventryItemRepository.save(item);
+    }
+
+    public boolean updateNewItemStock(AddItemNewStock addItemNewStock) {
+        try {
+            ItemAdd newItem = new ItemAdd();
+            newItem.setBuyingPrice(addItemNewStock.getBuyingPrice());
+            newItem.setQuantity(addItemNewStock.getStock());
+            newItem.setItem(inventryItemRepository.findByItemNo(addItemNewStock.getItemNo()));
+            itemAddRepository.save(newItem);
+
+            InventoryItem item = inventryItemRepository.findByItemNo(addItemNewStock.getItemNo());
+            item.setStock(item.getStock().add(addItemNewStock.getStock()));
+            inventryItemRepository.save(item);
+            return true;
+        }catch(Exception e) {
+            return false;
+        }
+
+    }
+
+    public List<AddInventryItemResponed> getAllItems() {
+       List<InventoryItem> all =  inventryItemRepository.findAll();
+       List<AddInventryItemResponed> respond = new ArrayList<>();
+        for(InventoryItem item : all){
+            AddInventryItemResponed newitem = new AddInventryItemResponed();
+            newitem.setItemName(item.getItemName());
+            newitem.setItemNo(item.getItemNo());
+            newitem.setStock(item.getStock());
+            newitem.setPrice(item.getPrice());
+            newitem.setReorderLevel(item.getReorderLevel());
+            newitem.setStatus(item.getStatus());
+            respond.add(newitem);
+        }
+        return respond;
+    }
+
+    public List<AddInventryItemResponed> getCategoryitems(long categoryId) {
+        List<InventoryItem> categoryAll =  inventryItemRepository.findAllByCategory_CategoryId(categoryId);
+        List<AddInventryItemResponed> respond = new ArrayList<>();
+        for(InventoryItem item : categoryAll){
+            AddInventryItemResponed newitem = new AddInventryItemResponed();
+            newitem.setItemName(item.getItemName());
+            newitem.setItemNo(item.getItemNo());
+            newitem.setStock(item.getStock());
+            newitem.setPrice(item.getPrice());
+            newitem.setReorderLevel(item.getReorderLevel());
+            newitem.setStatus(item.getStatus());
+            respond.add(newitem);
+        }
+        return respond;
     }
 }

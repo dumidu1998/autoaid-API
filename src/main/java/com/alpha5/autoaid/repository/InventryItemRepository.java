@@ -16,5 +16,6 @@ public interface InventryItemRepository extends JpaRepository<InventoryItem,Long
     @Query(value = "SELECT * FROM inventory_item WHERE stock<=reorder_level" , nativeQuery = true)
     List<InventoryItem> getLowStockItems();
 
+    List<InventoryItem> findAllByCategory_CategoryId(long categoryId);
 
 }

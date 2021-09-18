@@ -2,9 +2,8 @@ package com.alpha5.autoaid.service;
 
 
 import com.alpha5.autoaid.dto.request.*;
-import com.alpha5.autoaid.dto.response.AddStaffRespond;
-import com.alpha5.autoaid.dto.response.StaffListRespond;
-import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
+import com.alpha5.autoaid.dto.response.*;
+import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
 import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.model.*;
@@ -36,6 +35,9 @@ public class AdminService {
 
     @Autowired
     private SlotRepository slotRepository;
+
+    @Autowired
+    private ServiceEntryRepository serviceEntryRepository;
 
     //returns false if member exists
     public boolean checkStaffMemberExists(long staffId){
@@ -244,6 +246,64 @@ public class AdminService {
             response="User Status Unidentified";
         }
         return response;
+    }
+
+    public List<AdminGetSectionResponse> getAllSectionsDetails(){
+        List<AdminGetSectionResponse> adminGetSectionResponses=new ArrayList<>();
+        List<Section> sections=sectionRepository.findAll();
+        for(Section section:sections){
+            AdminGetSectionResponse adminGetSectionResponse=new AdminGetSectionResponse();
+            int numOfSlots=slotRepository.getTotalCount(section.getSectionId());
+            int freeSlots=slotRepository.getFreeSlotCount(section.getSectionId());
+            int notAvailSlots=slotRepository.getNotAvailSlots(section.getSectionId());
+            String staffName="";
+            try {
+                staffName=section.getStaff().getFirstName()+" "+section.getStaff().getLastName();
+            }catch  (Exception e){
+                staffName="UNASSIGNED";
+            }
+            adminGetSectionResponse.setSectionName(section.getSectionName());
+            adminGetSectionResponse.setNumberOfSlots(numOfSlots);
+            adminGetSectionResponse.setFreeSlots(freeSlots);
+            adminGetSectionResponse.setOccupiedSlots(numOfSlots-notAvailSlots);
+            adminGetSectionResponse.setTechnicianName(staffName);
+
+            adminGetSectionResponses.add(adminGetSectionResponse);
+        }
+
+        return adminGetSectionResponses;
+    }
+    public List<AdminGetSlotDetailsResponse> getSlotsDetails(String sectionName){
+        List<AdminGetSlotDetailsResponse> adminGetSlotDetailsResponses=new ArrayList<>();
+        List<Slot> slots=slotRepository.findAllBySection_SectionName(sectionName);
+
+        for (Slot slot:slots){
+            AdminGetSlotDetailsResponse adminGetSlotDetailsResponse=new AdminGetSlotDetailsResponse();
+            String vehicleNumber="";
+            String technicianName="";
+            try {
+                vehicleNumber=serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
+                        .stream()
+                        .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                        .map(serviceEntry -> serviceEntry.getRepair().getVehicle().getVehicleNumber()).findFirst().get();
+            }catch (Exception e){
+                vehicleNumber=null;
+            }
+            try {
+                technicianName=slot.getStaff().getFirstName()+" "+slot.getStaff().getLastName();
+            }catch (Exception e){
+                technicianName=null;
+            }
+            adminGetSlotDetailsResponse.setSlotId(slot.getSlotID());
+            adminGetSlotDetailsResponse.setSlotName(slot.getSlotName());
+            adminGetSlotDetailsResponse.setSlotStatus(slot.getStatus());
+            adminGetSlotDetailsResponse.setAssignedVehicle(vehicleNumber);
+            adminGetSlotDetailsResponse.setAssignedTechnicianName(technicianName);
+
+            adminGetSlotDetailsResponses.add(adminGetSlotDetailsResponse);
+        }
+
+        return adminGetSlotDetailsResponses;
     }
 }
 
