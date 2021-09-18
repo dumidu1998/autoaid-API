@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
@@ -38,6 +39,9 @@ public class AdminService {
 
     @Autowired
     private ServiceEntryRepository serviceEntryRepository;
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     //returns false if member exists
     public boolean checkStaffMemberExists(long staffId){
@@ -103,6 +107,11 @@ public class AdminService {
         if(slot!=null){
             return true;
         }else return false;
+    }
+
+    public List<String> getSectionList(){
+        List<String> sectionNameList=  sectionRepository.findAll().stream().map(section -> section.getSectionName()).collect(Collectors.toList());
+        return sectionNameList;
     }
 
     //------------------Staff Add------------------//
@@ -304,6 +313,48 @@ public class AdminService {
         }
 
         return adminGetSlotDetailsResponses;
+    }
+
+    public List<AdminSectionsOngoingVehicleResponse> getOngoingVehicles(String sectionName){
+        List<AdminSectionsOngoingVehicleResponse> adminSectionsOngoingVehicleResponses=new ArrayList<>();
+        List<Slot> slots=slotRepository.findAllBySection_SectionName(sectionName)
+                .stream()
+                .filter(slot -> !(slot.getStatus().equals(SlotStatus.AVAILABLE)||slot.getStatus().equals(SlotStatus.NOTAVAILABLE)))
+                .collect(Collectors.toList());
+
+        for (Slot slot:slots){
+            AdminSectionsOngoingVehicleResponse adminSectionsOngoingVehicleResponse=new AdminSectionsOngoingVehicleResponse();
+            String vin="";
+            String customerName="";
+            String contactNo="";
+            try {
+                vin=serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
+                        .stream()
+                        .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                        .map(serviceEntry -> serviceEntry.getRepair().getVehicle().getVin()).findFirst().get();
+            }catch (Exception e){
+                vin=null;
+            }
+            try {
+                Vehicle vehicle=vehicleRepository.findByVin(vin);
+                customerName=vehicle.getCustomer().getFirstName()+" "+vehicle.getCustomer().getLastName();
+                contactNo=vehicle.getCustomer().getUserData().getContactNo();
+
+            }catch (Exception e){
+                customerName=null;
+                contactNo=null;
+            }
+            adminSectionsOngoingVehicleResponse.setVehicleNumber(vin);
+            adminSectionsOngoingVehicleResponse.setRepairStatus(serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
+                                                            .stream()
+                                                            .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                                                            .map(serviceEntry -> serviceEntry.getRepair().getStatus()).findFirst().get());
+            adminSectionsOngoingVehicleResponse.setCustomerName(customerName);
+            adminSectionsOngoingVehicleResponse.setContactNo(contactNo);
+            adminSectionsOngoingVehicleResponses.add(adminSectionsOngoingVehicleResponse);
+        }
+
+        return adminSectionsOngoingVehicleResponses;
     }
 }
 

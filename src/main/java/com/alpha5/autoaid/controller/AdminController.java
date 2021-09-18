@@ -148,9 +148,19 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.getAllSectionsDetails());
     }
 
+    @GetMapping("/getsections")
+    public ResponseEntity getSectionList(){
+        return ResponseEntity.ok().body(adminService.getSectionList());
+    }
+
     @GetMapping("/slots/getdetails/{sectionName}")
     public ResponseEntity getSlotsDetails(@PathVariable  String sectionName){
         return ResponseEntity.ok().body(adminService.getSlotsDetails(sectionName));
+    }
+
+    @GetMapping("/section/getongoingvehicles/{sectionName}")
+    public ResponseEntity getOngoingVehicles(@PathVariable  String sectionName){
+        return ResponseEntity.ok().body(adminService.getOngoingVehicles(sectionName));
     }
 
 
