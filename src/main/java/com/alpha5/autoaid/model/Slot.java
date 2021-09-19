@@ -30,6 +30,11 @@ public class Slot {
     @JsonIgnore
     Section section;
 
+    @ManyToOne
+    @JoinColumn(name = "technician_id")
+    @JsonIgnore
+    Staff staff;
+
     @OneToMany (targetEntity = ServiceEntry.class, mappedBy = "slot", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<ServiceEntry> serviceEntries;

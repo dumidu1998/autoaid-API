@@ -123,10 +123,11 @@ public class TechnicianService {
                 List<ServiceEntry> serviceEntriesRepair=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(nextRepairId,section);
                 serviceEntriesRepair.forEach(serviceEntry -> {
                     serviceEntry.setSlot(newSlot);
+                    serviceEntry.setStaff(newSlot.getStaff());
                     serviceEntryRepository.save(serviceEntry);
                 });
 
-                System.out.println(newSlot.getSlotID());
+//                System.out.println(newSlot.getSlotID());
 
                 return getNextRepairResponse;
             }

@@ -48,12 +48,16 @@ public class Repair {
     @JsonIgnore
     private Set<ServiceEntry> serviceEntries;
 
-    @OneToMany(targetEntity = Invoice.class, mappedBy = "repair", cascade = CascadeType.ALL)
+    @OneToOne(targetEntity = Invoice.class, mappedBy = "repair", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Invoice> invoices;
+    private Invoice invoices;
 
     @OneToMany(targetEntity = RateAndReview.class, mappedBy = "repair", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<RateAndReview> rateAndReviews;
+
+    @OneToMany(targetEntity = ItemRequest.class, mappedBy = "repair", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ItemRequest> requests;
 
 }
