@@ -26,7 +26,7 @@ public class Invoice {
     @CreationTimestamp
     private Date invoiceDate;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "repair_id")
     Repair repair;
 
