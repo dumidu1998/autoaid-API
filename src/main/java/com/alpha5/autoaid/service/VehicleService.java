@@ -1,5 +1,6 @@
 package com.alpha5.autoaid.service;
 
+import com.alpha5.autoaid.dto.response.ChartResponse;
 import com.alpha5.autoaid.dto.response.ExpenseResponse;
 import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.model.Repair;
@@ -68,5 +69,17 @@ public class VehicleService {
             output.add(repair.getRepairCompletedDate().toString());
         }
         return output;
+    }
+
+    public List<ChartResponse> getCharts(long id) {
+        List<ChartResponse> response  = new ArrayList<>();
+        List<Vehicle> vehicles = vehicleRepository.findAllByCustomer_CustomerId(id);
+
+        for (Vehicle vehicle : vehicles){
+            ChartResponse chart = new ChartResponse(vehicleRepository.vehicleSummary(vehicle.getVehicleId()),vehicleRepository.vehicleSummary2(vehicle.getVehicleId()),vehicleRepository.vehicleSummary(vehicle.getVehicleId())/12,vehicleRepository.vehicleSummary3(vehicle.getVehicleId()),vehicleRepository.vehicleSummary4(vehicle.getVehicleId()),vehicle.getVehicleNumber());
+          response.add(chart);
+        }
+
+        return response;
     }
 }

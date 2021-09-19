@@ -15,10 +15,10 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     Vehicle findByVehicleId(long id);
 
-    @Query(value = "SELECT SUM(amount) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id WHERE v.vehicle_id=?1 AND i.invoice_date BETWEEN CURDATE() - INTERVAL 1 YEAR AND CURDATE() " , nativeQuery = true)
+    @Query(value = "SELECT coalesce(SUM(amount), 0) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id WHERE v.vehicle_id=?1 AND i.invoice_date BETWEEN CURDATE() - INTERVAL 1 YEAR AND CURDATE() " , nativeQuery = true)
     float vehicleSummary(long vid);
 
-    @Query(value = "SELECT SUM(amount) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id WHERE v.vehicle_id=?1 AND i.invoice_date BETWEEN CURDATE() - INTERVAL 1 MONTH AND CURDATE() " , nativeQuery = true)
+    @Query(value = "SELECT coalesce(SUM(amount), 0) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id WHERE v.vehicle_id=?1 AND i.invoice_date BETWEEN CURDATE() - INTERVAL 1 MONTH AND CURDATE() " , nativeQuery = true)
     float vehicleSummary2(long vid);
 
     @Query(value = "SELECT COUNT(*) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id WHERE v.vehicle_id=?1 AND i.invoice_date BETWEEN CURDATE() - INTERVAL 1 YEAR AND CURDATE() " , nativeQuery = true)
