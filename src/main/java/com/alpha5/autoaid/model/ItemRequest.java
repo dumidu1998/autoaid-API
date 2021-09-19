@@ -34,6 +34,10 @@ public class ItemRequest {
     Staff staff;
 
     @ManyToOne
+    @JoinColumn(name = "repair_id")
+    Repair repair;
+
+    @ManyToOne
     @JoinColumn(name = "item_no")
     InventoryItem invItem;
 

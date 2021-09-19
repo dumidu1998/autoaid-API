@@ -46,7 +46,12 @@ public class CustomerController {
         }
     }
 
+    @GetMapping("/vehicleservices/{id}")//vehicle Id
+    public ResponseEntity getVehicleServicesByVid(@PathVariable long id){
+        return ResponseEntity.ok(vehicleService.getCompletedRepairsByVid(id));
+    }
 
+    
 
 
 }
