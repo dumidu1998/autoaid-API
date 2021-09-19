@@ -33,4 +33,8 @@ public class ItemRequest {
     @JoinColumn(name = "staff_id")
     Staff staff;
 
+    @ManyToOne
+    @JoinColumn(name = "item_no")
+    InventoryItem invItem;
+
 }
