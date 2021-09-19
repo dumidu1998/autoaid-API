@@ -162,8 +162,28 @@ public class AdminService {
 
     //-------------------get nxt staff Id to the form ------------------//
     public long getNewStaffId(){
-        long getnewid=staffRepository.getMaxStaffId();
-        return getnewid+1;
+        long getNewId=staffRepository.getMaxStaffId();
+        return getNewId+1;
+    }
+
+    public AdminGetAssignedLeadTechResponse getTech(String sectionName){
+        AdminGetAssignedLeadTechResponse technician=new AdminGetAssignedLeadTechResponse();
+        try {
+            Staff staff= sectionRepository.findBySectionName(sectionName).getStaff();
+            technician.setTechId(staff.getStaffId());
+            technician.setFirstName(staff.getFirstName());
+            technician.setLastname(staff.getLastName());
+        }catch (Exception e){
+            technician=null;
+        }
+        return technician;
+    }
+
+    public void setTech(long techId,String sectionName){
+        Staff staff=staffRepository.findByStaffId(techId);
+        Section section=sectionRepository.findBySectionName(sectionName);
+        section.setStaff(staff);
+        sectionRepository.save(section);
     }
 
     //-------------------get nxt staff Mem Info ------------------//
