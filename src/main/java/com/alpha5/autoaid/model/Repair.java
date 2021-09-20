@@ -56,4 +56,8 @@ public class Repair {
     @JsonIgnore
     private Set<RateAndReview> rateAndReviews;
 
+    @OneToMany(targetEntity = ItemRequest.class, mappedBy = "repair", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ItemRequest> itemRequests;
+
 }

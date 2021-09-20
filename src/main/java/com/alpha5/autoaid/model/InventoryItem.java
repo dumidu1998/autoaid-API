@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.InventoryStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,9 @@ public class InventoryItem {
 
     @OneToMany(targetEntity = ItemAdd.class, mappedBy = "item", cascade = CascadeType.ALL)
     private Set<ItemAdd> itemAdd;
+
+    @OneToMany(targetEntity = ItemRequest.class, mappedBy = "item", cascade = CascadeType.ALL)
+    private Set<ItemRequest> itemRequests;
 
     public long getItemNo() {
         return itemNo;

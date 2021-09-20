@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -21,7 +22,7 @@ public class ItemRequest {
     private long requestId;
 
     @Column(nullable = false)
-    private int quantity;
+    private BigDecimal quantity;
 
     @Column(nullable = false)
     private Date issuedDateTime;
@@ -32,5 +33,13 @@ public class ItemRequest {
     @ManyToOne
     @JoinColumn(name = "staff_id")
     Staff staff;
+
+    @ManyToOne
+    @JoinColumn(name = "item_No")
+    InventoryItem item;
+
+    @ManyToOne
+    @JoinColumn(name = "repair_id")
+    Repair repair;
 
 }
