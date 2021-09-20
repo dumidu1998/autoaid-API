@@ -311,18 +311,25 @@ public class AdminService {
             String vehicleNumber="";
             String technicianName="";
             try {
-                vehicleNumber=serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
+                List<ServiceEntry> entryList = serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
                         .stream()
-                        .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                        .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING) || serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                        .collect(Collectors.toList());
+                vehicleNumber=entryList.stream()
                         .map(serviceEntry -> serviceEntry.getRepair().getVehicle().getVehicleNumber()).findFirst().get();
+                technicianName=entryList.stream()
+                        .map(serviceEntry -> serviceEntry.getStaff().getFirstName()+" "+serviceEntry.getStaff().getLastName())
+                        .findFirst().get();
             }catch (Exception e){
                 vehicleNumber=null;
-            }
-            try {
-                technicianName=slot.getStaff().getFirstName()+" "+slot.getStaff().getLastName();
-            }catch (Exception e){
                 technicianName=null;
             }
+//            try {
+//                technicianName=;
+//                        slot.getStaff().getFirstName()+" "+slot.getStaff().getLastName();
+//            }catch (Exception e){
+//                technicianName=null;
+//            }
             adminGetSlotDetailsResponse.setSlotId(slot.getSlotID());
             adminGetSlotDetailsResponse.setSlotName(slot.getSlotName());
             adminGetSlotDetailsResponse.setSlotStatus(slot.getStatus());

@@ -3,6 +3,7 @@ package com.alpha5.autoaid.service;
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
 import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
+import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
 import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
@@ -70,6 +71,32 @@ public class TechnicianService {
         }catch (Exception e){
             return null;
         }
+    }
+    public void assignTechnician(long techId,long repair,String section){
+        Staff staff=staffRepository.findByStaffId(techId);
+        List<Slot> slotList = serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repair, section)
+                .stream()
+                .map(serviceEntry -> serviceEntry.getSlot())
+                .collect(Collectors.toList());
+        Slot slot=slotList.stream().findFirst().get();
+//        slot.setStaff(staff);
+        slotRepository.save(slot);
+    }
+    public AdminGetAssignedLeadTechResponse getTech(long repairId,String sectionName){
+        AdminGetAssignedLeadTechResponse technician=new AdminGetAssignedLeadTechResponse();
+        try {
+            Staff staff= serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,sectionName)
+                    .stream()
+                    .map(serviceEntry -> serviceEntry.getStaff())
+                    .findFirst()
+                    .get();
+            technician.setTechId(staff.getStaffId());
+            technician.setFirstName(staff.getFirstName());
+            technician.setLastname(staff.getLastName());
+        }catch (Exception e){
+            technician=null;
+        }
+        return technician;
     }
 
     public void completeSubCat(SubCatCompleteRequest subCatCompleteRequest) {
@@ -152,7 +179,7 @@ public class TechnicianService {
                 List<ServiceEntry> serviceEntriesRepair=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(nextRepairId,section);
                 serviceEntriesRepair.forEach(serviceEntry -> {
                     serviceEntry.setSlot(newSlot);
-                    serviceEntry.setStaff(newSlot.getStaff());
+//                    serviceEntry.setStaff(newSlot.getStaff());
                     serviceEntryRepository.save(serviceEntry);
                 });
 

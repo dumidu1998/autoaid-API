@@ -4,6 +4,7 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
 import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
+import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
 import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
@@ -102,6 +103,22 @@ public class TechnicianController {
     @GetMapping("/getEntryList/{repairId}/{section}")
     public ResponseEntity getEntryList(@PathVariable long repairId,@PathVariable String section){
         return ResponseEntity.ok().body(technicianService.getEntryList(repairId, section));
+    }
+
+    @GetMapping("/assignTech/{repairId}/{techId}/{section}")
+    public ResponseEntity assignTech(@PathVariable long techId,@PathVariable long repairId,@PathVariable String section){
+        technicianService.assignTechnician(techId,repairId,section);
+        return ResponseEntity.ok().body("Success");
+    }
+    @GetMapping("/getTech/{repairId}/{section}")
+    public ResponseEntity getTech(@PathVariable long repairId,@PathVariable String section){
+        AdminGetAssignedLeadTechResponse technician = technicianService.getTech(repairId, section);
+        if (technician == null) {
+            return ResponseEntity.badRequest().body("Technician Not Assigned");
+        } else {
+            return ResponseEntity.ok().body(technician);
+
+        }
     }
 
 }

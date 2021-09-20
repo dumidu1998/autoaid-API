@@ -292,7 +292,7 @@ public class ServiceAdvisorService {
         List<ServiceEntry> serviceEntriesOfLatestSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,latest.getSection().getSectionName());
         serviceEntriesOfLatestSlot.forEach(serviceEntry -> {
             serviceEntry.setSlot(latest);
-            serviceEntry.setStaff(latest.getStaff());
+//            serviceEntry.setStaff(latest.getStaff());
             serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
             serviceEntryRepository.save(serviceEntry);
         });

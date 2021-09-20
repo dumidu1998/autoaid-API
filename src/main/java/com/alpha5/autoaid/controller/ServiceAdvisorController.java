@@ -92,7 +92,7 @@ public class ServiceAdvisorController {
                 section="Express Maintainance";
                 break;
             case 5:
-                section="Truck and Bus";
+                section="Washing";
                 break;
             default:
                 return ResponseEntity.badRequest().body("invalid Selection");
