@@ -245,10 +245,7 @@ public class StockService {
         ItemRequest request = itemRequestRepository.getById(requestId);
         request.setStatus(((request.getStatus().toString()=="REQUESTED")?ItemRequestStatus.DENIED:ItemRequestStatus.REQUESTED));
         request.setIssuedDateTime(new Date());
-
-        InventoryItem item = inventryItemRepository.findByItemNo(request.getInvItem().getItemNo());
-        item.setStock(item.getStock().subtract(BigDecimal.valueOf(request.getQuantity())));
-        inventryItemRepository.save(item);
+        itemRequestRepository.save(request);
 
     }
 
