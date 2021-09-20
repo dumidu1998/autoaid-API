@@ -6,6 +6,7 @@ import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
 import com.alpha5.autoaid.dto.response.ItemRequestRespond;
 import com.alpha5.autoaid.enums.InventoryStatus;
+import com.alpha5.autoaid.enums.ItemRequestStatus;
 import com.alpha5.autoaid.model.InventoryItem;
 import com.alpha5.autoaid.model.ItemAdd;
 import com.alpha5.autoaid.model.ItemCategory;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -226,19 +228,16 @@ public class StockService {
 
     }
 
-    public boolean approveRequest(ItemRequestApproveRequest itemRequestApproveRequest) {
-        try {
-            ItemRequest request = itemRequestRepository.getById(itemRequestApproveRequest.getRequestId());
-            request.setIssuedDateTime(itemRequestApproveRequest.getIssuedDateTime());
-            request.setStatus(itemRequestApproveRequest.getStatus());
-            itemRequestRepository.save(request);
+    public void approveRequest(long requestId) {
 
-            InventoryItem item = inventryItemRepository.findByItemNo(itemRequestApproveRequest.getItemNo());
-            item.setStock(item.getStock().subtract(itemRequestApproveRequest.getQuantity()));
+            ItemRequest request = itemRequestRepository.getById(requestId);
+            request.setStatus(((request.getStatus().toString()=="REQUESTED")?ItemRequestStatus.COMPLETED:ItemRequestStatus.REQUESTED));
+            request.setIssuedDateTime(new Date());
+
+            InventoryItem item = inventryItemRepository.findByItemNo(request.getInvItem().getItemNo());
+            item.setStock(item.getStock().subtract(BigDecimal.valueOf(request.getQuantity())));
             inventryItemRepository.save(item);
-            return true;
-        }catch(Exception e) {
-            return false;
-        }
+
     }
+
 }
