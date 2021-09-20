@@ -390,4 +390,9 @@ public class ServiceAdvisorService {
         }
         return true;
     }
+
+    public String getemail(long repairid) {
+        Repair repair = repairRepository.findByRepairId(repairid);
+        return repair.getVehicle().getCustomer().getUserData().getEmail();
+    }
 }
