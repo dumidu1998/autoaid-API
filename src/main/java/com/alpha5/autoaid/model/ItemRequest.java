@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -21,7 +22,7 @@ public class ItemRequest {
     private long requestId;
 
     @Column(nullable = false)
-    private int quantity;
+    private BigDecimal quantity;
 
     @Column(nullable = false)
     private Date issuedDateTime;

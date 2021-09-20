@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.InventoryStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
