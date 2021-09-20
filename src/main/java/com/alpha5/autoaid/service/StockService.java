@@ -215,7 +215,7 @@ public class StockService {
         for(ItemRequest request : all){
             ItemRequestRespond newRequest = new ItemRequestRespond();
             newRequest.setRequestId(request.getRequestId());
-            newRequest.setItemNo(request.getItem().getItemNo());
+            newRequest.setInvItem(request.getInvItem().getItemNo());
             newRequest.setQuantity(request.getQuantity());
             respond.add(newRequest);
 

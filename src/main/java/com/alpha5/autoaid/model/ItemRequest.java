@@ -22,7 +22,7 @@ public class ItemRequest {
     private long requestId;
 
     @Column(nullable = false)
-    private BigDecimal quantity;
+    private int quantity;
 
     @Column(nullable = false)
     private Date issuedDateTime;
