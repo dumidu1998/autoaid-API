@@ -6,7 +6,7 @@ public class ItemRequestRespond {
 
     private long requestId;
     private int quantity;
-    private long invItem;
+    private String itemName;
     private long repair;
     private String vehicleNumber;
 
@@ -19,12 +19,12 @@ public class ItemRequestRespond {
         this.requestId = requestId;
     }
 
-    public long getInvItem() {
-        return invItem;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setInvItem(long invItem) {
-        this.invItem = invItem;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public int getQuantity() {
