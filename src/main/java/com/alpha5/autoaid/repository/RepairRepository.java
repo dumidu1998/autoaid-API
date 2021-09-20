@@ -5,6 +5,8 @@ import com.alpha5.autoaid.model.Repair;
 import com.alpha5.autoaid.model.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Date;
+
 public interface RepairRepository extends JpaRepository<Repair, Long> {
     Repair findByRepairId(long repairId);
     Repair findByStatusAndAndVehicle(RepairStatus status, Vehicle vehicle);
