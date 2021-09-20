@@ -51,7 +51,9 @@ public class CustomerController {
         return ResponseEntity.ok(vehicleService.getCompletedRepairsByVid(id));
     }
 
-    
-
+    @GetMapping("/ongoingservices/{id}")//customer Id
+    public ResponseEntity getongoingService(@PathVariable long id){
+        return ResponseEntity.ok(vehicleService.getOngoingServices(id));
+    }
 
 }
