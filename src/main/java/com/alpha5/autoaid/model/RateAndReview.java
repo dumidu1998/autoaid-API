@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,10 +34,12 @@ public class RateAndReview {
     private String description;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "customer_id")
     Customer customer;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "repair_id")
     Repair repair;
 }
