@@ -1,19 +1,19 @@
 package com.alpha5.autoaid.service;
 
-import com.alpha5.autoaid.dto.request.AddItem;
-import com.alpha5.autoaid.dto.request.AddItemCategory;
-import com.alpha5.autoaid.dto.request.AddItemNewStock;
-import com.alpha5.autoaid.dto.request.UpdateItem;
+import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.AddInventryItemResponed;
 import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
+import com.alpha5.autoaid.dto.response.ItemRequestRespond;
 import com.alpha5.autoaid.enums.InventoryStatus;
 import com.alpha5.autoaid.model.InventoryItem;
 import com.alpha5.autoaid.model.ItemAdd;
 import com.alpha5.autoaid.model.ItemCategory;
+import com.alpha5.autoaid.model.ItemRequest;
 import com.alpha5.autoaid.repository.InventryItemRepository;
 import com.alpha5.autoaid.repository.ItemAddRepository;
 import com.alpha5.autoaid.repository.ItemCategoryRepository;
+import com.alpha5.autoaid.repository.ItemRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +31,10 @@ public class StockService {
     private ItemCategoryRepository itemCategoryRepository;
     @Autowired
     private ItemAddRepository itemAddRepository;
+
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
+
 
     public InventryStockRespond getItemByName(String itemName){
         InventoryItem item = inventryItemRepository.findByItemName(itemName);
@@ -203,5 +207,36 @@ public class StockService {
             respond.add(newitem);
         }
         return respond;
+    }
+
+    public List<ItemRequestRespond> allItemRequest(){
+        List<ItemRequest> all = itemRequestRepository.findAll();
+        List<ItemRequestRespond> respond = new ArrayList<>();
+        for(ItemRequest request : all){
+            ItemRequestRespond newRequest = new ItemRequestRespond();
+            newRequest.setRequestId(request.getRequestId());
+            newRequest.setItemNo(request.getItem().getItemNo());
+            newRequest.setQuantity(request.getQuantity());
+            respond.add(newRequest);
+
+        }
+        return respond;
+
+    }
+
+    public boolean approveRequest(ItemRequestApproveRequest itemRequestApproveRequest) {
+        try {
+            ItemRequest request = itemRequestRepository.getById(itemRequestApproveRequest.getRequestId());
+            request.setIssuedDateTime(itemRequestApproveRequest.getIssuedDateTime());
+            request.setStatus(itemRequestApproveRequest.getStatus());
+            itemRequestRepository.save(request);
+
+            InventoryItem item = inventryItemRepository.findByItemNo(itemRequestApproveRequest.getItemNo());
+            item.setStock(item.getStock().subtract(itemRequestApproveRequest.getQuantity()));
+            inventryItemRepository.save(item);
+            return true;
+        }catch(Exception e) {
+            return false;
+        }
     }
 }
