@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.InventoryStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,13 +36,16 @@ public class InventoryItem {
     private BigDecimal reorderLevel;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "category_id")
     ItemCategory category;
 
     @OneToMany(targetEntity = ItemAdd.class, mappedBy = "item", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<ItemAdd> itemAdd;
 
     @OneToMany(targetEntity = ItemRequest.class, mappedBy = "invItem", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<ItemRequest> inventoryItem;
 
 }
