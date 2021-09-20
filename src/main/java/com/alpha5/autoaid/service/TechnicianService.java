@@ -4,13 +4,11 @@ import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
 import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
+import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
-import com.alpha5.autoaid.model.ServiceEntry;
-import com.alpha5.autoaid.model.Slot;
-import com.alpha5.autoaid.repository.RepairRepository;
-import com.alpha5.autoaid.repository.ServiceEntryRepository;
-import com.alpha5.autoaid.repository.SlotRepository;
+import com.alpha5.autoaid.model.*;
+import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +28,15 @@ public class TechnicianService {
 
     @Autowired
     private ServiceEntryRepository serviceEntryRepository;
+
+    @Autowired
+    private SectionRepository sectionRepository;
+
+    @Autowired
+    private StaffRepository staffRepository;
+
+    @Autowired
+    private RepairRepository repairRepository;
 
     public boolean checkEntryExists(SubCatCompleteRequest subCatCompleteRequest) {
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
@@ -55,6 +62,13 @@ public class TechnicianService {
             return true;
         }else
             return false;
+    }
+    public String getSection(long userId){
+        try {
+            return (sectionRepository.findByStaff(staffRepository.findByUserData_Id(userId)).getSectionName());
+        }catch (Exception e){
+            return null;
+        }
     }
 
     public void completeSubCat(SubCatCompleteRequest subCatCompleteRequest) {
@@ -123,10 +137,11 @@ public class TechnicianService {
                 List<ServiceEntry> serviceEntriesRepair=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(nextRepairId,section);
                 serviceEntriesRepair.forEach(serviceEntry -> {
                     serviceEntry.setSlot(newSlot);
+                    serviceEntry.setStaff(newSlot.getStaff());
                     serviceEntryRepository.save(serviceEntry);
                 });
 
-                System.out.println(newSlot.getSlotID());
+//                System.out.println(newSlot.getSlotID());
 
                 return getNextRepairResponse;
             }
@@ -179,5 +194,31 @@ public class TechnicianService {
         }
         slot.setStatus(SlotStatus.ONPROCESS);
         slotRepository.save(slot);
+    }
+    public  List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
+        List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
+        //get pending repairs on section
+        System.out.println(sectionName);
+
+        List<Long> repairIdList = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.PENDING)
+                .stream()
+                .map(serviceEntry -> serviceEntry.getRepair().getRepairId())
+                .distinct()
+                .collect(Collectors.toList());
+
+        if(repairIdList.isEmpty()){
+            return null;
+        }else {
+            for (long repairId:repairIdList){
+                GetUpcomingRepairResponse getUpcomingRepairResponse=new GetUpcomingRepairResponse();
+                Repair repair=repairRepository.findByRepairId(repairId);
+                getUpcomingRepairResponse.setRepairId(repair.getRepairId());
+                getUpcomingRepairResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+                getUpcomingRepairResponse.setVin(repair.getVehicle().getVin());
+
+                getUpcomingRepairResponses.add(getUpcomingRepairResponse);
+            }
+            return getUpcomingRepairResponses;
+        }
     }
 }

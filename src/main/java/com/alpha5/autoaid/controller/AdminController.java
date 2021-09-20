@@ -2,9 +2,11 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.AddStaffRespond;
+import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
 import com.alpha5.autoaid.enums.UserType;
+import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -143,5 +145,40 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/section/getall")
+    public ResponseEntity getAllSections(){
+        return ResponseEntity.ok().body(adminService.getAllSectionsDetails());
+    }
+
+    @GetMapping("/getsections")
+    public ResponseEntity getSectionList(){
+        return ResponseEntity.ok().body(adminService.getSectionList());
+    }
+
+    @GetMapping("/slots/getdetails/{sectionName}")
+    public ResponseEntity getSlotsDetails(@PathVariable  String sectionName){
+        return ResponseEntity.ok().body(adminService.getSlotsDetails(sectionName));
+    }
+
+    @GetMapping("/section/getongoingvehicles/{sectionName}")
+    public ResponseEntity getOngoingVehicles(@PathVariable  String sectionName){
+        return ResponseEntity.ok().body(adminService.getOngoingVehicles(sectionName));
+    }
+
+    @GetMapping("/gettech/{sectionName}")
+    public ResponseEntity getTech(@PathVariable  String sectionName) {
+        if (adminService.getTech(sectionName) == null) {
+            return ResponseEntity.badRequest().body("Techlead Not Assigned");
+        } else {
+            return ResponseEntity.ok().body(adminService.getTech(sectionName));
+
+        }
+    }
+    @GetMapping("/settech/{techId}/{sectionName}")
+    public ResponseEntity setTech(@PathVariable long techId,@PathVariable String sectionName) {
+        System.out.println(techId+" "+sectionName);
+       adminService.setTech(techId,sectionName);
+       return ResponseEntity.ok().body("Success");
+    }
 }
 
