@@ -122,6 +122,7 @@ public class StockService {
         respond.setReorderLevel(item.getReorderLevel());
         respond.setStock(item.getStock());
         respond.setCatName(item.getCategory().getCategoryName());
+        respond.setCategoryId(item.getCategory().getCategoryId());
 
         return respond;
     }
@@ -142,9 +143,8 @@ public class StockService {
     }
 
     public void updateItem(UpdateItem updateItem) {
-        InventoryItem item = new InventoryItem();
+        InventoryItem item = inventryItemRepository.findByItemNo(updateItem.getItemId());
 
-        item.setItemNo(updateItem.getItemId());
         item.setItemName(updateItem.getItemName());
         item.setPrice(updateItem.getPrice());
         item.setStock(updateItem.getStock());
