@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class ItemAdd {
 
     @ManyToOne
     @JoinColumn(name = "item_no")
+    @JsonIgnore
     InventoryItem item;
 
     @Column(nullable = false, precision = 10,scale = 2)

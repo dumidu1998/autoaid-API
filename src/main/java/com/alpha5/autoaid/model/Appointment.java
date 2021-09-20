@@ -2,6 +2,7 @@ package com.alpha5.autoaid.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,14 +30,17 @@ public class Appointment {
     private Date addedDate;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "appointment_slot")
     AppointmentSlot appointmentSlot;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "vehicle_id")
     Vehicle vehicle;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "staff_id")
     Staff staff;
 

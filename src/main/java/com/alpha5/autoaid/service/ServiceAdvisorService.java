@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ServiceAdvisorService {
@@ -374,7 +373,21 @@ public class ServiceAdvisorService {
             upcomingAppointmentResponse.setVin(appointment.getVehicle().getVin());
             upcomingAppointmentResponses.add(upcomingAppointmentResponse);
         }
-
         return upcomingAppointmentResponses;
+    }
+
+    public boolean updateChecklist(ChecklistRequest data) {
+        Repair repair = repairRepository.findByRepairId(data.getRepairId());
+
+        repair.setFbDocId(data.getFbdocid());
+        repair.setRepairType(data.getRepairType());
+        repair.setMillage(data.getMillage());
+
+        try{
+            repairRepository.save(repair);
+        }catch (Exception e) {
+           return false;
+        }
+        return true;
     }
 }
