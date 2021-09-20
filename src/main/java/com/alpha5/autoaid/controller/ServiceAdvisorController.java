@@ -144,4 +144,13 @@ public class ServiceAdvisorController {
             return ResponseEntity.badRequest().body("Error Occurred!! Invalid Repair!");
     }
 
+    @GetMapping("getemailbypairid/{repairid}")
+    public ResponseEntity getemailbyrepid(@PathVariable long repairid){
+        String email= serviceAdvisorService.getemail(repairid);
+        if(email!=null)
+            return ResponseEntity.ok().body(email);
+        else
+            return ResponseEntity.badRequest().body("Error Occurred!! Invalid Repair!");
+    }
+
 }
