@@ -4,6 +4,7 @@ import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
 import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
+import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
@@ -87,6 +88,20 @@ public class TechnicianService {
         if (notCompletedList.isEmpty()) {
             return true;
         } else return false;
+    }
+
+    public List<GetEntryListResponse> getEntryList(long repairId, String sectionName){
+        List<GetEntryListResponse> getEntryListResponses=new ArrayList<>();
+        List<ServiceEntry> entryList = serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId, sectionName);
+        for(ServiceEntry serviceEntry:entryList){
+            GetEntryListResponse getEntryListResponse=new GetEntryListResponse();
+            getEntryListResponse.setSubCatName(serviceEntry.getSubCategory().getSubCatName());
+            getEntryListResponse.setEstimatedTime(serviceEntry.getEstimatedTime());
+            getEntryListResponse.setDescription(serviceEntry.getDescription());
+
+            getEntryListResponses.add(getEntryListResponse);
+        }
+        return getEntryListResponses;
     }
 
     public void completeRepair(RepairCompletedRequest repairCompletedRequest) {
@@ -195,7 +210,7 @@ public class TechnicianService {
         slot.setStatus(SlotStatus.ONPROCESS);
         slotRepository.save(slot);
     }
-    public  List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
+    public List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
         List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
         //get pending repairs on section
         System.out.println(sectionName);

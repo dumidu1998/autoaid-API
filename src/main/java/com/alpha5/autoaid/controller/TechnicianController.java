@@ -5,6 +5,7 @@ import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
 import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
+import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.model.Slot;
@@ -96,6 +97,11 @@ public class TechnicianController {
         }else {
             return ResponseEntity.ok().body(upcomingRepairs);
         }
+    }
+
+    @GetMapping("/getEntryList/{repairId}/{section}")
+    public ResponseEntity getEntryList(@PathVariable long repairId,@PathVariable String section){
+        return ResponseEntity.ok().body(technicianService.getEntryList(repairId, section));
     }
 
 }
