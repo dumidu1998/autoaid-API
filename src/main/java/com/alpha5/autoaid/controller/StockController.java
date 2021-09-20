@@ -146,6 +146,7 @@ public class StockController {
     @PutMapping("/approveItemRequest/{requestId}")
     public ResponseEntity approveRequest(@PathVariable long requestId){
         stockService.approveRequest(requestId);
+        return ResponseEntity.ok().body("Request Updated Sucesssfully!!");
     }
 
 }
