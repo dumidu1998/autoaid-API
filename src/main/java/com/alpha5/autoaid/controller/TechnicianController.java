@@ -6,7 +6,6 @@ import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
 import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
 import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
-import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.model.Slot;
@@ -110,6 +109,7 @@ public class TechnicianController {
         technicianService.assignTechnician(techId,repairId,section);
         return ResponseEntity.ok().body("Success");
     }
+
     @GetMapping("/getTech/{repairId}/{section}")
     public ResponseEntity getTech(@PathVariable long repairId,@PathVariable String section){
         AdminGetAssignedLeadTechResponse technician = technicianService.getTech(repairId, section);
@@ -119,6 +119,21 @@ public class TechnicianController {
             return ResponseEntity.ok().body(technician);
 
         }
+    }
+
+    @GetMapping("/ongoingrepairs/{userid}")//logged user id
+    public ResponseEntity getOngoingRepairs(@PathVariable long userid){
+        List<GetUpcomingRepairResponse> upcomingRepairs = technicianService.getOngoingRepairs(userid);
+        if(upcomingRepairs==null){
+            return ResponseEntity.badRequest().body("No Upcoming Repairs");
+        }else {
+            return ResponseEntity.ok().body(upcomingRepairs);
+        }
+    }
+
+    @GetMapping("/vehiclebyid/{repairid}")//repairid
+    public ResponseEntity getVehicleDetails(@PathVariable long repairid){
+            return ResponseEntity.ok().body(technicianService.getVehicleDetails(repairid));
     }
 
 }

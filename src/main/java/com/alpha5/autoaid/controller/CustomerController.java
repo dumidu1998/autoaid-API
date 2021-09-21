@@ -17,8 +17,13 @@ public class CustomerController {
     VehicleService vehicleService;
 
     @GetMapping("expenses/{id}") //userid is comming to here
-    public ExpenseResponse getSummary(@PathVariable("id") long id) {
-        return vehicleService.getSummaryByCustomer(id);
+    public ResponseEntity getSummary(@PathVariable("id") long id) {
+        try {
+            ExpenseResponse expenseResponse = vehicleService.getSummaryByCustomer(id);
+            return ResponseEntity.ok().body(expenseResponse);
+        }catch (Exception e){
+            return ResponseEntity.ok(new ExpenseResponse(0,0,0,0,0));
+        }
     }
 
     @GetMapping("/vehicles/{email}")
