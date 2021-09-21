@@ -117,6 +117,8 @@ public class AdminController {
 
     @PostMapping("/update/staff")
     public ResponseEntity updateStaffDetails(@RequestBody UpdateStaffRequest updateStaffRequest){
+        System.out.println("+++++++++++++++++++++++++++");
+        System.out.println(updateStaffRequest.getStaffId()+" "+updateStaffRequest.getFirstName());
         String response;
         //check whether staff member exists
         if(adminService.checkStaffMemberExists(updateStaffRequest.getStaffId())) {
