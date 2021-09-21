@@ -143,7 +143,7 @@ public class StockService {
     }
 
     public void updateItem(UpdateItem updateItem) {
-        InventoryItem item = inventryItemRepository.findByItemNo(updateItem.getItemId());
+        InventoryItem item = inventryItemRepository.findByItemNo(updateItem.getItemNo());
 
         item.setItemName(updateItem.getItemName());
         item.setPrice(updateItem.getPrice());
