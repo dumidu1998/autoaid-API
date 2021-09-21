@@ -153,4 +153,13 @@ public class ServiceAdvisorController {
             return ResponseEntity.badRequest().body("Error Occurred!! Invalid Repair!");
     }
 
+    @GetMapping("/getAllRepairs/{userId}")
+    public ResponseEntity getAllRepairs(@PathVariable long userId){
+        long advisorId=serviceAdvisorService.getStaffId(userId);
+        if(serviceAdvisorService.checkIfAdvisorExists(advisorId)){
+            return ResponseEntity.ok().body(serviceAdvisorService.getAllRepairs(advisorId));
+        }
+        return ResponseEntity.badRequest().body("Advisor Not exists");
+    }
+
 }
