@@ -1,24 +1,26 @@
 package com.alpha5.autoaid.service;
 
-import com.alpha5.autoaid.dto.request.AddItem;
-import com.alpha5.autoaid.dto.request.AddItemCategory;
-import com.alpha5.autoaid.dto.request.AddItemNewStock;
-import com.alpha5.autoaid.dto.request.UpdateItem;
+import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.AddInventryItemResponed;
 import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
+import com.alpha5.autoaid.dto.response.ItemRequestRespond;
 import com.alpha5.autoaid.enums.InventoryStatus;
+import com.alpha5.autoaid.enums.ItemRequestStatus;
 import com.alpha5.autoaid.model.InventoryItem;
 import com.alpha5.autoaid.model.ItemAdd;
 import com.alpha5.autoaid.model.ItemCategory;
+import com.alpha5.autoaid.model.ItemRequest;
 import com.alpha5.autoaid.repository.InventryItemRepository;
 import com.alpha5.autoaid.repository.ItemAddRepository;
 import com.alpha5.autoaid.repository.ItemCategoryRepository;
+import com.alpha5.autoaid.repository.ItemRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,6 +33,10 @@ public class StockService {
     private ItemCategoryRepository itemCategoryRepository;
     @Autowired
     private ItemAddRepository itemAddRepository;
+
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
+
 
     public InventryStockRespond getItemByName(String itemName){
         InventoryItem item = inventryItemRepository.findByItemName(itemName);
@@ -116,6 +122,7 @@ public class StockService {
         respond.setReorderLevel(item.getReorderLevel());
         respond.setStock(item.getStock());
         respond.setCatName(item.getCategory().getCategoryName());
+        respond.setCategoryId(item.getCategory().getCategoryId());
 
         return respond;
     }
@@ -136,9 +143,8 @@ public class StockService {
     }
 
     public void updateItem(UpdateItem updateItem) {
-        InventoryItem item = new InventoryItem();
+        InventoryItem item = inventryItemRepository.findByItemNo(updateItem.getItemNo());
 
-        item.setItemNo(updateItem.getItemId());
         item.setItemName(updateItem.getItemName());
         item.setPrice(updateItem.getPrice());
         item.setStock(updateItem.getStock());
@@ -204,4 +210,44 @@ public class StockService {
         }
         return respond;
     }
+
+    public List<ItemRequestRespond> allItemRequest(){
+        List<ItemRequest> all = itemRequestRepository.findAll();
+        List<ItemRequestRespond> respond = new ArrayList<>();
+        for(ItemRequest request : all){
+            ItemRequestRespond newRequest = new ItemRequestRespond();
+            newRequest.setRequestId(request.getRequestId());
+            newRequest.setItemName(request.getInvItem().getItemName());
+
+            newRequest.setQuantity(request.getQuantity());
+            newRequest.setRepair(request.getRepair().getRepairId());
+            newRequest.setVehicleNumber(request.getRepair().getVehicle().getVehicleNumber());
+            respond.add(newRequest);
+
+        }
+        return respond;
+
+    }
+
+    public void approveRequest(long requestId) {
+
+            ItemRequest request = itemRequestRepository.getById(requestId);
+            request.setStatus(((request.getStatus().toString()=="REQUESTED")?ItemRequestStatus.COMPLETED:ItemRequestStatus.REQUESTED));
+            request.setIssuedDateTime(new Date());
+            itemRequestRepository.save(request);
+
+            InventoryItem item = inventryItemRepository.findByItemNo(request.getInvItem().getItemNo());
+            item.setStock(item.getStock().subtract(BigDecimal.valueOf(request.getQuantity())));
+            inventryItemRepository.save(item);
+
+    }
+    public void rejectRequest(long requestId) {
+
+        ItemRequest request = itemRequestRepository.getById(requestId);
+        request.setStatus(((request.getStatus().toString()=="REQUESTED")?ItemRequestStatus.DENIED:ItemRequestStatus.REQUESTED));
+        request.setIssuedDateTime(new Date());
+        itemRequestRepository.save(request);
+
+    }
+
 }

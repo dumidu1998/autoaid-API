@@ -1,12 +1,10 @@
 package com.alpha5.autoaid.controller;
 
-import com.alpha5.autoaid.dto.request.AddItem;
-import com.alpha5.autoaid.dto.request.AddItemCategory;
-import com.alpha5.autoaid.dto.request.AddItemNewStock;
-import com.alpha5.autoaid.dto.request.UpdateItem;
+import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.AddInventryItemResponed;
 import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
+import com.alpha5.autoaid.dto.response.ItemRequestRespond;
 import com.alpha5.autoaid.model.ItemCategory;
 import com.alpha5.autoaid.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,6 +135,23 @@ public class StockController {
         if(out)
         return ResponseEntity.ok().body("New stock updated");
         else return ResponseEntity.badRequest().body("Error!!");
+    }
+
+    @GetMapping("/itemRequestAll")
+    public ResponseEntity GetAllRequest(){
+        List<ItemRequestRespond> response = stockService.allItemRequest();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/approveItemRequest/{requestId}")
+    public ResponseEntity approveRequest(@PathVariable long requestId){
+        stockService.approveRequest(requestId);
+        return ResponseEntity.ok().body("Request Updated Sucesssfully!!");
+    }
+    @PutMapping("/rejectItemRequest/{requestId}")
+    public ResponseEntity rejectRequest(@PathVariable long requestId){
+        stockService.rejectRequest(requestId);
+        return ResponseEntity.ok().body("Request Updated Sucesssfully!!");
     }
 
 }

@@ -6,7 +6,7 @@ public class AddItemNewStock {
 
     private long itemNo;
     private BigDecimal buyingPrice;
-    private BigDecimal stock;
+        private BigDecimal stock;
 
     public long getItemNo() {
         return itemNo;

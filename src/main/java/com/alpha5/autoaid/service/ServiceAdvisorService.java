@@ -207,13 +207,12 @@ public class ServiceAdvisorService {
     // Add new service entry
     public void addNewServiceEntry(AddNewServiceEntryRequest addNewServiceEntryRequest){
         String out="";
-        Staff staff = staffRepository.findByUserData_Id(addNewServiceEntryRequest.getUserId());
         Repair repair = repairRepository.findByRepairId(addNewServiceEntryRequest.getRepairId());
 
         for (ServiceEntryInstance serviceEntryInstance :addNewServiceEntryRequest.getServiceEntryInstances()) {
+
             SubCategory subCategory = subCategoryRepository.findBySubCatId(serviceEntryInstance.getSubCatId());
             ServiceEntry serviceEntry = new ServiceEntry();
-            serviceEntry.setStaff(staff);
             serviceEntry.setDescription(serviceEntryInstance.getDescription());
             serviceEntry.setRepair(repair);
             serviceEntry.setSubCategory(subCategory);
@@ -246,7 +245,7 @@ public class ServiceAdvisorService {
                                 && serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ADDED)))
                 .collect(Collectors.toList());
 
-        //redirect to prioratized sections
+        //redirect to prioritized sections
         if(!(entriesList1.isEmpty())){
             return getAvailSlot(entriesList1,repairId);
         }else if(!(entriesList2.isEmpty())){
@@ -272,12 +271,15 @@ public class ServiceAdvisorService {
                     .findFirst();
 
             Slot assignedSlot=next.get();
-            assignedSlot.setStatus(SlotStatus.RESERVED);
-            slotRepository.save(assignedSlot);
+            //in real time if any other repair searched
+//            assignedSlot.setStatus(SlotStatus.RESERVED);
+//            slotRepository.save(assignedSlot);
             return getSlot(repairId, assignedSlot);
         }
+        //if available slots not there
         catch (Exception e){
             Slot latest=latestSlot(sectionList);
+            //find if there working slots
             if(latest==null){
                 throw new RuntimeException("Slots are Not Available currently");
             }else{
@@ -286,12 +288,13 @@ public class ServiceAdvisorService {
         }
     }
 
-    //return slot assigned
+    //return slot assigned with updating entry
     private Slot getSlot(long repairId, Slot latest) {
         //get list of service entries assigned to slot
         List<ServiceEntry> serviceEntriesOfLatestSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,latest.getSection().getSectionName());
         serviceEntriesOfLatestSlot.forEach(serviceEntry -> {
             serviceEntry.setSlot(latest);
+//            serviceEntry.setStaff(latest.getStaff());
             serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
             serviceEntryRepository.save(serviceEntry);
         });

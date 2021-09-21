@@ -53,7 +53,7 @@ public class ServiceAdvisorController {
         return ResponseEntity.badRequest().body("Add Customer");
     }
 
-    //add new aketchy account for customer
+    //add new sketchy account for customer
     // it doesnt check for existing contact since it was filtered early. So, add non existing contact
     @PostMapping("/customer/addNew")
     public ResponseEntity addNewCustomerSketchy(@RequestBody AddSketchyCustomerRequest addSketchyCustomerRequest){
@@ -91,7 +91,7 @@ public class ServiceAdvisorController {
                 section="Express Maintainance";
                 break;
             case 5:
-                section="Truck and Bus";
+                section="Washing";
                 break;
             default:
                 return ResponseEntity.badRequest().body("invalid Selection");

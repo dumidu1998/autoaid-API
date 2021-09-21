@@ -3,14 +3,14 @@ package com.alpha5.autoaid.service;
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
 import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
+import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
+import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
+import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
-import com.alpha5.autoaid.model.ServiceEntry;
-import com.alpha5.autoaid.model.Slot;
-import com.alpha5.autoaid.repository.RepairRepository;
-import com.alpha5.autoaid.repository.ServiceEntryRepository;
-import com.alpha5.autoaid.repository.SlotRepository;
+import com.alpha5.autoaid.model.*;
+import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +30,15 @@ public class TechnicianService {
 
     @Autowired
     private ServiceEntryRepository serviceEntryRepository;
+
+    @Autowired
+    private SectionRepository sectionRepository;
+
+    @Autowired
+    private StaffRepository staffRepository;
+
+    @Autowired
+    private RepairRepository repairRepository;
 
     public boolean checkEntryExists(SubCatCompleteRequest subCatCompleteRequest) {
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
@@ -56,12 +65,49 @@ public class TechnicianService {
         }else
             return false;
     }
+    public String getSection(long userId){
+        try {
+            return (sectionRepository.findByStaff(staffRepository.findByUserData_Id(userId)).getSectionName());
+        }catch (Exception e){
+            return null;
+        }
+    }
+    public void assignTechnician(long techId,long repair,String section){
+        Staff staff=staffRepository.findByStaffId(techId);
+        List<ServiceEntry> serviceEntryList = serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repair, section);
+        serviceEntryList.forEach(serviceEntry -> serviceEntry.getEntryId());
+        for(ServiceEntry serviceEntry:serviceEntryList){
+            serviceEntry.setStaff(staff);
+            serviceEntryRepository.save(serviceEntry);
+        }
+    }
+    public AdminGetAssignedLeadTechResponse getTech(long repairId,String sectionName){
+        AdminGetAssignedLeadTechResponse technician=new AdminGetAssignedLeadTechResponse();
+        try {
+            Staff staff= serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,sectionName)
+                    .stream()
+                    .map(serviceEntry -> serviceEntry.getStaff())
+                    .findFirst()
+                    .get();
+            technician.setTechId(staff.getStaffId());
+            technician.setFirstName(staff.getFirstName());
+            technician.setLastname(staff.getLastName());
+        }catch (Exception e){
+            technician=null;
+        }
+        return technician;
+    }
 
     public void completeSubCat(SubCatCompleteRequest subCatCompleteRequest) {
         Date date=new Date();
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
-        serviceEntry.setServiceEntryStatus(ServiceEntryStatus.COMPLETED);
-        serviceEntry.setCompletedTime(date);
+        if(serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.COMPLETED)){
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ONGOING);
+            serviceEntry.setCompletedTime(null);
+        }else{
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.COMPLETED);
+            serviceEntry.setCompletedTime(date);
+        }
         serviceEntryRepository.save(serviceEntry);
     }
 
@@ -73,6 +119,21 @@ public class TechnicianService {
         if (notCompletedList.isEmpty()) {
             return true;
         } else return false;
+    }
+
+    public List<GetEntryListResponse> getEntryList(long repairId, String sectionName){
+        List<GetEntryListResponse> getEntryListResponses=new ArrayList<>();
+        List<ServiceEntry> entryList = serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId, sectionName);
+        for(ServiceEntry serviceEntry:entryList){
+            GetEntryListResponse getEntryListResponse=new GetEntryListResponse();
+            getEntryListResponse.setSubCatName(serviceEntry.getSubCategory().getSubCatName());
+            getEntryListResponse.setEstimatedTime(serviceEntry.getEstimatedTime());
+            getEntryListResponse.setDescription(serviceEntry.getDescription());
+            getEntryListResponse.setSubCatId(serviceEntry.getSubCategory().getSubCatId());
+            getEntryListResponse.setServiceEntryStatus(serviceEntry.getServiceEntryStatus());
+            getEntryListResponses.add(getEntryListResponse);
+        }
+        return getEntryListResponses;
     }
 
     public void completeRepair(RepairCompletedRequest repairCompletedRequest) {
@@ -123,10 +184,11 @@ public class TechnicianService {
                 List<ServiceEntry> serviceEntriesRepair=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(nextRepairId,section);
                 serviceEntriesRepair.forEach(serviceEntry -> {
                     serviceEntry.setSlot(newSlot);
+//                    serviceEntry.setStaff(newSlot.getStaff());
                     serviceEntryRepository.save(serviceEntry);
                 });
 
-                System.out.println(newSlot.getSlotID());
+//                System.out.println(newSlot.getSlotID());
 
                 return getNextRepairResponse;
             }
@@ -168,16 +230,44 @@ public class TechnicianService {
     public void acceptRepair(TechnicianRepairAcceptanceRequest technicianRepairAcceptanceRequest){
         List<ServiceEntry> serviceEntriesOfRepair=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(technicianRepairAcceptanceRequest.getRepairId(),technicianRepairAcceptanceRequest.getSectionName());
         Slot slot=serviceEntriesOfRepair.stream().findFirst().get().getSlot();
+        System.out.println("+++++++++++++++++++++++++++++");
+        serviceEntriesOfRepair.forEach(serviceEntry -> serviceEntry.getEntryId());
 
         SimpleDateFormat dateFormat=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date=new Date();
         System.out.println(dateFormat.format(date));
         for (ServiceEntry serviceEntry:serviceEntriesOfRepair){
-            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ASSIGNED);
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ONGOING);
             serviceEntry.setAssignedTime(date);
             serviceEntryRepository.save(serviceEntry);
         }
         slot.setStatus(SlotStatus.ONPROCESS);
         slotRepository.save(slot);
+    }
+    public List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
+        List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
+        //get pending repairs on section
+//        System.out.println("section"+sectionName);
+
+        List<Long> repairIdList = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.PENDING)
+                .stream()
+                .map(serviceEntry -> serviceEntry.getRepair().getRepairId())
+                .distinct()
+                .collect(Collectors.toList());
+
+        if(repairIdList.isEmpty()){
+            return null;
+        }else {
+            for (long repairId:repairIdList){
+                GetUpcomingRepairResponse getUpcomingRepairResponse=new GetUpcomingRepairResponse();
+                Repair repair=repairRepository.findByRepairId(repairId);
+                getUpcomingRepairResponse.setRepairId(repair.getRepairId());
+                getUpcomingRepairResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+                getUpcomingRepairResponse.setVin(repair.getVehicle().getVin());
+
+                getUpcomingRepairResponses.add(getUpcomingRepairResponse);
+            }
+            return getUpcomingRepairResponses;
+        }
     }
 }
