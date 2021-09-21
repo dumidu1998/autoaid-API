@@ -1,9 +1,29 @@
 package com.alpha5.autoaid.dto.response.technician;
 
+import com.alpha5.autoaid.enums.ServiceEntryStatus;
+
 public class GetEntryListResponse {
+    private long subCatId;
     private String subCatName;
     private int estimatedTime;
     private String description;
+    private ServiceEntryStatus serviceEntryStatus;
+
+    public ServiceEntryStatus getServiceEntryStatus() {
+        return serviceEntryStatus;
+    }
+
+    public void setServiceEntryStatus(ServiceEntryStatus serviceEntryStatus) {
+        this.serviceEntryStatus = serviceEntryStatus;
+    }
+
+    public long getSubCatId() {
+        return subCatId;
+    }
+
+    public void setSubCatId(long subCatId) {
+        this.subCatId = subCatId;
+    }
 
     public String getSubCatName() {
         return subCatName;

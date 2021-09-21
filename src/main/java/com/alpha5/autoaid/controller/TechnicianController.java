@@ -46,16 +46,16 @@ public class TechnicianController {
     public ResponseEntity completeRepair(@RequestBody RepairCompletedRequest repairCompletedRequest){
         if(technicianService.checkWhetherAllEntriesCompleted(repairCompletedRequest)){
             technicianService.completeRepair(repairCompletedRequest);
-            Slot slot=serviceAdvisorService.getNextSlot(repairCompletedRequest.getRepairId());
-            return ResponseEntity.ok().body(slot);
+            return ResponseEntity.ok().body("All entries Completed");
         }else
-        return ResponseEntity.badRequest().body("All entries Not Completed Yet");
+        return ResponseEntity.badRequest().body("Have pending entries");
     }
     @GetMapping("/repair/findnext/{repairId}")
     public ResponseEntity findNextRepair(@PathVariable long repairId){
         String response;
         if(technicianService.checkWhetherNoneCompletedEntries(repairId)){
-            response="entries exists";
+            Slot slot=serviceAdvisorService.getNextSlot(repairId);
+            response="Next Slot is "+slot.getSlotName();
         }else
             response="all completed";
         return ResponseEntity.ok().body(response);

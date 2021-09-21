@@ -271,12 +271,15 @@ public class ServiceAdvisorService {
                     .findFirst();
 
             Slot assignedSlot=next.get();
-            assignedSlot.setStatus(SlotStatus.RESERVED);
-            slotRepository.save(assignedSlot);
+            //in real time if any other repair searched
+//            assignedSlot.setStatus(SlotStatus.RESERVED);
+//            slotRepository.save(assignedSlot);
             return getSlot(repairId, assignedSlot);
         }
+        //if available slots not there
         catch (Exception e){
             Slot latest=latestSlot(sectionList);
+            //find if there working slots
             if(latest==null){
                 throw new RuntimeException("Slots are Not Available currently");
             }else{
@@ -285,7 +288,7 @@ public class ServiceAdvisorService {
         }
     }
 
-    //return slot assigned
+    //return slot assigned with updating entry
     private Slot getSlot(long repairId, Slot latest) {
         //get list of service entries assigned to slot
         List<ServiceEntry> serviceEntriesOfLatestSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,latest.getSection().getSectionName());

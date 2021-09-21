@@ -74,13 +74,12 @@ public class TechnicianService {
     }
     public void assignTechnician(long techId,long repair,String section){
         Staff staff=staffRepository.findByStaffId(techId);
-        List<Slot> slotList = serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repair, section)
-                .stream()
-                .map(serviceEntry -> serviceEntry.getSlot())
-                .collect(Collectors.toList());
-        Slot slot=slotList.stream().findFirst().get();
-//        slot.setStaff(staff);
-        slotRepository.save(slot);
+        List<ServiceEntry> serviceEntryList = serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repair, section);
+        serviceEntryList.forEach(serviceEntry -> serviceEntry.getEntryId());
+        for(ServiceEntry serviceEntry:serviceEntryList){
+            serviceEntry.setStaff(staff);
+            serviceEntryRepository.save(serviceEntry);
+        }
     }
     public AdminGetAssignedLeadTechResponse getTech(long repairId,String sectionName){
         AdminGetAssignedLeadTechResponse technician=new AdminGetAssignedLeadTechResponse();
@@ -102,8 +101,13 @@ public class TechnicianService {
     public void completeSubCat(SubCatCompleteRequest subCatCompleteRequest) {
         Date date=new Date();
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
-        serviceEntry.setServiceEntryStatus(ServiceEntryStatus.COMPLETED);
-        serviceEntry.setCompletedTime(date);
+        if(serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.COMPLETED)){
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ONGOING);
+            serviceEntry.setCompletedTime(null);
+        }else{
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.COMPLETED);
+            serviceEntry.setCompletedTime(date);
+        }
         serviceEntryRepository.save(serviceEntry);
     }
 
@@ -125,7 +129,8 @@ public class TechnicianService {
             getEntryListResponse.setSubCatName(serviceEntry.getSubCategory().getSubCatName());
             getEntryListResponse.setEstimatedTime(serviceEntry.getEstimatedTime());
             getEntryListResponse.setDescription(serviceEntry.getDescription());
-
+            getEntryListResponse.setSubCatId(serviceEntry.getSubCategory().getSubCatId());
+            getEntryListResponse.setServiceEntryStatus(serviceEntry.getServiceEntryStatus());
             getEntryListResponses.add(getEntryListResponse);
         }
         return getEntryListResponses;
@@ -225,12 +230,14 @@ public class TechnicianService {
     public void acceptRepair(TechnicianRepairAcceptanceRequest technicianRepairAcceptanceRequest){
         List<ServiceEntry> serviceEntriesOfRepair=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(technicianRepairAcceptanceRequest.getRepairId(),technicianRepairAcceptanceRequest.getSectionName());
         Slot slot=serviceEntriesOfRepair.stream().findFirst().get().getSlot();
+        System.out.println("+++++++++++++++++++++++++++++");
+        serviceEntriesOfRepair.forEach(serviceEntry -> serviceEntry.getEntryId());
 
         SimpleDateFormat dateFormat=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date=new Date();
         System.out.println(dateFormat.format(date));
         for (ServiceEntry serviceEntry:serviceEntriesOfRepair){
-            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ASSIGNED);
+            serviceEntry.setServiceEntryStatus(ServiceEntryStatus.ONGOING);
             serviceEntry.setAssignedTime(date);
             serviceEntryRepository.save(serviceEntry);
         }
@@ -240,7 +247,7 @@ public class TechnicianService {
     public List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
         List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
         //get pending repairs on section
-        System.out.println(sectionName);
+//        System.out.println("section"+sectionName);
 
         List<Long> repairIdList = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.PENDING)
                 .stream()
