@@ -56,4 +56,10 @@ public class CustomerController {
         return ResponseEntity.ok(vehicleService.getOngoingServices(id));
     }
 
+    @GetMapping("/getdocid/{id}")//repair Id
+    public ResponseEntity getDocId(@PathVariable long id){
+        return ResponseEntity.ok(vehicleService.getDocId(id));
+    }
+
+
 }
