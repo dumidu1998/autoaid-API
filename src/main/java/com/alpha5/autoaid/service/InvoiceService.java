@@ -40,16 +40,20 @@ public class InvoiceService {
     public InvoiceByRepairId getInvoiceByRepairId(long id) {
         InvoiceByRepairId response = new InvoiceByRepairId();
         Repair repair = repairRepository.findByRepairId(id);
-        List<ServiceEntry> services= new ArrayList<>();
-        services = serviceEntryRepository.findAllByRepair_RepairIdAndServiceEntryStatusIs(id, ServiceEntryStatus.COMPLETED);
+        List<ServiceEntry> services = serviceEntryRepository.findAllByRepair_RepairIdAndServiceEntryStatusIs(id, ServiceEntryStatus.COMPLETED);
         List<ServiceList> serviceList = new ArrayList<>();
-        for (ServiceEntry serviceEntry : services) {
-            serviceList.add(new ServiceList(serviceEntry.getSubCategory().getSubCatName() + (serviceEntry.getDescription()==null?" ":" ("+serviceEntry.getDescription()+") "), new BigDecimal(serviceEntry.getEstimatedTime()) ));
+        if(services.size()!=0) {
+            for (ServiceEntry serviceEntry : services) {
+                System.out.println(serviceEntry.getEstimatedTime());
+                serviceList.add(new ServiceList(serviceEntry.getSubCategory().getSubCatName() + (serviceEntry.getDescription() == null ? " " : " (" + serviceEntry.getDescription() + ") "), new BigDecimal(serviceEntry.getEstimatedTime())));
+            }
         }
         List<MaterialList> materialList=new ArrayList<>();
         List<ItemRequest> requests = itemCategoryRepository.findAllByRepair_repairIdAndStatusIs(id, ItemRequestStatus.COMPLETED);
-        for (ItemRequest request : requests){
-            materialList.add(new MaterialList(request.getInvItem().getItemName(),request.getQuantity(),request.getInvItem().getPrice(),new BigDecimal(request.getQuantity()).multiply(request.getInvItem().getPrice())));
+        if(requests.size()!=0) {
+            for (ItemRequest request : requests) {
+                materialList.add(new MaterialList(request.getInvItem().getItemName(), request.getQuantity(), request.getInvItem().getPrice(), new BigDecimal(request.getQuantity()).multiply(request.getInvItem().getPrice())));
+            }
         }
         response.setCustomerName(repair.getVehicle().getCustomer().getFirstName()+' '+repair.getVehicle().getCustomer().getLastName());
         response.setAddress(repair.getVehicle().getCustomer().getUserData().getAddress());
