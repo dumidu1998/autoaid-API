@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
@@ -38,6 +39,9 @@ public class AdminService {
 
     @Autowired
     private ServiceEntryRepository serviceEntryRepository;
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     //returns false if member exists
     public boolean checkStaffMemberExists(long staffId){
@@ -105,6 +109,11 @@ public class AdminService {
         }else return false;
     }
 
+    public List<String> getSectionList(){
+        List<String> sectionNameList=  sectionRepository.findAll().stream().map(section -> section.getSectionName()).collect(Collectors.toList());
+        return sectionNameList;
+    }
+
     //------------------Staff Add------------------//
     public AddStaffRespond insertStaff(AddStaffRequest addStaffRequest){
     //object 2
@@ -153,8 +162,28 @@ public class AdminService {
 
     //-------------------get nxt staff Id to the form ------------------//
     public long getNewStaffId(){
-        long getnewid=staffRepository.getMaxStaffId();
-        return getnewid+1;
+        long getNewId=staffRepository.getMaxStaffId();
+        return getNewId+1;
+    }
+
+    public AdminGetAssignedLeadTechResponse getTech(String sectionName){
+        AdminGetAssignedLeadTechResponse technician=new AdminGetAssignedLeadTechResponse();
+        try {
+            Staff staff= sectionRepository.findBySectionName(sectionName).getStaff();
+            technician.setTechId(staff.getStaffId());
+            technician.setFirstName(staff.getFirstName());
+            technician.setLastname(staff.getLastName());
+        }catch (Exception e){
+            technician=null;
+        }
+        return technician;
+    }
+
+    public void setTech(long techId,String sectionName){
+        Staff staff=staffRepository.findByStaffId(techId);
+        Section section=sectionRepository.findBySectionName(sectionName);
+        section.setStaff(staff);
+        sectionRepository.save(section);
     }
 
     //-------------------get nxt staff Mem Info ------------------//
@@ -282,18 +311,25 @@ public class AdminService {
             String vehicleNumber="";
             String technicianName="";
             try {
-                vehicleNumber=serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
+                List<ServiceEntry> entryList = serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
                         .stream()
-                        .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                        .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING) || serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                        .collect(Collectors.toList());
+                vehicleNumber=entryList.stream()
                         .map(serviceEntry -> serviceEntry.getRepair().getVehicle().getVehicleNumber()).findFirst().get();
+                technicianName=entryList.stream()
+                        .map(serviceEntry -> serviceEntry.getStaff().getFirstName()+" "+serviceEntry.getStaff().getLastName())
+                        .findFirst().get();
             }catch (Exception e){
                 vehicleNumber=null;
-            }
-            try {
-                technicianName=slot.getStaff().getFirstName()+" "+slot.getStaff().getLastName();
-            }catch (Exception e){
                 technicianName=null;
             }
+//            try {
+//                technicianName=;
+//                        slot.getStaff().getFirstName()+" "+slot.getStaff().getLastName();
+//            }catch (Exception e){
+//                technicianName=null;
+//            }
             adminGetSlotDetailsResponse.setSlotId(slot.getSlotID());
             adminGetSlotDetailsResponse.setSlotName(slot.getSlotName());
             adminGetSlotDetailsResponse.setSlotStatus(slot.getStatus());
@@ -304,6 +340,51 @@ public class AdminService {
         }
 
         return adminGetSlotDetailsResponses;
+    }
+
+    public List<AdminSectionsOngoingVehicleResponse> getOngoingVehicles(String sectionName){
+        List<AdminSectionsOngoingVehicleResponse> adminSectionsOngoingVehicleResponses=new ArrayList<>();
+        List<Slot> slots=slotRepository.findAllBySection_SectionName(sectionName)
+                .stream()
+                .filter(slot -> !(slot.getStatus().equals(SlotStatus.AVAILABLE)||slot.getStatus().equals(SlotStatus.NOTAVAILABLE)))
+                .collect(Collectors.toList());
+
+        for (Slot slot:slots){
+            AdminSectionsOngoingVehicleResponse adminSectionsOngoingVehicleResponse=new AdminSectionsOngoingVehicleResponse();
+            String vin="";
+            String customerName="";
+            String contactNo="";
+            String vehicleNo="";
+
+            try {
+                vin=serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
+                        .stream()
+                        .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                        .map(serviceEntry -> serviceEntry.getRepair().getVehicle().getVin()).findFirst().get();
+            }catch (Exception e){
+                vin=null;
+            }
+            try {
+                Vehicle vehicle=vehicleRepository.findByVin(vin);
+                customerName=vehicle.getCustomer().getFirstName()+" "+vehicle.getCustomer().getLastName();
+                contactNo=vehicle.getCustomer().getUserData().getContactNo();
+                vehicleNo=vehicle.getVehicleNumber();
+
+            }catch (Exception e){
+                customerName=vehicleNo=contactNo=null;
+            }
+            adminSectionsOngoingVehicleResponse.setVin(vin);
+            adminSectionsOngoingVehicleResponse.setVehicleNumber(vehicleNo);
+            adminSectionsOngoingVehicleResponse.setRepairStatus(serviceEntryRepository.findAllBySlot_SlotID(slot.getSlotID())
+                                                            .stream()
+                                                            .filter(serviceEntry -> serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ONGOING)||serviceEntry.getServiceEntryStatus().equals(ServiceEntryStatus.ASSIGNED))
+                                                            .map(serviceEntry -> serviceEntry.getRepair().getStatus()).findFirst().get());
+            adminSectionsOngoingVehicleResponse.setCustomerName(customerName);
+            adminSectionsOngoingVehicleResponse.setContactNo(contactNo);
+            adminSectionsOngoingVehicleResponses.add(adminSectionsOngoingVehicleResponse);
+        }
+
+        return adminSectionsOngoingVehicleResponses;
     }
 }
 

@@ -76,6 +76,12 @@ public class AuthService implements UserDetailsService {
         }
         return false;
     }
+    //
+    public boolean checkIfUserIdExistsOnUserType(long userId, UserType userType){
+        if(userRepository.findByIdAndUserType(userId,userType)==null){
+            return false;
+        }else return true;
+    }
 
     public void signup(CustomerSignUpRequest customerSignUpRequest) {
 
