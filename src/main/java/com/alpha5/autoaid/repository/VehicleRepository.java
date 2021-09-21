@@ -27,5 +27,4 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     @Query(value = "SELECT COUNT(*) FROM invoice as i INNER JOIN repair as r ON i.repair_id=r.repair_id INNER JOIN vehicle as v ON v.vehicle_id=r.vehicle_id WHERE v.vehicle_id=?1 AND r.status != 'COMPLETED'" , nativeQuery = true)
     int vehicleSummary4(long vid);
 
-
 }

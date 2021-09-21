@@ -18,9 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class TechnicianService {
@@ -39,6 +37,9 @@ public class TechnicianService {
 
     @Autowired
     private RepairRepository repairRepository;
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     public boolean checkEntryExists(SubCatCompleteRequest subCatCompleteRequest) {
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
@@ -269,5 +270,23 @@ public class TechnicianService {
             }
             return getUpcomingRepairResponses;
         }
+    }
+
+    public List<GetUpcomingRepairResponse> getOngoingRepairs(long userid) {
+        List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
+        Section section = sectionRepository.findByStaff_UserData_id(userid);
+        List<Repair> repairs = repairRepository.findDistinctByServiceEntries_ServiceEntryStatusAndServiceEntries_SubCategory_Section(ServiceEntryStatus.ONGOING,section);
+        for(Repair repair : repairs) {
+            GetUpcomingRepairResponse d = new GetUpcomingRepairResponse();
+            d.setRepairId(repair.getRepairId());
+            d.setVin(repair.getVehicle().getVin());
+            d.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+            getUpcomingRepairResponses.add(d);
+        }
+        return getUpcomingRepairResponses;
+    }
+
+    public Vehicle getVehicleDetails(long repairid) {
+        return repairRepository.findByRepairId(repairid).getVehicle();
     }
 }
