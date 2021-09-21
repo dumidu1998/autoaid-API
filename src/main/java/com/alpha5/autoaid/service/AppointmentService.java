@@ -1,10 +1,12 @@
 package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.AddAppointment;
+import com.alpha5.autoaid.dto.request.AddAppointmentV;
 import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.model.Appointment;
 import com.alpha5.autoaid.model.AppointmentSlot;
 import com.alpha5.autoaid.model.Staff;
+import com.alpha5.autoaid.model.Vehicle;
 import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,29 @@ public class AppointmentService {
         }
     }
 
+    public boolean addAppointmentV(AddAppointmentV addAppointmentv) {
+        Appointment appointment = new Appointment();
+
+        Vehicle newVehicle = new Vehicle();
+        newVehicle.setVehicleNumber(addAppointmentv.getvNo());
+        newVehicle.setCustomer(customerRepository.findByUserData_Id(addAppointmentv.getUserid()));
+        try {
+            Vehicle addedVehicle = vehicleRepository.save(newVehicle);
+            appointment.setVehicle(addedVehicle);
+        }catch (Exception e){
+            return false;
+        }
+        appointment.setDate(addAppointmentv.getDate());
+        appointment.setStaff(staffRepository.findByStaffId(addAppointmentv.getStaffId()));
+        appointment.setAppointmentSlot(appointmentSlotsRepository.findByAppointmentSlotId(addAppointmentv.getSlotId()));
+
+        if(appointmentRepository.save(appointment)!=null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public List<AppointmentSlot> getFreeSlotsByDate(Date date) {
         String shortDate=new SimpleDateFormat("YYYY-MM-dd").format(date);
         List<AppointmentSlot> response = appointmentSlotsRepository.findAvailableSlotsbyDate(shortDate);
@@ -70,6 +95,8 @@ public class AppointmentService {
         }
         return response;
     }
+
+
 
 //    public ResponseEntity getUpcomingAppointments(long id) {
 //        List<Appointments> appointments = staffRepository.
