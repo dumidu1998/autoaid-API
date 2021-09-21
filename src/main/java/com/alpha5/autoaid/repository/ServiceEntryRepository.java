@@ -23,4 +23,6 @@ public interface ServiceEntryRepository extends JpaRepository<ServiceEntry, Long
     @Query(value = "SELECT SUM(estimated_time) FROM service_entry WHERE slot_id=?1 AND (service_entry_status!='ADDED' OR service_entry_status!='COMPLETED')", nativeQuery = true)
     int findSumOfPending(long slotId);
 
+    List<ServiceEntry> findAllByRepair_RepairIdAndServiceEntryStatusIsOrServiceEntryStatusIs(long repairId,ServiceEntryStatus serviceEntryStatus1,ServiceEntryStatus serviceEntryStatus2);
+
 }
