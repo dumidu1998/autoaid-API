@@ -17,7 +17,7 @@ public class Vehicle {
     @GeneratedValue
     private long vehicleId;
 
-    @Column
+    @Column(unique = true)
     private String vin;
 
     @Column
