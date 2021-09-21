@@ -10,6 +10,7 @@ public class InventryStockRespond {
     private BigDecimal price;
     private BigDecimal reorderLevel;
     private String catName;
+    private long categoryId;
 
     public String getCatName() {
         return catName;
@@ -57,5 +58,13 @@ public class InventryStockRespond {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
     }
 }

@@ -143,12 +143,15 @@ public class StockController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PutMapping("/approveItemRequest")
-    public ResponseEntity approveRequest(@RequestBody ItemRequestApproveRequest itemRequestApproveRequest){
-        boolean out=stockService.approveRequest(itemRequestApproveRequest);
-        if(out)
-            return ResponseEntity.ok().body("New stock updated");
-        else return ResponseEntity.badRequest().body("Error!!");
+    @PutMapping("/approveItemRequest/{requestId}")
+    public ResponseEntity approveRequest(@PathVariable long requestId){
+        stockService.approveRequest(requestId);
+        return ResponseEntity.ok().body("Request Updated Sucesssfully!!");
+    }
+    @PutMapping("/rejectItemRequest/{requestId}")
+    public ResponseEntity rejectRequest(@PathVariable long requestId){
+        stockService.rejectRequest(requestId);
+        return ResponseEntity.ok().body("Request Updated Sucesssfully!!");
     }
 
 }

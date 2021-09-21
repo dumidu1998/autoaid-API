@@ -5,8 +5,11 @@ import java.math.BigDecimal;
 public class ItemRequestRespond {
 
     private long requestId;
-    private BigDecimal quantity;
-    private long itemNo;
+    private int quantity;
+    private String itemName;
+    private long repair;
+    private String vehicleNumber;
+
 
     public long getRequestId() {
         return requestId;
@@ -16,19 +19,35 @@ public class ItemRequestRespond {
         this.requestId = requestId;
     }
 
-    public long getItemNo() {
-        return itemNo;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setItemNo(long itemNo) {
-        this.itemNo = itemNo;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
-    public BigDecimal getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(BigDecimal quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public long getRepair() {
+        return repair;
+    }
+
+    public void setRepair(long repair) {
+        this.repair = repair;
+    }
+
+    public String getVehicleNumber() {
+        return vehicleNumber;
+    }
+
+    public void setVehicleNumber(String vehicleNumber) {
+        this.vehicleNumber = vehicleNumber;
     }
 }

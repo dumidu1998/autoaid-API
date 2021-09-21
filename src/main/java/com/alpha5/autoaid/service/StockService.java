@@ -6,6 +6,7 @@ import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.InventryStockRespond;
 import com.alpha5.autoaid.dto.response.ItemRequestRespond;
 import com.alpha5.autoaid.enums.InventoryStatus;
+import com.alpha5.autoaid.enums.ItemRequestStatus;
 import com.alpha5.autoaid.model.InventoryItem;
 import com.alpha5.autoaid.model.ItemAdd;
 import com.alpha5.autoaid.model.ItemCategory;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -120,6 +122,7 @@ public class StockService {
         respond.setReorderLevel(item.getReorderLevel());
         respond.setStock(item.getStock());
         respond.setCatName(item.getCategory().getCategoryName());
+        respond.setCategoryId(item.getCategory().getCategoryId());
 
         return respond;
     }
@@ -140,9 +143,8 @@ public class StockService {
     }
 
     public void updateItem(UpdateItem updateItem) {
-        InventoryItem item = new InventoryItem();
+        InventoryItem item = inventryItemRepository.findByItemNo(updateItem.getItemNo());
 
-        item.setItemNo(updateItem.getItemId());
         item.setItemName(updateItem.getItemName());
         item.setPrice(updateItem.getPrice());
         item.setStock(updateItem.getStock());
@@ -215,8 +217,11 @@ public class StockService {
         for(ItemRequest request : all){
             ItemRequestRespond newRequest = new ItemRequestRespond();
             newRequest.setRequestId(request.getRequestId());
-            newRequest.setItemNo(request.getInvItem().getItemNo());
+            newRequest.setItemName(request.getInvItem().getItemName());
+
             newRequest.setQuantity(request.getQuantity());
+            newRequest.setRepair(request.getRepair().getRepairId());
+            newRequest.setVehicleNumber(request.getRepair().getVehicle().getVehicleNumber());
             respond.add(newRequest);
 
         }
@@ -224,19 +229,25 @@ public class StockService {
 
     }
 
-    public boolean approveRequest(ItemRequestApproveRequest itemRequestApproveRequest) {
-        try {
-            ItemRequest request = itemRequestRepository.getById(itemRequestApproveRequest.getRequestId());
-            request.setIssuedDateTime(itemRequestApproveRequest.getIssuedDateTime());
-            request.setStatus(itemRequestApproveRequest.getStatus());
+    public void approveRequest(long requestId) {
+
+            ItemRequest request = itemRequestRepository.getById(requestId);
+            request.setStatus(((request.getStatus().toString()=="REQUESTED")?ItemRequestStatus.COMPLETED:ItemRequestStatus.REQUESTED));
+            request.setIssuedDateTime(new Date());
             itemRequestRepository.save(request);
 
-            InventoryItem item = inventryItemRepository.findByItemNo(itemRequestApproveRequest.getItemNo());
-            item.setStock(item.getStock().subtract(itemRequestApproveRequest.getQuantity()));
+            InventoryItem item = inventryItemRepository.findByItemNo(request.getInvItem().getItemNo());
+            item.setStock(item.getStock().subtract(BigDecimal.valueOf(request.getQuantity())));
             inventryItemRepository.save(item);
-            return true;
-        }catch(Exception e) {
-            return false;
-        }
+
     }
+    public void rejectRequest(long requestId) {
+
+        ItemRequest request = itemRequestRepository.getById(requestId);
+        request.setStatus(((request.getStatus().toString()=="REQUESTED")?ItemRequestStatus.DENIED:ItemRequestStatus.REQUESTED));
+        request.setIssuedDateTime(new Date());
+        itemRequestRepository.save(request);
+
+    }
+
 }
