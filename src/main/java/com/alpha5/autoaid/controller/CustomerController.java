@@ -66,5 +66,9 @@ public class CustomerController {
         return ResponseEntity.ok(vehicleService.getDocId(id));
     }
 
+    @GetMapping("/cusvehiclesbyuserid/{id}")
+    public ResponseEntity getVehiclesbyuserid(@PathVariable long id){
+        return ResponseEntity.ok(vehicleService.getCusVehicleByUserId(id));
+    }
 
 }

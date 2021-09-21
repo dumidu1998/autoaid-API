@@ -121,4 +121,9 @@ public class VehicleService {
     public String getDocId(long id) {
         return repairRepository.findByRepairId(id).getFbDocId();
     }
+
+    public List<Vehicle> getCusVehicleByUserId(long id) {
+        return vehicleRepository.findAllByCustomer_UserData_Id(id);
+    }
+
 }
