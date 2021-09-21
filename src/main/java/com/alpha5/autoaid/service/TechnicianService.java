@@ -7,6 +7,7 @@ import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
 import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
+import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
 import com.alpha5.autoaid.model.*;
@@ -246,15 +247,17 @@ public class TechnicianService {
         slotRepository.save(slot);
     }
     public List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
+        //get ongoing entries on section
+        List<ServiceEntry> ongoingEntries = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.ONGOING);
         List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
-        //get pending repairs on section
-//        System.out.println("section"+sectionName);
 
+        //get pending repairs on section
         List<Long> repairIdList = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.PENDING)
                 .stream()
                 .map(serviceEntry -> serviceEntry.getRepair().getRepairId())
                 .distinct()
                 .collect(Collectors.toList());
+        //check if slot has ongoing repairs
 
         if(repairIdList.isEmpty()){
             return null;
@@ -265,7 +268,11 @@ public class TechnicianService {
                 getUpcomingRepairResponse.setRepairId(repair.getRepairId());
                 getUpcomingRepairResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
                 getUpcomingRepairResponse.setVin(repair.getVehicle().getVin());
-
+                if(ongoingEntries.isEmpty()){
+                    getUpcomingRepairResponse.setBtnAct(true);
+                }else {
+                    getUpcomingRepairResponse.setBtnAct(false);
+                }
                 getUpcomingRepairResponses.add(getUpcomingRepairResponse);
             }
             return getUpcomingRepairResponses;
@@ -281,6 +288,7 @@ public class TechnicianService {
             d.setRepairId(repair.getRepairId());
             d.setVin(repair.getVehicle().getVin());
             d.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+            d.setBtnAct(true);
             getUpcomingRepairResponses.add(d);
         }
         return getUpcomingRepairResponses;
@@ -288,5 +296,12 @@ public class TechnicianService {
 
     public Vehicle getVehicleDetails(long repairid) {
         return repairRepository.findByRepairId(repairid).getVehicle();
+    }
+    public void updateRepairStatus(long repairid){
+        Date date=new Date();
+        Repair repair = repairRepository.findByRepairId(repairid);
+        repair.setStatus(RepairStatus.COMPLETED);
+        repair.setRepairCompletedDate(date);
+        repairRepository.save(repair);
     }
 }

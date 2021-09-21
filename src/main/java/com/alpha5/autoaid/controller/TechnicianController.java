@@ -55,8 +55,10 @@ public class TechnicianController {
         if(technicianService.checkWhetherNoneCompletedEntries(repairId)){
             Slot slot=serviceAdvisorService.getNextSlot(repairId);
             response="Next Slot is "+slot.getSlotName();
-        }else
+        }else{
+            technicianService.updateRepairStatus(repairId);
             response="all completed";
+        }
         return ResponseEntity.ok().body(response);
     }
 
