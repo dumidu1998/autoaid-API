@@ -101,4 +101,8 @@ public class VehicleService {
         }
         return response;
     }
+
+    public String getDocId(long id) {
+        return repairRepository.findByRepairId(id).getFbDocId();
+    }
 }
