@@ -2,6 +2,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.response.ExpenseResponse;
 import com.alpha5.autoaid.dto.response.OngoingServicesResponse;
+import com.alpha5.autoaid.dto.response.VehicleServices;
 import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.model.Repair;
@@ -66,11 +67,12 @@ public class VehicleService {
         return new ExpenseResponse(totalSpent,totalSpentMonth,totalSpent/12,repairsPerMonth,activeRepairs);
     }
 
-    public List <String> getCompletedRepairsByVid(long id) {
+    public List <VehicleServices> getCompletedRepairsByVid(long id) {
         List <Repair> repairs = repairRepository.findAllByStatusAndVehicleVehicleId(RepairStatus.COMPLETED,id);
-        List <String> output = new ArrayList<String>();
+        List <VehicleServices> output = new ArrayList<>();
         for (Repair repair : repairs) {
-            output.add(repair.getRepairCompletedDate().toString());
+            VehicleServices n= new VehicleServices(repair.getRepairId(),repair.getRepairCompletedDate().toString());
+            output.add(n);
         }
         return output;
     }
