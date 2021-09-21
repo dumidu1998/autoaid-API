@@ -5,7 +5,6 @@ import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.OngoingRepairResponse;
 import com.alpha5.autoaid.dto.response.UpcomingAppointmentResponse;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
-import com.alpha5.autoaid.model.Appointment;
 import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +91,7 @@ public class ServiceAdvisorController {
                 section="Express Maintainance";
                 break;
             case 5:
-                section="Truck and Bus";
+                section="Washing";
                 break;
             default:
                 return ResponseEntity.badRequest().body("invalid Selection");
@@ -135,6 +134,23 @@ public class ServiceAdvisorController {
             }
         }else
             return ResponseEntity.badRequest().body("Advisor Not Exists");
+    }
+
+    @PutMapping("addchecklist")
+    public ResponseEntity addCheckList(@RequestBody ChecklistRequest checklistRequest){
+        if(serviceAdvisorService.updateChecklist(checklistRequest))
+            return ResponseEntity.ok().body("Checklist Submitted!!");
+        else
+            return ResponseEntity.badRequest().body("Error Occurred!! Invalid Repair!");
+    }
+
+    @GetMapping("getemailbypairid/{repairid}")
+    public ResponseEntity getemailbyrepid(@PathVariable long repairid){
+        String email= serviceAdvisorService.getemail(repairid);
+        if(email!=null)
+            return ResponseEntity.ok().body(email);
+        else
+            return ResponseEntity.badRequest().body("Error Occurred!! Invalid Repair!");
     }
 
 }

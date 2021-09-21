@@ -2,6 +2,7 @@ package com.alpha5.autoaid.model;
 
 import com.alpha5.autoaid.enums.PaymentType;
 import com.alpha5.autoaid.enums.RepairStatus;
+import com.alpha5.autoaid.enums.RepairType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,16 @@ public class Repair {
 
     @Column
     private Date repairCompletedDate;
+
+    @Column
+    private String fbDocId;
+
+    @Column
+    private int millage;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private RepairType repairType;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
