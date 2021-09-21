@@ -3,7 +3,7 @@ package com.alpha5.autoaid.dto.request;
 import java.math.BigDecimal;
 
 public class UpdateItem {
-    private long itemId;
+    private long itemNo;
     private String itemName;
     private BigDecimal reorderLevel;
     private BigDecimal price;
@@ -18,12 +18,12 @@ public class UpdateItem {
         this.stock = stock;
     }
 
-    public long getItemId() {
-        return itemId;
+    public long getItemNo() {
+        return itemNo;
     }
 
-    public void setItemId(long itemId) {
-        this.itemId = itemId;
+    public void setItemNo(long itemNo) {
+        this.itemNo = itemNo;
     }
 
     public String getItemName() {
