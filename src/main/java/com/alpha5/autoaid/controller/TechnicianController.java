@@ -4,7 +4,9 @@ package com.alpha5.autoaid.controller;
 import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
 import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
 import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
+import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
+import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.model.Slot;
@@ -44,16 +46,16 @@ public class TechnicianController {
     public ResponseEntity completeRepair(@RequestBody RepairCompletedRequest repairCompletedRequest){
         if(technicianService.checkWhetherAllEntriesCompleted(repairCompletedRequest)){
             technicianService.completeRepair(repairCompletedRequest);
-            Slot slot=serviceAdvisorService.getNextSlot(repairCompletedRequest.getRepairId());
-            return ResponseEntity.ok().body(slot);
+            return ResponseEntity.ok().body("All entries Completed");
         }else
-        return ResponseEntity.badRequest().body("All entries Not Completed Yet");
+        return ResponseEntity.badRequest().body("Have pending entries");
     }
     @GetMapping("/repair/findnext/{repairId}")
     public ResponseEntity findNextRepair(@PathVariable long repairId){
         String response;
         if(technicianService.checkWhetherNoneCompletedEntries(repairId)){
-            response="entries exists";
+            Slot slot=serviceAdvisorService.getNextSlot(repairId);
+            response="Next Slot is "+slot.getSlotName();
         }else
             response="all completed";
         return ResponseEntity.ok().body(response);
@@ -95,6 +97,27 @@ public class TechnicianController {
             return ResponseEntity.badRequest().body("No Upcoming Repairs");
         }else {
             return ResponseEntity.ok().body(upcomingRepairs);
+        }
+    }
+
+    @GetMapping("/getEntryList/{repairId}/{section}")
+    public ResponseEntity getEntryList(@PathVariable long repairId,@PathVariable String section){
+        return ResponseEntity.ok().body(technicianService.getEntryList(repairId, section));
+    }
+
+    @GetMapping("/assignTech/{repairId}/{techId}/{section}")
+    public ResponseEntity assignTech(@PathVariable long techId,@PathVariable long repairId,@PathVariable String section){
+        technicianService.assignTechnician(techId,repairId,section);
+        return ResponseEntity.ok().body("Success");
+    }
+    @GetMapping("/getTech/{repairId}/{section}")
+    public ResponseEntity getTech(@PathVariable long repairId,@PathVariable String section){
+        AdminGetAssignedLeadTechResponse technician = technicianService.getTech(repairId, section);
+        if (technician == null) {
+            return ResponseEntity.badRequest().body("Technician Not Assigned");
+        } else {
+            return ResponseEntity.ok().body(technician);
+
         }
     }
 
