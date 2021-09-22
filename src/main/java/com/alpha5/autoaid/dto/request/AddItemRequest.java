@@ -4,7 +4,6 @@ import com.alpha5.autoaid.enums.ItemRequestStatus;
 
 public class AddItemRequest {
     private int quantity;
-    private ItemRequestStatus status;
     private long staffId;
     private long repairId;
     private long itemNo;
@@ -15,14 +14,6 @@ public class AddItemRequest {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public ItemRequestStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ItemRequestStatus status) {
-        this.status = status;
     }
 
     public long getStaffId() {
