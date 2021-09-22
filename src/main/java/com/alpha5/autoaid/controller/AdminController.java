@@ -1,18 +1,12 @@
 package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.*;
-import com.alpha5.autoaid.dto.response.AddStaffRespond;
-import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
-import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.dto.response.GetStaffMemInfoRespond;
 import com.alpha5.autoaid.enums.UserType;
-import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequestMapping("/admin")
 @RestController
@@ -182,5 +176,11 @@ public class AdminController {
        adminService.setTech(techId,sectionName);
        return ResponseEntity.ok().body("Success");
     }
+
+    @GetMapping("/gettodaytransactions")
+    public ResponseEntity getTransactions() {
+        return ResponseEntity.ok().body(adminService.getTransactions());
+    }
+
 }
 
