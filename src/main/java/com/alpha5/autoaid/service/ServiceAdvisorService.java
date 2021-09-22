@@ -376,10 +376,15 @@ public class ServiceAdvisorService {
         List<UpcomingAppointmentResponse> upcomingAppointmentResponses=new ArrayList<>();
         List<Appointment> allAppointmentsOnDate = appointmentRepository.findAllByStaff_StaffIdAndDate(staffId, date);
         for (Appointment appointment:allAppointmentsOnDate){
-            UpcomingAppointmentResponse upcomingAppointmentResponse=new UpcomingAppointmentResponse();
-            upcomingAppointmentResponse.setVehicleNumber(appointment.getVehicle().getVehicleNumber());
-            upcomingAppointmentResponse.setVin(appointment.getVehicle().getVin());
-            upcomingAppointmentResponses.add(upcomingAppointmentResponse);
+            Vehicle vehicle=appointment.getVehicle();
+            Repair repair=repairRepository.findByVehicleAndStatusIsNot(vehicle,RepairStatus.HANDOVER);
+            if(repair==null){
+                UpcomingAppointmentResponse upcomingAppointmentResponse=new UpcomingAppointmentResponse();
+                upcomingAppointmentResponse.setVehicleNumber(appointment.getVehicle().getVehicleNumber());
+                upcomingAppointmentResponse.setVin(appointment.getVehicle().getVin());
+                upcomingAppointmentResponse.setContactNo(appointment.getVehicle().getCustomer().getUserData().getContactNo());
+                upcomingAppointmentResponses.add(upcomingAppointmentResponse);
+            }
         }
         return upcomingAppointmentResponses;
     }
