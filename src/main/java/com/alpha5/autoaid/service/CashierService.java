@@ -1,12 +1,7 @@
 package com.alpha5.autoaid.service;
 
-import com.alpha5.autoaid.dto.response.CashierInventryRespond;
-import com.alpha5.autoaid.dto.response.InvoiceByRepairId;
-import com.alpha5.autoaid.dto.response.MaterialList;
-import com.alpha5.autoaid.dto.response.ServiceList;
-import com.alpha5.autoaid.dto.response.serviceadvisor.GetAllRepairInstanceResponse;
+import com.alpha5.autoaid.dto.response.*;
 import com.alpha5.autoaid.enums.ItemRequestStatus;
-import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
@@ -17,7 +12,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 
@@ -41,8 +35,8 @@ public class CashierService {
     @Autowired
     private ServiceEntryRepository serviceEntryRepository;
 
-    public CashierInventryRespond cashierGetRepairInvoice(long id) {
-        CashierInventryRespond response = new CashierInventryRespond();
+    public CashierInvoiceRespond cashierGetRepairInvoice(long id) {
+        CashierInvoiceRespond response = new CashierInvoiceRespond();
         Repair repair = repairRepository.findByRepairId(id);
         List<ServiceEntry> services = serviceEntryRepository.findAllByRepair_RepairIdAndServiceEntryStatusIs(id, ServiceEntryStatus.COMPLETED);
         List<ServiceList> serviceList = new ArrayList<>();
@@ -77,11 +71,39 @@ public class CashierService {
 
     }
 
-    public  List<Long> getAllRepairs(){
-
-        List<Long> repairIdList = repairRepository.findAllByStatus(RepairStatus.COMPLETED).stream().map(repair -> repair.getRepairId()).collect(Collectors.toList());
-
-        return repairIdList;
+    public  List<CashierRepairDetailsRespond> getAllRepairs(){
+        List<Repair> all = repairRepository.findAll();
+        List<CashierRepairDetailsRespond> response = new ArrayList<>();
+        for(Repair repair : all){
+            if(repair.getStatus().toString() == "COMPLETED"){
+                CashierRepairDetailsRespond cashierRepairDetailsRespond = new CashierRepairDetailsRespond();
+                cashierRepairDetailsRespond.setRepairId(repair.getRepairId());
+                cashierRepairDetailsRespond.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+                cashierRepairDetailsRespond.setName(repair.getVehicle().getCustomer().getFirstName()+" "+repair.getVehicle().getCustomer().getLastName());
+                cashierRepairDetailsRespond.setContactNo(repair.getVehicle().getCustomer().getUserData().getContactNo());
+                response.add(cashierRepairDetailsRespond);
+            }
+        }
+        return response;
     }
+    public  List<CashierRepairDetailsRespond> getHandOverRepairs(){
+        List<Repair> allHandOver = repairRepository.findAll();
+        List<CashierRepairDetailsRespond> response = new ArrayList<>();
+        for(Repair repair : allHandOver){
+            if(repair.getStatus().toString() == "HANDOVER"){
+                CashierRepairDetailsRespond cashierRepairDetailsRespond = new CashierRepairDetailsRespond();
+                cashierRepairDetailsRespond.setRepairId(repair.getRepairId());
+                cashierRepairDetailsRespond.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+                String completedDate=new SimpleDateFormat("YYYY-MM-dd").format(repair.getRepairCompletedDate());
+                cashierRepairDetailsRespond.setRepairCompletedDate(completedDate);
+                cashierRepairDetailsRespond.setName(repair.getVehicle().getCustomer().getFirstName()+" "+repair.getVehicle().getCustomer().getLastName());
+                cashierRepairDetailsRespond.setContactNo(repair.getVehicle().getCustomer().getUserData().getContactNo());
+
+                response.add(cashierRepairDetailsRespond);
+            }
+        }
+        return response;
+    }
+
 
 }
