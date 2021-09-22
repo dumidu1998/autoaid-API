@@ -197,5 +197,11 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.getStatistics());
     }
 
+    @GetMapping("/getvehicleDetails")
+    public ResponseEntity getAllDetails() {
+        return ResponseEntity.ok().body(adminService.getStatistics());
+    }
+
+
 }
 
