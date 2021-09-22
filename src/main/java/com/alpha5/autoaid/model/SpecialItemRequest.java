@@ -1,34 +1,44 @@
 package com.alpha5.autoaid.model;
 
 
-import com.alpha5.autoaid.enums.ItemRequestStatus;
+import com.alpha5.autoaid.enums.SpecialItemRequestStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "item_request")
-public class ItemRequest {
+@Table(name = "special_item_request")
+public class SpecialItemRequest {
 
     @Id
     @GeneratedValue
-    private long requestId;
+    private long specialRequestId;
 
     @Column(nullable = false)
     private int quantity;
 
+    @Column(nullable = false)
+    private String itemName;
+
     @Column
-    private Date issuedDateTime;
+    private Date requestedDateTime;
+
+    @Column(precision = 10,scale = 2)
+    private BigDecimal price;
+
+    @Column
+    private Date approvedDateTime;
 
     @Enumerated(EnumType.STRING)
-    private ItemRequestStatus status;
+    private SpecialItemRequestStatus status;
 
     @ManyToOne
     @JsonIgnore
@@ -40,9 +50,5 @@ public class ItemRequest {
     @JoinColumn(name = "repair_id")
     Repair repair;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "item_no")
-    InventoryItem invItem;
 
 }
