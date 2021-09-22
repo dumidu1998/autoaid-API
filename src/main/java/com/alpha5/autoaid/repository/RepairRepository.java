@@ -8,6 +8,7 @@ import com.alpha5.autoaid.model.Section;
 import com.alpha5.autoaid.model.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Date;
 import java.util.List;
 
 public interface RepairRepository extends JpaRepository<Repair, Long> {
@@ -20,5 +21,6 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
     List<Repair> findAllByStatusAndVehicle_Customer_UserData_id(RepairStatus status,long userId);
     List<Repair> findAllByVehicle_VehicleIdAndRepairTypeOrderByRepairAddedDateDesc(long vehicleId, RepairType type);
     List<Repair> findDistinctByServiceEntries_ServiceEntryStatusAndServiceEntries_SubCategory_Section(ServiceEntryStatus status, Section section);
+    List<Repair> findAllByRepairCompletedDateIsBefore(Date date);
     List<Repair> findAllByStatus(RepairStatus status);
 }

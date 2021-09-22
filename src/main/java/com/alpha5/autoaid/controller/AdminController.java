@@ -192,5 +192,10 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.approveRejectRequest(req));
     }
 
+    @GetMapping("/getstatistics")
+    public ResponseEntity getStatistics() {
+        return ResponseEntity.ok().body(adminService.getStatistics());
+    }
+
 }
 

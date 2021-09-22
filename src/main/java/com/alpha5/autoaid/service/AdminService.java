@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,10 +25,16 @@ public class AdminService {
     private UserRepository userRepository;
 
     @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private SectionRepository sectionRepository;
+
+    @Autowired
+    private RepairRepository repairRepository;
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;
@@ -444,6 +451,40 @@ public class AdminService {
             return false;
         }
 
+    }
+
+    public SummaryResponse getStatistics() {
+
+        Date d1= new Date();
+        int old =  customerRepository.findAllByRegisteredDateBefore(new Date(d1.getTime() - (1000 * 60 * 60 * 24*7))).size();
+        int now =  customerRepository.findAllByRegisteredDateBefore(new Date()).size();
+        System.out.println(old);
+        System.out.println(now);
+        double grow=0;
+        if(old==0){
+            grow = 0;
+        }else {
+            grow = (double) (now - old) / old * 100;
+        }
+        int repairsold=repairRepository.findAllByRepairCompletedDateIsBefore(new Date(d1.getTime() - (1000 * 60 * 60 * 24*7))).size();
+        int repairsnew=repairRepository.findAllByRepairCompletedDateIsBefore(new Date()).size();
+
+        System.out.println("repairsnew = " + repairsnew);
+        System.out.println("repairsnew = " + repairsold);
+        if(repairsold==0){repairsold=1;}
+
+        BigDecimal monthsales = invoiceRepository.findsuminmonth();
+
+        System.out.println(monthsales);
+
+        int employees = staffRepository.findAll().size();
+
+        System.out.println(employees);
+
+
+        SummaryResponse response = new SummaryResponse(now,grow,repairsnew,(double)((repairsnew-repairsold)/repairsold)*100,monthsales,employees);
+
+        return response;
     }
 }
 
