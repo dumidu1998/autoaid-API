@@ -182,5 +182,15 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.getTransactions());
     }
 
+    @GetMapping("/getspecialrequests")
+    public ResponseEntity getrequests() {
+        return ResponseEntity.ok().body(adminService.getspecialrequests());
+    }
+
+    @PutMapping("/approvereject")
+    public ResponseEntity approveRejectRequest(@RequestBody ApproveRejectRequest req) {
+        return ResponseEntity.ok().body(adminService.approveRejectRequest(req));
+    }
+
 }
 

@@ -3,10 +3,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.*;
-import com.alpha5.autoaid.enums.ServiceEntryStatus;
-import com.alpha5.autoaid.enums.SlotStatus;
-import com.alpha5.autoaid.enums.UserStatus;
-import com.alpha5.autoaid.enums.UserType;
+import com.alpha5.autoaid.enums.*;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +43,9 @@ public class AdminService {
 
     @Autowired
     private InvoiceRepository invoiceRepository;
+
+    @Autowired
+    private SpecialItemRequestRepository specialItemRequestRepository;
 
     //returns false if member exists
     public boolean checkStaffMemberExists(long staffId){
@@ -407,6 +407,43 @@ public class AdminService {
         }
 
         return response;
+    }
+
+    public List<SpecialRequestResponse> getspecialrequests() {
+        List<SpecialRequestResponse> response = new ArrayList<>();
+
+        List<SpecialItemRequest> list = specialItemRequestRepository.findAllByStatus(SpecialItemRequestStatus.REQUESTED);
+        for(SpecialItemRequest request:list){
+            SpecialRequestResponse out = new SpecialRequestResponse();
+
+            out.setItemName(request.getItemName());
+            out.setQty(request.getQuantity());
+            out.setRequestId(request.getSpecialRequestId());
+            out.setVehicleNo(request.getRepair().getVehicle().getVehicleNumber());
+            out.setTechieName(request.getStaff().getFirstName()+" "+request.getStaff().getLastName());
+            out.setSectionName(null);
+
+            response.add(out);
+
+        }
+
+        return response;
+    }
+
+    public boolean approveRejectRequest(ApproveRejectRequest req) {
+        SpecialItemRequest item = specialItemRequestRepository.findBySpecialRequestId(req.getRequestId());
+
+        item.setPrice(req.getPrice());
+        item.setStatus(req.getStatus());
+        item.setApprovedDateTime(new Date());
+        try{
+            specialItemRequestRepository.save(item);
+            return true;
+        }catch (Exception e) {
+
+            return false;
+        }
+
     }
 }
 
