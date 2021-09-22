@@ -300,6 +300,7 @@ public class AdminService {
             adminGetSectionResponse.setFreeSlots(freeSlots);
             adminGetSectionResponse.setOccupiedSlots(numOfSlots-notAvailSlots);
             adminGetSectionResponse.setTechnicianName(staffName);
+            adminGetSectionResponse.setSectionId(section.getSectionId());
 
             adminGetSectionResponses.add(adminGetSectionResponse);
         }

@@ -7,6 +7,7 @@ public class TransactionResponse {
     private String vehicleNo;
     private BigDecimal amount;
 
+
     public String getVehicleNo() {
         return vehicleNo;
     }
