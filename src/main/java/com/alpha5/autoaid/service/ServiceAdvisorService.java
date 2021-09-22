@@ -69,6 +69,11 @@ public class ServiceAdvisorService {
             return true;
         } return false;
     }
+    public boolean checkIfVehicleExistsOnVehicleNum(String vehicleNumber){
+        if(vehicleRepository.findByVehicleNumber(vehicleNumber)!=null){
+            return true;
+        } return false;
+    }
     public boolean checkIfAdvisorExists(long staffId){
         try {
             Staff staff=staffRepository.findByStaffId(staffId);
@@ -111,19 +116,25 @@ public class ServiceAdvisorService {
     public VehicleDetailsAutofillResponse autoFillVehicleDetails(String vin) {
         //check whether vehicle exists
         Vehicle vehicle = vehicleRepository.findByVin(vin);
-        if (vehicle != null) {
-            VehicleDetailsAutofillResponse response = new VehicleDetailsAutofillResponse();
-            response.setVin(vehicle.getVin());
-            response.setVehicleNumber(vehicle.getVehicleNumber());
-            response.setChassisNo(vehicle.getChassisNo());
-            response.setEngineNo(vehicle.getEngineNo());
-            response.setMake(vehicle.getMake());
-            response.setModel(vehicle.getModel());
-            response.setContactNo(vehicle.getCustomer().getUserData().getContactNo());
+        if(vehicle==null){
+            vehicle = vehicleRepository.findByVehicleNumber(vin);
+            if(vehicle==null){
+                throw new RuntimeException("Vehicle registered. Add details");
+            }else {
+                VehicleDetailsAutofillResponse response = new VehicleDetailsAutofillResponse();
+                response.setVin(vehicle.getVin());
+                response.setVehicleNumber(vehicle.getVehicleNumber());
+                response.setChassisNo(vehicle.getChassisNo());
+                response.setEngineNo(vehicle.getEngineNo());
+                response.setMake(vehicle.getMake());
+                response.setModel(vehicle.getModel());
+                response.setContactNo(vehicle.getCustomer().getUserData().getContactNo());
 
-            return response;
-        } else throw new RuntimeException("Vehicle not registered. Add details");
-
+                return response;
+            }
+        }else{
+                throw new RuntimeException("Vehicle need to update details");
+        }
     }
 
     //adding new vehicle
@@ -141,6 +152,21 @@ public class ServiceAdvisorService {
         newVehicle.setCustomer(customer);
 
         vehicleRepository.save(newVehicle);
+    }
+    public void updateVehicle(AddVehicleRequest addVehicleRequest) {
+        //get customer data by search contact in user data
+
+        Customer customer=customerRepository.findByUserData(userRepository.findByContactNo(addVehicleRequest.getContactNo()));
+        Vehicle vehicle=vehicleRepository.findByVehicleNumber(addVehicleRequest.getVehicleNumber());
+
+        vehicle.setVin(addVehicleRequest.getVin());
+        vehicle.setChassisNo(addVehicleRequest.getChassisNo());
+        vehicle.setEngineNo(addVehicleRequest.getEngineNo());
+        vehicle.setMake(addVehicleRequest.getMake());
+        vehicle.setModel(addVehicleRequest.getModel());
+        vehicle.setCustomer(customer);
+
+        vehicleRepository.save(vehicle);
     }
     //add customer which not exists
     public void addNewCustomerSketchy(AddSketchyCustomerRequest addSketchyCustomerRequest){
@@ -316,7 +342,7 @@ public class ServiceAdvisorService {
               List<Slot> slots= (slotRepository.findAllBySection_SectionNameAndStatusIsNot(section,SlotStatus.NOTAVAILABLE));
               slots.forEach(slot -> workingSlots.add(slot));
         }
-//        workingSlots.forEach(slot -> System.out.println(slot.getSlotName()));
+        workingSlots.forEach(slot -> System.out.println(slot.getSlotName()));
         //if no slot is available
         if(workingSlots.isEmpty()){
             return null;
@@ -338,7 +364,7 @@ public class ServiceAdvisorService {
                     latestAvailSlot = slot;
                 }
             }
-//            System.out.println(bestTime+ " And "+latestAvailSlot.getSlotName());
+            System.out.println(bestTime+ " And "+latestAvailSlot.getSlotName());
             return latestAvailSlot;
         }
     }
