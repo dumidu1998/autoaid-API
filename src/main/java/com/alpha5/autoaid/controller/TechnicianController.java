@@ -127,7 +127,7 @@ public class TechnicianController {
             technicianService.createItemRequest(addItemRequest);
             return ResponseEntity.ok().body("Item Request Added Successfully");
         }catch(Exception e){
-            return ResponseEntity.badRequest().body("Item Request Error!");
+            return ResponseEntity.badRequest().body("Error Occurred!");
         }
     }
 
@@ -144,6 +144,16 @@ public class TechnicianController {
     @GetMapping("/vehiclebyid/{repairid}")//repairid
     public ResponseEntity getVehicleDetails(@PathVariable long repairid){
             return ResponseEntity.ok().body(technicianService.getVehicleDetails(repairid));
+    }
+
+    @PostMapping("/createspecialitem")
+    public ResponseEntity createSpecialItemRequest(@RequestBody AddSpecialItem addItemRequest){
+        try{
+            technicianService.createSpecialItemRequest(addItemRequest);
+            return ResponseEntity.ok().body("Item Request Added Successfully");
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Error Occurred!");
+        }
     }
 
 }

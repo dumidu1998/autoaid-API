@@ -1,12 +1,18 @@
 package com.alpha5.autoaid.dto.request;
 
-import com.alpha5.autoaid.enums.ItemRequestStatus;
-
 public class AddItemRequest {
     private int quantity;
-    private long staffId;
+    private long userId;
     private long repairId;
     private long itemNo;
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 
     public int getQuantity() {
         return quantity;
@@ -16,13 +22,6 @@ public class AddItemRequest {
         this.quantity = quantity;
     }
 
-    public long getStaffId() {
-        return staffId;
-    }
-
-    public void setStaffId(long staffId) {
-        this.staffId = staffId;
-    }
 
     public long getRepairId() {
         return repairId;
