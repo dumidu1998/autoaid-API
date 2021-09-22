@@ -432,9 +432,4 @@ public class ServiceAdvisorService {
         return getAllRepairInstanceResponses;
     }
 
-    public Customer getCustomerbyVehicle(long vehicleId){
-        Customer customer = vehicleRepository.findByVehicleId(vehicleId).getCustomer();
-        return customer;
-    }
-
 }

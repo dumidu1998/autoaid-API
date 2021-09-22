@@ -20,4 +20,5 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
     List<Repair> findAllByStatusAndVehicle_Customer_UserData_id(RepairStatus status,long userId);
     List<Repair> findAllByVehicle_VehicleIdAndRepairTypeOrderByRepairAddedDateDesc(long vehicleId, RepairType type);
     List<Repair> findDistinctByServiceEntries_ServiceEntryStatusAndServiceEntries_SubCategory_Section(ServiceEntryStatus status, Section section);
+    List<Repair> findAllByStatus(RepairStatus status);
 }

@@ -163,10 +163,4 @@ public class ServiceAdvisorController {
         return ResponseEntity.badRequest().body("Advisor Not exists");
     }
 
-    @GetMapping("/getCustomerbyVehicle/{vehicleId}")
-    public ResponseEntity getCustomerbyVehicle(@PathVariable long vehicleId){
-        Customer customer = serviceAdvisorService.getCustomerbyVehicle(vehicleId);
-        return ResponseEntity.ok().body(customer);
-    }
-
 }
