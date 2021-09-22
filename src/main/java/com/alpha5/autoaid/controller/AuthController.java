@@ -2,6 +2,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
 import com.alpha5.autoaid.dto.request.CustomerSignUpRequest;
+import com.alpha5.autoaid.dto.request.GetNameOfLoggedUserRequest;
 import com.alpha5.autoaid.dto.request.Resetpwd;
 import com.alpha5.autoaid.dto.response.UserSigned;
 import com.alpha5.autoaid.model.Customer;
@@ -94,18 +95,15 @@ public class AuthController {
             responseMsg="Error!";
             return ResponseEntity.badRequest().body(responseMsg);
         }
+    }
 
-//        String responseMsg;
-//        if (authService.checkIfEmailExists(email)){
-//            responseMsg="Email exists";
-//        }else if (authService.checkIfContactExists(contactNo)){
-//            responseMsg="Contact exists";
-//        }else if (authService.checkIfUserNameExists(username)){
-//            responseMsg="username exists";
-//        }else {
-//            authService.signup(customerSignUpRequest);
-//            responseMsg="Customer Added Successfully";
-//        }
+    @PostMapping("/getUserName")
+    public ResponseEntity getUserName(@RequestBody GetNameOfLoggedUserRequest getNameOfLoggedUserRequest){
+        if(authService.checkIfUserIdExistsOnUserType(getNameOfLoggedUserRequest.getUserId(),getNameOfLoggedUserRequest.getUserType())){
+            return ResponseEntity.ok().body(authService.findStaffName(getNameOfLoggedUserRequest));
+        }else{
+            return ResponseEntity.badRequest().body("Invalid User Credentials");
+        }
     }
 
 }
