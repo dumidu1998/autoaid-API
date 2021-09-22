@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ServiceAdvisorService {
@@ -272,12 +271,15 @@ public class ServiceAdvisorService {
                     .findFirst();
 
             Slot assignedSlot=next.get();
-            assignedSlot.setStatus(SlotStatus.RESERVED);
-            slotRepository.save(assignedSlot);
+            //in real time if any other repair searched
+//            assignedSlot.setStatus(SlotStatus.RESERVED);
+//            slotRepository.save(assignedSlot);
             return getSlot(repairId, assignedSlot);
         }
+        //if available slots not there
         catch (Exception e){
             Slot latest=latestSlot(sectionList);
+            //find if there working slots
             if(latest==null){
                 throw new RuntimeException("Slots are Not Available currently");
             }else{
@@ -286,13 +288,13 @@ public class ServiceAdvisorService {
         }
     }
 
-    //return slot assigned
+    //return slot assigned with updating entry
     private Slot getSlot(long repairId, Slot latest) {
         //get list of service entries assigned to slot
         List<ServiceEntry> serviceEntriesOfLatestSlot=serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId,latest.getSection().getSectionName());
         serviceEntriesOfLatestSlot.forEach(serviceEntry -> {
             serviceEntry.setSlot(latest);
-            serviceEntry.setStaff(latest.getStaff());
+//            serviceEntry.setStaff(latest.getStaff());
             serviceEntry.setServiceEntryStatus(ServiceEntryStatus.PENDING);
             serviceEntryRepository.save(serviceEntry);
         });
@@ -374,7 +376,26 @@ public class ServiceAdvisorService {
             upcomingAppointmentResponse.setVin(appointment.getVehicle().getVin());
             upcomingAppointmentResponses.add(upcomingAppointmentResponse);
         }
-
         return upcomingAppointmentResponses;
+    }
+
+    public boolean updateChecklist(ChecklistRequest data) {
+        Repair repair = repairRepository.findByRepairId(data.getRepairId());
+
+        repair.setFbDocId(data.getFbdocid());
+        repair.setRepairType(data.getRepairType());
+        repair.setMillage(data.getMillage());
+
+        try{
+            repairRepository.save(repair);
+        }catch (Exception e) {
+           return false;
+        }
+        return true;
+    }
+
+    public String getemail(long repairid) {
+        Repair repair = repairRepository.findByRepairId(repairid);
+        return repair.getVehicle().getCustomer().getUserData().getEmail();
     }
 }

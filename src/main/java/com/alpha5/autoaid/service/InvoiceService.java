@@ -38,33 +38,34 @@ public class InvoiceService {
     private ServiceEntryRepository serviceEntryRepository;
 
     public InvoiceByRepairId getInvoiceByRepairId(long id) {
-        InvoiceByRepairId response = new InvoiceByRepairId();
-        Repair repair = repairRepository.findByRepairId(id);
-        List<ServiceEntry> services= new ArrayList<>();
-        services = serviceEntryRepository.findAllByRepair_RepairIdAndServiceEntryStatusIs(id, ServiceEntryStatus.COMPLETED);
-        List<ServiceList> serviceList = new ArrayList<>();
-        for (ServiceEntry serviceEntry : services) {
-            serviceList.add(new ServiceList(serviceEntry.getSubCategory().getSubCatName() + (serviceEntry.getDescription()==null?" ":" ("+serviceEntry.getDescription()+") "), new BigDecimal(serviceEntry.getEstimatedTime()) ));
-        }
-        List<MaterialList> materialList=new ArrayList<>();
-        List<ItemRequest> requests = itemCategoryRepository.findAllByRepair_repairIdAndStatusIs(id, ItemRequestStatus.COMPLETED);
-        for (ItemRequest request : requests){
-            materialList.add(new MaterialList(request.getInvItem().getItemName(),request.getQuantity(),request.getInvItem().getPrice(),new BigDecimal(request.getQuantity()).multiply(request.getInvItem().getPrice())));
-        }
-        response.setCustomerName(repair.getVehicle().getCustomer().getFirstName()+' '+repair.getVehicle().getCustomer().getLastName());
-        response.setAddress(repair.getVehicle().getCustomer().getUserData().getAddress());
-        response.setCity(repair.getVehicle().getCustomer().getUserData().getCity());
-        response.setMobileNumber(repair.getVehicle().getCustomer().getUserData().getContactNo());
-        response.setInvoiceDate(repair.getInvoices().getInvoiceDate().toString());
-        response.setAmount(repair.getInvoices().getAmount());
-        response.setInvoiceNumber(repair.getInvoices().getInvoiceId());
-        response.setPaymentType(repair.getPaymentType().toString());
-        response.setVehicleNumber(repair.getVehicle().getVehicleNumber());
-        response.setModel(repair.getVehicle().getModel());
-        response.setServices(serviceList);
-        response.setMaterials(materialList);
-
-        return response;
+//        InvoiceByRepairId response = new InvoiceByRepairId();
+//        Repair repair = repairRepository.findByRepairId(id);
+//        List<ServiceEntry> services= new ArrayList<>();
+//        services = serviceEntryRepository.findAllByRepair_RepairIdAndServiceEntryStatusIs(id, ServiceEntryStatus.COMPLETED);
+//        List<ServiceList> serviceList = new ArrayList<>();
+//        for (ServiceEntry serviceEntry : services) {
+//            serviceList.add(new ServiceList(serviceEntry.getSubCategory().getSubCatName() + (serviceEntry.getDescription()==null?" ":" ("+serviceEntry.getDescription()+") "), new BigDecimal(serviceEntry.getEstimatedTime()) ));
+//        }
+//        List<MaterialList> materialList=new ArrayList<>();
+//        List<ItemRequest> requests = itemCategoryRepository.findAllByRepair_repairIdAndStatusIs(id, ItemRequestStatus.COMPLETED);
+//        for (ItemRequest request : requests){
+//            materialList.add(new MaterialList(request.getInvItem().getItemName(),request.getQuantity(),request.getInvItem().getPrice(),new BigDecimal(request.getQuantity()).multiply(request.getInvItem().getPrice())));
+//        }
+//        response.setCustomerName(repair.getVehicle().getCustomer().getFirstName()+' '+repair.getVehicle().getCustomer().getLastName());
+//        response.setAddress(repair.getVehicle().getCustomer().getUserData().getAddress());
+//        response.setCity(repair.getVehicle().getCustomer().getUserData().getCity());
+//        response.setMobileNumber(repair.getVehicle().getCustomer().getUserData().getContactNo());
+//        response.setInvoiceDate(repair.getInvoices().getInvoiceDate().toString());
+//        response.setAmount(repair.getInvoices().getAmount());
+//        response.setInvoiceNumber(repair.getInvoices().getInvoiceId());
+//        response.setPaymentType(repair.getPaymentType().toString());
+//        response.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+//        response.setModel(repair.getVehicle().getModel());
+//        response.setServices(serviceList);
+//        response.setMaterials(materialList);
+//
+//        return response;
+        return null;
     }
 }
 

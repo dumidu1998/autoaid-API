@@ -49,8 +49,8 @@ public class Staff {
     @JsonIgnore
     private Set<Repair> repairs;
 
-    @OneToMany(targetEntity = Slot.class, mappedBy = "staff", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Slot> slots;
+//    @OneToMany(targetEntity = Slot.class, mappedBy = "staff", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Set<Slot> slots;
 
 }

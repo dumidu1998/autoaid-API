@@ -166,7 +166,7 @@ public class AdminController {
     }
 
     @GetMapping("/gettech/{sectionName}")
-    public ResponseEntity getTech(@PathVariable  String sectionName) {
+    public ResponseEntity getTech(@PathVariable String sectionName) {
         if (adminService.getTech(sectionName) == null) {
             return ResponseEntity.badRequest().body("Techlead Not Assigned");
         } else {
