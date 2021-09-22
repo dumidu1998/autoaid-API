@@ -108,4 +108,11 @@ public class AuthController {
 //        }
     }
 
+
+    @GetMapping("/checkemail/{email}")
+    public ResponseEntity checkForEmail(@PathVariable String email){
+        return ResponseEntity.ok().body(authService.checkIfEmailExists(email));
+    }
+
+
 }
