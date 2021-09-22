@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.AddAppointment;
+import com.alpha5.autoaid.dto.request.AddAppointmentV;
 import com.alpha5.autoaid.dto.response.StaffListRespond;
 import com.alpha5.autoaid.model.AppointmentSlot;
 import com.alpha5.autoaid.service.AppointmentService;
@@ -27,6 +28,16 @@ public class AppointmentController {
     @PostMapping("/addappointment")
     ResponseEntity addNewAppointment(@RequestBody AddAppointment addAppointment){
         boolean success =appointmentService.addAppointment(addAppointment);
+        if(success) {
+            return ResponseEntity.ok().body("Appointment Placed Successfully");
+        }else{
+            return ResponseEntity.badRequest().body("Error!!");
+        }
+    }
+
+    @PostMapping("/addappointmentwithvehicle")
+    ResponseEntity addNewAppointmentWithVehicle(@RequestBody AddAppointmentV addAppointmentv){
+        boolean success =appointmentService.addAppointmentV(addAppointmentv);
         if(success) {
             return ResponseEntity.ok().body("Appointment Placed Successfully");
         }else{

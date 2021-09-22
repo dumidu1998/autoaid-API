@@ -8,6 +8,7 @@ import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
 import com.alpha5.autoaid.enums.InventoryStatus;
 import com.alpha5.autoaid.enums.ItemRequestStatus;
+import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
 import com.alpha5.autoaid.model.*;
@@ -20,9 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class TechnicianService {
@@ -47,6 +46,8 @@ public class TechnicianService {
 
     @Autowired
     private InventryItemRepository inventryItemRepository;
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     public boolean checkEntryExists(SubCatCompleteRequest subCatCompleteRequest) {
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
@@ -253,15 +254,17 @@ public class TechnicianService {
         slotRepository.save(slot);
     }
     public List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
+        //get ongoing entries on section
+        List<ServiceEntry> ongoingEntries = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.ONGOING);
         List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
-        //get pending repairs on section
-//        System.out.println("section"+sectionName);
 
+        //get pending repairs on section
         List<Long> repairIdList = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.PENDING)
                 .stream()
                 .map(serviceEntry -> serviceEntry.getRepair().getRepairId())
                 .distinct()
                 .collect(Collectors.toList());
+        //check if slot has ongoing repairs
 
         if(repairIdList.isEmpty()){
             return null;
@@ -272,7 +275,11 @@ public class TechnicianService {
                 getUpcomingRepairResponse.setRepairId(repair.getRepairId());
                 getUpcomingRepairResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
                 getUpcomingRepairResponse.setVin(repair.getVehicle().getVin());
-
+                if(ongoingEntries.isEmpty()){
+                    getUpcomingRepairResponse.setBtnAct(true);
+                }else {
+                    getUpcomingRepairResponse.setBtnAct(false);
+                }
                 getUpcomingRepairResponses.add(getUpcomingRepairResponse);
             }
             return getUpcomingRepairResponses;
@@ -291,4 +298,29 @@ public class TechnicianService {
         itemRequestRepository.save(request);
     }
 
+    public List<GetUpcomingRepairResponse> getOngoingRepairs(long userid) {
+        List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
+        Section section = sectionRepository.findByStaff_UserData_id(userid);
+        List<Repair> repairs = repairRepository.findDistinctByServiceEntries_ServiceEntryStatusAndServiceEntries_SubCategory_Section(ServiceEntryStatus.ONGOING,section);
+        for(Repair repair : repairs) {
+            GetUpcomingRepairResponse d = new GetUpcomingRepairResponse();
+            d.setRepairId(repair.getRepairId());
+            d.setVin(repair.getVehicle().getVin());
+            d.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+            d.setBtnAct(true);
+            getUpcomingRepairResponses.add(d);
+        }
+        return getUpcomingRepairResponses;
+    }
+
+    public Vehicle getVehicleDetails(long repairid) {
+        return repairRepository.findByRepairId(repairid).getVehicle();
+    }
+    public void updateRepairStatus(long repairid){
+        Date date=new Date();
+        Repair repair = repairRepository.findByRepairId(repairid);
+        repair.setStatus(RepairStatus.COMPLETED);
+        repair.setRepairCompletedDate(date);
+        repairRepository.save(repair);
+    }
 }

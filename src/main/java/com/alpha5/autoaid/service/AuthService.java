@@ -151,4 +151,13 @@ public class AuthService implements UserDetailsService {
         return new User(userData.getEmail(), userData.getPassword(), new ArrayList<>());
     }
 
+    public boolean resetpwd(String email, String newpwd) {
+        UserData userData = userRepository.findByEmail(email);
+        userData.setPassword(bcryptPasswordEncoder.encode(newpwd));
+
+        UserData out = userRepository.save(userData);
+        if(out != null) return true;
+        else return false;
+    }
+
 }

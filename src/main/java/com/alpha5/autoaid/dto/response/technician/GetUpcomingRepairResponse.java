@@ -4,6 +4,15 @@ public class GetUpcomingRepairResponse {
     private long repairId;
     private String vin;
     private String vehicleNumber;
+    private boolean btnAct;
+
+    public boolean isBtnAct() {
+        return btnAct;
+    }
+
+    public void setBtnAct(boolean btnAct) {
+        this.btnAct = btnAct;
+    }
 
     public long getRepairId() {
         return repairId;
