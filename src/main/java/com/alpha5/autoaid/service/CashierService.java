@@ -1,7 +1,9 @@
 package com.alpha5.autoaid.service;
 
+import com.alpha5.autoaid.dto.request.AddInvoiceDataRequest;
 import com.alpha5.autoaid.dto.response.*;
 import com.alpha5.autoaid.enums.ItemRequestStatus;
+import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -104,6 +107,20 @@ public class CashierService {
             }
         }
         return response;
+    }
+
+    public void updateStatusPaid(AddInvoiceDataRequest addInvoiceDataRequest) {
+
+        Repair repair = repairRepository.findByRepairId(addInvoiceDataRequest.getRepairId());
+        repair.setStatus(RepairStatus.HANDOVER);
+        repairRepository.save(repair);
+
+        Invoice invoice = new Invoice();
+        invoice.setRepair(repair);
+        invoice.setAmount(addInvoiceDataRequest.getAmount());
+        invoice.setInvoiceDate(new Date());
+        invoiceRepository.save(invoice);
+
     }
 
 

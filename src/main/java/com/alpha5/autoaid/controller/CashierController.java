@@ -1,15 +1,15 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.AddInvoiceDataRequest;
+import com.alpha5.autoaid.dto.request.UpdateItem;
 import com.alpha5.autoaid.dto.response.AddInventryItemResponed;
 import com.alpha5.autoaid.dto.response.CashierRepairDetailsRespond;
 import com.alpha5.autoaid.model.Customer;
+import com.alpha5.autoaid.model.Repair;
 import com.alpha5.autoaid.service.CashierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,5 +36,11 @@ public class CashierController {
         List<CashierRepairDetailsRespond> response = cashierService.getHandOverRepairs();
         return ResponseEntity.ok().body(response);
     }
+    @PutMapping("/updateStatusPaid")
+    public ResponseEntity updateStatusPaid(@RequestBody AddInvoiceDataRequest addInvoiceDataRequest){
+        cashierService.updateStatusPaid(addInvoiceDataRequest);
+        return ResponseEntity.ok().body("Status Updated Sucesssfully!!");
+    }
+
 
 }
