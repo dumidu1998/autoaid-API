@@ -85,4 +85,5 @@ public class CashierInvoiceRespond {
     public void setMaterials(List<MaterialList> materials) {
         this.materials = materials;
     }
+
 }
