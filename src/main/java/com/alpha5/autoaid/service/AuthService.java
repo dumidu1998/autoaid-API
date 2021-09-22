@@ -3,10 +3,12 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
 import com.alpha5.autoaid.dto.request.CustomerSignUpRequest;
+import com.alpha5.autoaid.dto.request.GetNameOfLoggedUserRequest;
 import com.alpha5.autoaid.dto.response.UserSigned;
 import com.alpha5.autoaid.enums.UserStatus;
 import com.alpha5.autoaid.enums.UserType;
 import com.alpha5.autoaid.model.Customer;
+import com.alpha5.autoaid.model.Staff;
 import com.alpha5.autoaid.model.UserData;
 import com.alpha5.autoaid.repository.CustomerRepository;
 import com.alpha5.autoaid.repository.StaffRepository;
@@ -52,7 +54,10 @@ public class AuthService implements UserDetailsService {
         }
         return false;
     }
-
+    public String findStaffName(GetNameOfLoggedUserRequest getNameOfLoggedUserRequest){
+        Staff staff=authStaffRepository.findByUserData_Id(getNameOfLoggedUserRequest.getUserId());
+        return staff.getFirstName()+" "+staff.getLastName();
+    }
     //check whether contact No exists
     public boolean checkIfContactExists(String contactNo) {
         if (userRepository.findByContactNo(contactNo) != null) {

@@ -5,6 +5,7 @@ import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.OngoingRepairResponse;
 import com.alpha5.autoaid.dto.response.UpcomingAppointmentResponse;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
+import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;

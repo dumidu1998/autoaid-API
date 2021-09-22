@@ -3,6 +3,15 @@ package com.alpha5.autoaid.dto.response;
 public class UpcomingAppointmentResponse {
     private String vehicleNumber;
     private String vin;
+    private String contactNo;
+
+    public String getContactNo() {
+        return contactNo;
+    }
+
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
+    }
 
     public String getVehicleNumber() {
         return vehicleNumber;
