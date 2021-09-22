@@ -5,6 +5,9 @@ import com.alpha5.autoaid.model.UserData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
+import java.util.List;
+
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Customer findByFirstName(String username);
     Customer findByUserData(UserData user);
@@ -22,5 +25,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     int customerSummary4(long userId);
 
     Customer findByUserData_Id(long userId);
+
+    List<Customer> findAllByRegisteredDateIsBetween(Date d1,Date d2);
+    List<Customer> findAllByRegisteredDateBefore(Date d1);
 
 }
