@@ -81,6 +81,7 @@ public class CashierService {
                 cashierRepairDetailsRespond.setVehicleNumber(repair.getVehicle().getVehicleNumber());
                 cashierRepairDetailsRespond.setName(repair.getVehicle().getCustomer().getFirstName()+" "+repair.getVehicle().getCustomer().getLastName());
                 cashierRepairDetailsRespond.setContactNo(repair.getVehicle().getCustomer().getUserData().getContactNo());
+
                 response.add(cashierRepairDetailsRespond);
             }
         }
