@@ -215,15 +215,15 @@ public class StockService {
         List<ItemRequest> all = itemRequestRepository.findAll();
         List<ItemRequestRespond> respond = new ArrayList<>();
         for(ItemRequest request : all){
-            ItemRequestRespond newRequest = new ItemRequestRespond();
-            newRequest.setRequestId(request.getRequestId());
-            newRequest.setItemName(request.getInvItem().getItemName());
-
-            newRequest.setQuantity(request.getQuantity());
-            newRequest.setRepair(request.getRepair().getRepairId());
-            newRequest.setVehicleNumber(request.getRepair().getVehicle().getVehicleNumber());
-            respond.add(newRequest);
-
+            if(request.getStatus().toString() == "REQUESTED"){
+                ItemRequestRespond newRequest = new ItemRequestRespond();
+                newRequest.setRequestId(request.getRequestId());
+                newRequest.setItemName(request.getInvItem().getItemName());
+                newRequest.setQuantity(request.getQuantity());
+                newRequest.setRepair(request.getRepair().getRepairId());
+                newRequest.setVehicleNumber(request.getRepair().getVehicle().getVehicleNumber());
+                respond.add(newRequest);
+            }
         }
         return respond;
 
@@ -241,10 +241,10 @@ public class StockService {
             inventryItemRepository.save(item);
 
     }
-    public void rejectRequest(long requestId) {
+    public void referRequest(long requestId) {
 
         ItemRequest request = itemRequestRepository.getById(requestId);
-        request.setStatus(((request.getStatus().toString()=="REQUESTED")?ItemRequestStatus.DENIED:ItemRequestStatus.REQUESTED));
+        request.setStatus(((request.getStatus().toString()=="REQUESTED")?ItemRequestStatus.REFERRED:ItemRequestStatus.REQUESTED));
         request.setIssuedDateTime(new Date());
         itemRequestRepository.save(request);
 

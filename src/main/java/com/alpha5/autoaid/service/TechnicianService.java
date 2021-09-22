@@ -1,12 +1,13 @@
 package com.alpha5.autoaid.service;
 
-import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
-import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
-import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
+import com.alpha5.autoaid.dto.request.*;
+import com.alpha5.autoaid.dto.response.AddItemRespond;
 import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
 import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
+import com.alpha5.autoaid.enums.InventoryStatus;
+import com.alpha5.autoaid.enums.ItemRequestStatus;
 import com.alpha5.autoaid.enums.RepairStatus;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.enums.SlotStatus;
@@ -15,6 +16,7 @@ import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +41,11 @@ public class TechnicianService {
     @Autowired
     private RepairRepository repairRepository;
 
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
+
+    @Autowired
+    private InventryItemRepository inventryItemRepository;
     @Autowired
     private VehicleRepository vehicleRepository;
 
@@ -277,6 +284,18 @@ public class TechnicianService {
             }
             return getUpcomingRepairResponses;
         }
+    }
+
+    public void createItemRequest(AddItemRequest addItemRequest) {
+        ItemRequest request = new ItemRequest();
+        request.setIssuedDateTime(new Date());
+        request.setQuantity(addItemRequest.getQuantity());
+        request.setStatus(ItemRequestStatus.REQUESTED);
+        request.setInvItem(inventryItemRepository.findByItemNo(addItemRequest.getItemNo()));
+        request.setRepair(repairRepository.findByRepairId(addItemRequest.getRepairId()));
+        request.setStaff(staffRepository.findByStaffId(addItemRequest.getStaffId()));
+
+        itemRequestRepository.save(request);
     }
 
     public List<GetUpcomingRepairResponse> getOngoingRepairs(long userid) {
