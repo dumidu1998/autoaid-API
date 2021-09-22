@@ -3,7 +3,7 @@ package com.alpha5.autoaid.dto.response;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class CashierInventryRespond {
+public class CashierInvoiceRespond {
     private String customerName;
     private String address;
     private String city;
