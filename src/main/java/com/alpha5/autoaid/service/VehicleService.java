@@ -36,6 +36,9 @@ public class VehicleService {
     @Autowired
     ServiceEntryRepository serviceEntryRepository;
 
+    @Autowired
+    InvoiceRepository invoiceRepository;
+
     public List<Vehicle> getVehicleById(long id) {
         return vehicleRepository.findAllByCustomer_CustomerId(id);
     }
@@ -126,4 +129,12 @@ public class VehicleService {
         return vehicleRepository.findAllByCustomer_UserData_Id(id);
     }
 
+    public List<Object> getcharts(long id) {
+//        System.out.println(invoiceRepository.getsummonth(id));
+        return invoiceRepository.getsummonth(customerRepository.findByUserData_Id(id).getUserData().getId());
+    }
+
+    public List<Object> getcharts2(long id) {
+        return invoiceRepository.getsummonth2(customerRepository.findByUserData_Id(id).getUserData().getId());
+    }
 }

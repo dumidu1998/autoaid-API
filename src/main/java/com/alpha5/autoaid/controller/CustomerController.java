@@ -85,4 +85,14 @@ public class CustomerController {
         }
     }
 
+    @GetMapping("/getcharts/{id}")
+    public ResponseEntity getCharts(@PathVariable long id){
+        return ResponseEntity.ok(vehicleService.getcharts(id));
+    }
+
+    @GetMapping("/getcharts2/{id}")
+    public ResponseEntity getCharts2(@PathVariable long id){
+        return ResponseEntity.ok(vehicleService.getcharts2(id));
+    }
+
 }
