@@ -6,6 +6,15 @@ public class AdminGetSectionResponse {
     private int freeSlots;
     private int occupiedSlots;
     private String technicianName;
+    private long sectionId;
+
+    public long getSectionId() {
+        return sectionId;
+    }
+
+    public void setSectionId(long sectionId) {
+        this.sectionId = sectionId;
+    }
 
     public String getSectionName() {
         return sectionName;
