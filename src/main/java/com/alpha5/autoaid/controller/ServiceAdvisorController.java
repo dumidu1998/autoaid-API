@@ -107,7 +107,7 @@ public class ServiceAdvisorController {
         }
         return ResponseEntity.ok().body(slot);
     }
-
+    //Get not handed over vehicles
     @GetMapping("/repairs/ongoing/{userId}")
     public ResponseEntity getOngoingRepairs(@PathVariable long userId){
         long advisorId=serviceAdvisorService.getStaffId(userId);
