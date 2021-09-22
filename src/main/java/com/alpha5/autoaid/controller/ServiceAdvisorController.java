@@ -107,7 +107,7 @@ public class ServiceAdvisorController {
         }
         return ResponseEntity.ok().body(slot);
     }
-
+    //Get not handed over vehicles
     @GetMapping("/repairs/ongoing/{userId}")
     public ResponseEntity getOngoingRepairs(@PathVariable long userId){
         long advisorId=serviceAdvisorService.getStaffId(userId);
@@ -151,6 +151,15 @@ public class ServiceAdvisorController {
             return ResponseEntity.ok().body(email);
         else
             return ResponseEntity.badRequest().body("Error Occurred!! Invalid Repair!");
+    }
+
+    @GetMapping("/getAllRepairs/{userId}")
+    public ResponseEntity getAllRepairs(@PathVariable long userId){
+        long advisorId=serviceAdvisorService.getStaffId(userId);
+        if(serviceAdvisorService.checkIfAdvisorExists(advisorId)){
+            return ResponseEntity.ok().body(serviceAdvisorService.getAllRepairs(advisorId));
+        }
+        return ResponseEntity.badRequest().body("Advisor Not exists");
     }
 
 }

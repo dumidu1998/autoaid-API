@@ -2,6 +2,7 @@ package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.*;
+import com.alpha5.autoaid.dto.response.serviceadvisor.GetAllRepairInstanceResponse;
 import com.alpha5.autoaid.enums.*;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,6 +22,9 @@ public class ServiceAdvisorService {
 
     @Autowired
     private AppointmentSlotsRepository appointmentSlotsRepository;
+
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     @Autowired
     private StaffRepository staffRepository;
@@ -397,6 +402,29 @@ public class ServiceAdvisorService {
     public String getemail(long repairid) {
         Repair repair = repairRepository.findByRepairId(repairid);
         return repair.getVehicle().getCustomer().getUserData().getEmail();
+    }
+
+    public  List<GetAllRepairInstanceResponse> getAllRepairs(long staffId){
+        List<Repair> completedRepairList = repairRepository.findAllByStaff_StaffIdAndStatusIsNot(staffId, RepairStatus.ONGOING);
+        List<GetAllRepairInstanceResponse> getAllRepairInstanceResponses=new ArrayList<>();
+
+        for (Repair repair:completedRepairList){
+            Invoice invoice=invoiceRepository.findByRepair_RepairId(repair.getRepairId());
+            String addedDate=new SimpleDateFormat("YYYY-MM-dd").format(repair.getRepairAddedDate());
+            String completedDate=new SimpleDateFormat("YYYY-MM-dd").format(repair.getRepairCompletedDate());
+
+            GetAllRepairInstanceResponse getAllRepairInstanceResponse= new GetAllRepairInstanceResponse();
+
+            getAllRepairInstanceResponse.setVin(repair.getVehicle().getVin());
+            getAllRepairInstanceResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+            getAllRepairInstanceResponse.setStatus(repair.getStatus());
+            getAllRepairInstanceResponse.setRepairAddedDate(addedDate);
+            getAllRepairInstanceResponse.setRepairCompletedDate(completedDate);
+//            getAllRepairInstanceResponse.setAmount(invoice.getAmount());
+
+            getAllRepairInstanceResponses.add(getAllRepairInstanceResponse);
+        }
+        return getAllRepairInstanceResponses;
     }
 
 }
