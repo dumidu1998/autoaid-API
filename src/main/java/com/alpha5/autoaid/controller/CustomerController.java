@@ -1,20 +1,26 @@
 package com.alpha5.autoaid.controller;
 
+import com.alpha5.autoaid.dto.request.CustomerProfileDetailsRequest;
 import com.alpha5.autoaid.dto.response.ExpenseResponse;
+import com.alpha5.autoaid.service.AuthService;
+import com.alpha5.autoaid.service.CustomerService;
 import com.alpha5.autoaid.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/customer")
 @RestController
 public class CustomerController {
 
     @Autowired
-    VehicleService vehicleService;
+    private VehicleService vehicleService;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private AuthService authService;
 
     @GetMapping("expenses/{id}") //userid is comming to here
     public ResponseEntity getSummary(@PathVariable("id") long id) {
@@ -69,6 +75,14 @@ public class CustomerController {
     @GetMapping("/cusvehiclesbyuserid/{id}")
     public ResponseEntity getVehiclesbyuserid(@PathVariable long id){
         return ResponseEntity.ok(vehicleService.getCusVehicleByUserId(id));
+    }
+    @PostMapping("/getuserDetails")
+    public ResponseEntity getUserDetails(@RequestBody CustomerProfileDetailsRequest customerProfileDetailsRequest){
+        if(customerService.findByUserIdAndUsername(customerProfileDetailsRequest)){
+            return ResponseEntity.ok().body(customerService.getProfileDetails(customerProfileDetailsRequest));
+        }else{
+            return ResponseEntity.badRequest().body("Invalid user");
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 package com.alpha5.autoaid.dto.request;
 
+import com.alpha5.autoaid.model.Vehicle;
+
 import javax.persistence.Column;
 
 public class AddVehicleRequest {

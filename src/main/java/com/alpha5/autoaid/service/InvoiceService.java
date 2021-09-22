@@ -44,8 +44,8 @@ public class InvoiceService {
         List<ServiceList> serviceList = new ArrayList<>();
         if(services.size()!=0) {
             for (ServiceEntry serviceEntry : services) {
-                System.out.println(serviceEntry.getEstimatedTime());
-                serviceList.add(new ServiceList(serviceEntry.getSubCategory().getSubCatName() + (serviceEntry.getDescription() == null ? " " : " (" + serviceEntry.getDescription() + ") "), new BigDecimal(serviceEntry.getEstimatedTime())));
+                System.out.println(serviceEntry.getEstimatedTime()/60);
+                serviceList.add(new ServiceList(serviceEntry.getSubCategory().getSubCatName() + (serviceEntry.getDescription() == null ? " " : " (" + serviceEntry.getDescription() + ") "), new BigDecimal((double)serviceEntry.getEstimatedTime()/60).multiply(new BigDecimal(1000))));
             }
         }
         List<MaterialList> materialList=new ArrayList<>();
