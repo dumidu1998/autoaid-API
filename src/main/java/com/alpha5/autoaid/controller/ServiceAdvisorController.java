@@ -5,6 +5,7 @@ import com.alpha5.autoaid.dto.response.GetCustomerDetailsRespond;
 import com.alpha5.autoaid.dto.response.OngoingRepairResponse;
 import com.alpha5.autoaid.dto.response.UpcomingAppointmentResponse;
 import com.alpha5.autoaid.dto.response.VehicleDetailsAutofillResponse;
+import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.Slot;
 import com.alpha5.autoaid.service.ServiceAdvisorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,6 +161,12 @@ public class ServiceAdvisorController {
             return ResponseEntity.ok().body(serviceAdvisorService.getAllRepairs(advisorId));
         }
         return ResponseEntity.badRequest().body("Advisor Not exists");
+    }
+
+    @GetMapping("/getCustomerbyVehicle/{vehicleId}")
+    public ResponseEntity getCustomerbyVehicle(@PathVariable long vehicleId){
+        Customer customer = serviceAdvisorService.getCustomerbyVehicle(vehicleId);
+        return ResponseEntity.ok().body(customer);
     }
 
 }
