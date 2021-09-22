@@ -254,8 +254,13 @@ public class TechnicianService {
         slotRepository.save(slot);
     }
     public List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
-        //get ongoing entries on section
-        List<ServiceEntry> ongoingEntries = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.ONGOING);
+        //check if section has available slots
+        List<Slot> availableList = slotRepository.findAllBySection_SectionNameAndStatusIs(sectionName, SlotStatus.AVAILABLE);
+        Slot availableSlot=null;
+        if(availableList.isEmpty()) {
+            availableSlot=null;
+        }else{ availableSlot = availableList.stream().findFirst().get();}
+
         List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
 
         //get pending repairs on section
@@ -272,14 +277,26 @@ public class TechnicianService {
             for (long repairId:repairIdList){
                 GetUpcomingRepairResponse getUpcomingRepairResponse=new GetUpcomingRepairResponse();
                 Repair repair=repairRepository.findByRepairId(repairId);
+                List<ServiceEntry> entriesByIdAndSection = serviceEntryRepository.findAllByRepair_RepairIdAndSubCategory_Section_SectionName(repairId, sectionName);
+                Long currentSlotId = entriesByIdAndSection
+                        .stream()
+                        .map(serviceEntry -> serviceEntry.getSlot().getSlotID())
+                        .findFirst()
+                        .get();
                 getUpcomingRepairResponse.setRepairId(repair.getRepairId());
                 getUpcomingRepairResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
                 getUpcomingRepairResponse.setVin(repair.getVehicle().getVin());
-                if(ongoingEntries.isEmpty()){
-                    getUpcomingRepairResponse.setBtnAct(true);
-                }else {
+
+                if(availableSlot ==null){
                     getUpcomingRepairResponse.setBtnAct(false);
+                }else{
+                    for(ServiceEntry serviceEntry:entriesByIdAndSection){
+                        serviceEntry.setSlot(availableSlot);
+                        serviceEntryRepository.save(serviceEntry);
+                    }
+                    getUpcomingRepairResponse.setBtnAct(true);
                 }
+
                 getUpcomingRepairResponses.add(getUpcomingRepairResponse);
             }
             return getUpcomingRepairResponses;
