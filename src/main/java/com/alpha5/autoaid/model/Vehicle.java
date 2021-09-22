@@ -17,22 +17,22 @@ public class Vehicle {
     @GeneratedValue
     private long vehicleId;
 
-    @Column(nullable = false)
+    @Column(unique = true)
     private String vin;
 
-    @Column(nullable = false)
+    @Column
     private String vehicleNumber;
 
-    @Column(nullable = false)
+    @Column
     private String engineNo;
 
-    @Column(nullable = false)
+    @Column
     private String chassisNo;
 
-    @Column(nullable = false)
+    @Column
     private String make;
 
-    @Column(nullable = false)
+    @Column
     private String model;
 
     @ManyToOne

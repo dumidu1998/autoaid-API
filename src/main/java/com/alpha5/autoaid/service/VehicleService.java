@@ -1,8 +1,11 @@
 package com.alpha5.autoaid.service;
 
+import com.alpha5.autoaid.dto.response.CustomerVehicleResponse;
 import com.alpha5.autoaid.dto.response.ExpenseResponse;
 import com.alpha5.autoaid.dto.response.OngoingServicesResponse;
+import com.alpha5.autoaid.dto.response.VehicleServices;
 import com.alpha5.autoaid.enums.RepairStatus;
+import com.alpha5.autoaid.enums.RepairType;
 import com.alpha5.autoaid.enums.ServiceEntryStatus;
 import com.alpha5.autoaid.model.Repair;
 import com.alpha5.autoaid.model.ServiceEntry;
@@ -50,8 +53,20 @@ public class VehicleService {
         return new ExpenseResponse(totalSpent,totalSpentMonth,totalSpent/12,repairsPerMonth,activeRepairs);
     }
 
-    public List<Vehicle> getVehicleByUserId(long id) {
-        return vehicleRepository.findAllByCustomer_UserData_Id(id);
+    public List<CustomerVehicleResponse> getVehicleByUserId(long id) {
+        List <CustomerVehicleResponse> response = new ArrayList<CustomerVehicleResponse>();
+            List <Vehicle> vlist=  vehicleRepository.findAllByCustomer_UserData_Id(id);
+            for(Vehicle vehicle : vlist){
+                int millage =0;
+                List<Repair> repairs = repairRepository.findAllByVehicle_VehicleIdAndRepairTypeOrderByRepairAddedDateDesc(vehicle.getVehicleId(), RepairType.RSERVICE);
+                if(repairs.size()==0){
+                    millage =-1;
+                }else{
+                    millage = repairs.get(0).getMillage();
+                }
+                response.add(new CustomerVehicleResponse(vehicle,(millage==-1?"- -":String.valueOf(millage+2500))));
+            }
+        return response;
     }
 
     public Vehicle getDetailsByVid(long id) {
@@ -66,11 +81,12 @@ public class VehicleService {
         return new ExpenseResponse(totalSpent,totalSpentMonth,totalSpent/12,repairsPerMonth,activeRepairs);
     }
 
-    public List <String> getCompletedRepairsByVid(long id) {
+    public List <VehicleServices> getCompletedRepairsByVid(long id) {
         List <Repair> repairs = repairRepository.findAllByStatusAndVehicleVehicleId(RepairStatus.COMPLETED,id);
-        List <String> output = new ArrayList<String>();
+        List <VehicleServices> output = new ArrayList<>();
         for (Repair repair : repairs) {
-            output.add(repair.getRepairCompletedDate().toString());
+            VehicleServices n= new VehicleServices(repair.getRepairId(),repair.getRepairCompletedDate().toString());
+            output.add(n);
         }
         return output;
     }
@@ -101,4 +117,13 @@ public class VehicleService {
         }
         return response;
     }
+
+    public String getDocId(long id) {
+        return repairRepository.findByRepairId(id).getFbDocId();
+    }
+
+    public List<Vehicle> getCusVehicleByUserId(long id) {
+        return vehicleRepository.findAllByCustomer_UserData_Id(id);
+    }
+
 }

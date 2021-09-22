@@ -4,5 +4,7 @@ public enum ItemRequestStatus {
     REQUESTED,
     DENIED,
     COMPLETED,
+    REFERRED,
+    ADVISORAPPROVAL
 
 }

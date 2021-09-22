@@ -2,6 +2,7 @@ package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.CustomerSignInRequest;
 import com.alpha5.autoaid.dto.request.CustomerSignUpRequest;
+import com.alpha5.autoaid.dto.request.Resetpwd;
 import com.alpha5.autoaid.dto.response.UserSigned;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.service.AuthService;
@@ -78,6 +79,33 @@ public class AuthController {
     @GetMapping("/allcustomers")
     public List<Customer> findAllCustomers(){
         return authService.getAll();
+    }
+
+    @PostMapping("/forgetpwd")
+    public ResponseEntity forgetPwd(@RequestBody Resetpwd resetpwd){
+
+        String email=resetpwd.getEmail();
+        String newpwd=resetpwd.getNewpwd();
+        String responseMsg ="";
+        if(authService.resetpwd(email,newpwd)){
+            responseMsg="Successful!";
+            return ResponseEntity.ok().body(responseMsg);
+        }else{
+            responseMsg="Error!";
+            return ResponseEntity.badRequest().body(responseMsg);
+        }
+
+//        String responseMsg;
+//        if (authService.checkIfEmailExists(email)){
+//            responseMsg="Email exists";
+//        }else if (authService.checkIfContactExists(contactNo)){
+//            responseMsg="Contact exists";
+//        }else if (authService.checkIfUserNameExists(username)){
+//            responseMsg="username exists";
+//        }else {
+//            authService.signup(customerSignUpRequest);
+//            responseMsg="Customer Added Successfully";
+//        }
     }
 
 }

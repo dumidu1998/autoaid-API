@@ -238,6 +238,7 @@ public class AdminService {
     public void updateStaff(UpdateStaffRequest updateStaffRequest){
         Staff staffMember= staffRepository.findByStaffId(updateStaffRequest.getStaffId());
         UserData userData= staffMember.getUserData();
+        System.out.println(userData.getContactNo());
 
         // add data to userData
         userData.setEmail(updateStaffRequest.getEmail());
@@ -246,11 +247,10 @@ public class AdminService {
         userData.setUserName(updateStaffRequest.getUserName());
         userData.setAddress(updateStaffRequest.getAddress());
         userData.setCity(updateStaffRequest.getCity());
-        if(updateStaffRequest.isPassword()==1){
+        if(updateStaffRequest.isPassword()){
             userData.setPassword(passwordEncoder.encode("Staff123"));
         }
         userRepository.save(userData);
-//        System.out.println(updateStaffRequest.isPassword());
 
         // add data to staff member
         staffMember.setFirstName(updateStaffRequest.getFirstName());

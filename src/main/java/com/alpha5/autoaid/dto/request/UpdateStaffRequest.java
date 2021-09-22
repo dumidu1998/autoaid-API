@@ -16,7 +16,15 @@ public class UpdateStaffRequest {
     private String  lastName;
     @Enumerated(EnumType.STRING)
     private UserType userType;
-    private int password[];
+    private boolean password;
+
+    public void setPassword(boolean password) {
+        this.password = password;
+    }
+
+    public boolean isPassword() {
+        return password;
+    }
 
     public long getStaffId() {
         return staffId;
@@ -90,11 +98,4 @@ public class UpdateStaffRequest {
         this.userType = userType;
     }
 
-    public int isPassword() {
-        return password[0];
-    }
-
-    public void setPassword(int password[]) {
-        this.password = password;
-    }
 }

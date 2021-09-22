@@ -1,26 +1,22 @@
 package com.alpha5.autoaid.service;
 
-import com.alpha5.autoaid.dto.request.RepairCompletedRequest;
-import com.alpha5.autoaid.dto.request.SubCatCompleteRequest;
-import com.alpha5.autoaid.dto.request.TechnicianRepairAcceptanceRequest;
+import com.alpha5.autoaid.dto.request.*;
 import com.alpha5.autoaid.dto.response.AdminGetAssignedLeadTechResponse;
 import com.alpha5.autoaid.dto.response.GetNextRepairResponse;
 import com.alpha5.autoaid.dto.response.technician.GetEntryListResponse;
 import com.alpha5.autoaid.dto.response.technician.GetUpcomingRepairResponse;
-import com.alpha5.autoaid.enums.ServiceEntryStatus;
-import com.alpha5.autoaid.enums.SlotStatus;
+import com.alpha5.autoaid.enums.*;
 import com.alpha5.autoaid.model.*;
 import com.alpha5.autoaid.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class TechnicianService {
@@ -39,6 +35,16 @@ public class TechnicianService {
 
     @Autowired
     private RepairRepository repairRepository;
+
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
+
+    @Autowired
+    private InventryItemRepository inventryItemRepository;
+    @Autowired
+    private VehicleRepository vehicleRepository;
+    @Autowired
+    private SpecialItemRequestRepository specialRequestRepository;
 
     public boolean checkEntryExists(SubCatCompleteRequest subCatCompleteRequest) {
         ServiceEntry serviceEntry = serviceEntryRepository.findByRepair_RepairIdAndSubCategory_SubCatId(subCatCompleteRequest.getRepairId(), subCatCompleteRequest.getSubCatId());
@@ -245,15 +251,17 @@ public class TechnicianService {
         slotRepository.save(slot);
     }
     public List<GetUpcomingRepairResponse> getUpcomingRepairs(String sectionName) {
+        //get ongoing entries on section
+        List<ServiceEntry> ongoingEntries = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.ONGOING);
         List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
-        //get pending repairs on section
-//        System.out.println("section"+sectionName);
 
+        //get pending repairs on section
         List<Long> repairIdList = serviceEntryRepository.findAllBySlot_Section_SectionNameAndServiceEntryStatusIs(sectionName, ServiceEntryStatus.PENDING)
                 .stream()
                 .map(serviceEntry -> serviceEntry.getRepair().getRepairId())
                 .distinct()
                 .collect(Collectors.toList());
+        //check if slot has ongoing repairs
 
         if(repairIdList.isEmpty()){
             return null;
@@ -264,10 +272,85 @@ public class TechnicianService {
                 getUpcomingRepairResponse.setRepairId(repair.getRepairId());
                 getUpcomingRepairResponse.setVehicleNumber(repair.getVehicle().getVehicleNumber());
                 getUpcomingRepairResponse.setVin(repair.getVehicle().getVin());
-
+                if(ongoingEntries.isEmpty()){
+                    getUpcomingRepairResponse.setBtnAct(true);
+                }else {
+                    getUpcomingRepairResponse.setBtnAct(false);
+                }
                 getUpcomingRepairResponses.add(getUpcomingRepairResponse);
             }
             return getUpcomingRepairResponses;
         }
     }
+
+
+
+    public List<GetUpcomingRepairResponse> getOngoingRepairs(long userid) {
+        List<GetUpcomingRepairResponse> getUpcomingRepairResponses = new ArrayList<>();
+        Section section = sectionRepository.findByStaff_UserData_id(userid);
+        List<Repair> repairs = repairRepository.findDistinctByServiceEntries_ServiceEntryStatusAndServiceEntries_SubCategory_Section(ServiceEntryStatus.ONGOING,section);
+        for(Repair repair : repairs) {
+            GetUpcomingRepairResponse d = new GetUpcomingRepairResponse();
+            d.setRepairId(repair.getRepairId());
+            d.setVin(repair.getVehicle().getVin());
+            d.setVehicleNumber(repair.getVehicle().getVehicleNumber());
+            d.setBtnAct(true);
+            getUpcomingRepairResponses.add(d);
+        }
+        return getUpcomingRepairResponses;
+    }
+
+    public Vehicle getVehicleDetails(long repairid) {
+        return repairRepository.findByRepairId(repairid).getVehicle();
+    }
+    public void updateRepairStatus(long repairid){
+        Date date=new Date();
+        Repair repair = repairRepository.findByRepairId(repairid);
+        repair.setStatus(RepairStatus.COMPLETED);
+        repair.setRepairCompletedDate(date);
+        repairRepository.save(repair);
+    }
+
+    public void createItemRequest(AddItemRequest addItemRequest) {
+        ItemRequest request = new ItemRequest();
+
+        request.setIssuedDateTime(null);
+        request.setQuantity(addItemRequest.getQuantity());
+
+        int qty = addItemRequest.getQuantity();
+
+        BigDecimal amount = inventryItemRepository.findByItemNo(addItemRequest.getItemNo()).getPrice();
+
+        if(amount.multiply(BigDecimal.valueOf(qty)).compareTo(BigDecimal.valueOf(5000))>=0){
+            request.setStatus(ItemRequestStatus.ADVISORAPPROVAL);
+        }else{
+            request.setStatus(ItemRequestStatus.REQUESTED);
+        }
+
+        request.setInvItem(inventryItemRepository.findByItemNo(addItemRequest.getItemNo()));
+        request.setRepair(repairRepository.findByRepairId(addItemRequest.getRepairId()));
+//        System.out.println(staffRepository.findByUserData_Id(addItemRequest.getStaffId()).getStaffId());
+        System.out.println(addItemRequest.getUserId());
+        request.setStaff(staffRepository.findByUserData_Id(addItemRequest.getUserId()));
+
+        itemRequestRepository.save(request);
+
+    }
+
+    public void createSpecialItemRequest(AddSpecialItem addItemRequest) {
+        SpecialItemRequest specialRequest = new SpecialItemRequest();
+
+        specialRequest.setItemName(addItemRequest.getItemName());
+        specialRequest.setPrice(BigDecimal.valueOf(0));
+        specialRequest.setRequestedDateTime(new Date());
+        specialRequest.setApprovedDateTime(null);
+        specialRequest.setQuantity(addItemRequest.getQuantity());
+        specialRequest.setStatus(SpecialItemRequestStatus.REQUESTED);
+        specialRequest.setRepair(repairRepository.findByRepairId(addItemRequest.getRepairId()));
+        specialRequest.setStaff(staffRepository.findByUserData_Id(addItemRequest.getUserId()));
+
+        specialRequestRepository.save(specialRequest);
+    }
+
+
 }
