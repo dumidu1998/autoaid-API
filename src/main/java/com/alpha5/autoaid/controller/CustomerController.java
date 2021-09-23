@@ -1,7 +1,9 @@
 package com.alpha5.autoaid.controller;
 
 import com.alpha5.autoaid.dto.request.CustomerProfileDetailsRequest;
+import com.alpha5.autoaid.dto.request.CustomerProfileUpdateRequest;
 import com.alpha5.autoaid.dto.response.ExpenseResponse;
+import com.alpha5.autoaid.service.AdminService;
 import com.alpha5.autoaid.service.AuthService;
 import com.alpha5.autoaid.service.CustomerService;
 import com.alpha5.autoaid.service.VehicleService;
@@ -21,6 +23,7 @@ public class CustomerController {
 
     @Autowired
     private AuthService authService;
+
 
     @GetMapping("expenses/{id}") //userid is comming to here
     public ResponseEntity getSummary(@PathVariable("id") long id) {
@@ -83,6 +86,21 @@ public class CustomerController {
         }else{
             return ResponseEntity.badRequest().body("Invalid user");
         }
+    }
+    @PostMapping("/update/user")
+    public ResponseEntity updateUserDetails(@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest){
+        String response=null;
+        if(!(authService.checkIfUserIdExistsOnUserType(customerProfileUpdateRequest.getUserId(),customerProfileUpdateRequest.getUserType()))){
+            response="Invalid User";
+        }else if(customerService.checkEmailExistsInOtherUsers(customerProfileUpdateRequest.getEmail(),customerProfileUpdateRequest.getUserId())){
+                response= "Email is Already Exists";
+        }else if(customerService.checkContactExistsInOtherUsers(customerProfileUpdateRequest.getContactNo(),customerProfileUpdateRequest.getUserId())){
+                response= "Change Contact Number";
+        }else {
+            customerService.updateUser(customerProfileUpdateRequest);
+            return ResponseEntity.ok().body("Updated");
+        }
+        return ResponseEntity.badRequest().body(response);
     }
 
     @GetMapping("/getcharts/{id}")

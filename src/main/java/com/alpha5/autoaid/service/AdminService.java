@@ -196,6 +196,36 @@ public class AdminService {
         section.setStaff(staff);
         sectionRepository.save(section);
     }
+    public void slotDeactivate(String slotName){
+        Slot slot=slotRepository.findBySlotName(slotName);
+        slot.setStatus(SlotStatus.NOTAVAILABLE);
+        slotRepository.save(slot);
+    }
+    public void slotActivate(String slotName){
+        Slot slot=slotRepository.findBySlotName(slotName);
+        slot.setStatus(SlotStatus.AVAILABLE);
+        slotRepository.save(slot);
+    }
+    public String activeStatus(String slotName){
+        Slot slot=slotRepository.findBySlotName(slotName);
+        if(slot.getStatus().equals(SlotStatus.NOTAVAILABLE)){
+            return "ACTIVATE";
+        }else{
+            return "DEACTIVATE";
+        }
+    }
+    public boolean checkSlotAvailable(String slotName){
+        Slot slot=slotRepository.findBySlotName(slotName);
+        if(slot.getStatus().equals(SlotStatus.AVAILABLE)){
+            return true;
+        }else return false;
+    }
+    public boolean checkSlotNotAvailable(String slotName){
+        Slot slot=slotRepository.findBySlotName(slotName);
+        if(slot.getStatus().equals(SlotStatus.NOTAVAILABLE)){
+            return true;
+        }else return false;
+    }
 
     //-------------------get nxt staff Mem Info ------------------//
     public GetStaffMemInfoRespond getStaffMemInfo(long sid){

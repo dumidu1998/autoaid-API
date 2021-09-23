@@ -27,8 +27,10 @@ public class ServiceAdvisorController {
         if(serviceAdvisorService.checkIfVehicleExists(vin)){
             VehicleDetailsAutofillResponse response = serviceAdvisorService.autoFillVehicleDetails(vin);
             return ResponseEntity.ok().body(response);
-        }
-
+        }else if(serviceAdvisorService.checkIfVehicleExistsOnVehicleNum(vin)){
+            VehicleDetailsAutofillResponse response = serviceAdvisorService.autoFillVehicleDetails(vin);
+            return ResponseEntity.ok().body(response);
+        }else
         return ResponseEntity.badRequest().body("Vehicle Not Exists");
 
     }
@@ -41,8 +43,13 @@ public class ServiceAdvisorController {
            return ResponseEntity.badRequest().body("Vehicle Already Exists");
         }else {
             serviceAdvisorService.registerNewVehicle(addVehicleRequest);
-            return ResponseEntity.ok().body("vehicle Added Succesfully");
+            return ResponseEntity.ok().body("vehicle Added Successfully");
         }
+    }
+    @PutMapping("/vehicle/update")
+    public ResponseEntity updateVehicle(@RequestBody AddVehicleRequest addVehicleRequest) {
+        serviceAdvisorService.updateVehicle(addVehicleRequest);
+        return ResponseEntity.ok().body("vehicle Updated Successfully");
     }
     @GetMapping("/getCustomer/{contactNo}")
     public ResponseEntity getCustomerDetails(@PathVariable String contactNo){
