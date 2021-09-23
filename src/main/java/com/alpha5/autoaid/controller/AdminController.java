@@ -202,6 +202,33 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.getStatistics());
     }
 
+    @GetMapping("/slot/deactivate/{slotName}")
+    public ResponseEntity slotDeactivate(@PathVariable String slotName) {
+        if(adminService.checkSlotAvailable(slotName)){
+            adminService.slotDeactivate(slotName);
+            return ResponseEntity.ok().body("Slot Deactivated");
+        }else{
+            return ResponseEntity.ok().body("Slot has ongoing process");
+        }
+    }
+    @GetMapping("/slot/activate/{slotName}")
+    public ResponseEntity slotActivate(@PathVariable String slotName) {
+        if(adminService.checkSlotNotAvailable(slotName)){
+            adminService.slotActivate(slotName);
+            return ResponseEntity.ok().body("Slot Activated");
+        }else{
+            return ResponseEntity.ok().body("Slot has ongoing process");
+        }
+    }
+    @GetMapping("/slot/actStatus/{slotName}")
+    public ResponseEntity slotActStatus(@PathVariable String slotName) {
+        if(adminService.checkIfSlotExists(slotName)){
+            return ResponseEntity.ok().body(adminService.activeStatus(slotName));
+        }else{
+            return ResponseEntity.ok().body("Invalid Slot Name");
+        }
+    }
+
 
 }
 

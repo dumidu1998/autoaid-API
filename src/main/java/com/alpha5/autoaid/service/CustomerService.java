@@ -1,6 +1,7 @@
 package com.alpha5.autoaid.service;
 
 import com.alpha5.autoaid.dto.request.CustomerProfileDetailsRequest;
+import com.alpha5.autoaid.dto.request.CustomerProfileUpdateRequest;
 import com.alpha5.autoaid.dto.response.customer.GetProfileDetailsResponse;
 import com.alpha5.autoaid.model.Customer;
 import com.alpha5.autoaid.model.UserData;
@@ -31,6 +32,21 @@ public class CustomerService {
     public List<Vehicle> getVehicleByEmail(String email) {
         return vehicleRepository.findAllByCustomer_UserData_Email(email);
     }
+    public boolean checkEmailExistsInOtherUsers(String email, long userId){
+        if (customerRepository.findByUserData_Email(email)==customerRepository.findByUserData_Id(userId)){
+            return false;
+        }else if (userRepository.findByEmail(email)!=null){
+            return true;
+        }else return false;
+    }
+
+    public boolean checkContactExistsInOtherUsers(String contact, long userId){
+        if (customerRepository.findByUserData_ContactNo(contact)==customerRepository.findByUserData_Id(userId)){
+            return false;
+        }else if (userRepository.findByContactNo(contact)!=null){
+            return true;
+        }else return false;
+    }
     public GetProfileDetailsResponse getProfileDetails(CustomerProfileDetailsRequest customerProfileDetailsRequest){
         UserData userData=userRepository.findByIdAndUserName(customerProfileDetailsRequest.getUserId(),customerProfileDetailsRequest.getUserName());
         Customer customer=customerRepository.findByUserData(userData);
@@ -45,6 +61,18 @@ public class CustomerService {
         getProfileDetailsResponse.setUserName(userData.getUserName());
 
         return getProfileDetailsResponse;
+    }
+    public void updateUser(CustomerProfileUpdateRequest customerProfileUpdateRequest){
+        UserData userData=userRepository.findByIdAndUserType(customerProfileUpdateRequest.getUserId(),customerProfileUpdateRequest.getUserType());
+        Customer customer=customerRepository.findByUserData(userData);
+        userData.setCity(customerProfileUpdateRequest.getCity());
+        userData.setContactNo(customerProfileUpdateRequest.getContactNo());
+        userData.setEmail(customerProfileUpdateRequest.getEmail());
+        userData.setAddress(customerProfileUpdateRequest.getAddress());
+        customer.setFirstName(customerProfileUpdateRequest.getFirstName());
+        customer.setLastName(customerProfileUpdateRequest.getLastName());
+        userRepository.save(userData);
+        customerRepository.save(customer);
     }
     public boolean findByUserIdAndUsername(CustomerProfileDetailsRequest customerProfileDetailsRequest){
         if (userRepository.findByIdAndUserName(customerProfileDetailsRequest.getUserId(),customerProfileDetailsRequest.getUserName())==null){
