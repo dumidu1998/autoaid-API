@@ -101,8 +101,6 @@ public class ServiceAdvisorService {
             vehicleListResponses.add(vehicleListResponse);
         }
 
-
-
             respond.setFirstName(user.getCustomer().getFirstName());
             respond.setLastName(user.getCustomer().getLastName());
             respond.setAddress(user.getAddress());
@@ -213,7 +211,7 @@ public class ServiceAdvisorService {
         String keys = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder stringBuilder = new StringBuilder();
         Random random = new Random();
-        while (stringBuilder.length() < 10) { // length of the random string.
+        while (stringBuilder.length() < 11) { // length of the random string.
             int index = (int) (random.nextFloat() * keys.length());
             stringBuilder.append(keys.charAt(index));
         }
