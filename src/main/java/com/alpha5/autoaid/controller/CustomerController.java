@@ -112,5 +112,10 @@ public class CustomerController {
     public ResponseEntity getCharts2(@PathVariable long id){
         return ResponseEntity.ok(vehicleService.getcharts2(id));
     }
+    
+    @GetMapping("/getchartsnew/{id}")
+    public ResponseEntity getChartsnew(@PathVariable long id){
+        return ResponseEntity.ok(vehicleService.getcharts2(id)); //this will return data required for the chart in the customer dashboard
+    }
 
 }
