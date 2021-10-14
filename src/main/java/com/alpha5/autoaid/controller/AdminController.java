@@ -108,6 +108,11 @@ public class AdminController {
             return ResponseEntity.ok().body("Slot Added");
         }
     }
+    
+    @PutMapping("/approverejectnew")
+    public ResponseEntity approveRejectRequestnewall(@RequestBody ApproveRejectRequest req) {
+        return ResponseEntity.ok().body(adminService.approveRejectRequest(req));
+    }
 
     @PostMapping("/update/staff")
     public ResponseEntity updateStaffDetails(@RequestBody UpdateStaffRequest updateStaffRequest){
