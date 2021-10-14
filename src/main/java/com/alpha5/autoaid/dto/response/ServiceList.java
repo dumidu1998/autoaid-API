@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class ServiceList {
     private String repairName;
     private BigDecimal price;
-    private int new;
+    private int newer;
 
     public ServiceList(String repairName, BigDecimal price) {
         this.repairName = repairName;
