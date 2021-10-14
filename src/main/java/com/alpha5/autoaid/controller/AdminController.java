@@ -130,6 +130,11 @@ public class AdminController {
         }
         return ResponseEntity.badRequest().body(response);
     }
+    
+    @PutMapping("/approverejectall")
+    public ResponseEntity approveRejectRequestall(@RequestBody ApproveRejectRequest req) {
+        return ResponseEntity.ok().body(adminService.approveRejectRequest(req));
+    }
 
     @PostMapping("/staff/activation")
     public ResponseEntity activateStaffAccount(@RequestBody StaffAccountActivateRequest staffAccountActivateRequest){
